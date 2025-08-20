@@ -9,9 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./app/routes/__root";
+import { Route as AuthEsqueciSenhaRouteImport } from "./app/routes/auth/esqueci-senha";
+import { Route as LoginRouteImport } from "./app/routes/auth/login";
 import { Route as ComunicacoesRouteImport } from "./app/routes/comunicacoes";
 import { Route as IndexRouteImport } from "./app/routes/index";
-import { Route as LoginRouteImport } from "./app/routes/login";
 import { Route as RecordsRouteImport } from "./app/routes/records";
 
 const RecordsRoute = RecordsRouteImport.update({
@@ -20,8 +21,8 @@ const RecordsRoute = RecordsRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any);
 const LoginRoute = LoginRouteImport.update({
-  id: "/login",
-  path: "/login",
+  id: "/auth/login",
+  path: "/auth/login",
   getParentRoute: () => rootRouteImport,
 } as any);
 const ComunicacoesRoute = ComunicacoesRouteImport.update({
@@ -34,32 +35,56 @@ const IndexRoute = IndexRouteImport.update({
   path: "/",
   getParentRoute: () => rootRouteImport,
 } as any);
+const AuthEsqueciSenhaRoute = AuthEsqueciSenhaRouteImport.update({
+  id: "/auth/esqueci-senha",
+  path: "/auth/esqueci-senha",
+  getParentRoute: () => rootRouteImport,
+} as any);
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute;
   "/comunicacoes": typeof ComunicacoesRoute;
-  "/login": typeof LoginRoute;
+  "/auth/login": typeof LoginRoute;
   "/records": typeof RecordsRoute;
+  "/auth/esqueci-senha": typeof AuthEsqueciSenhaRoute;
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute;
   "/comunicacoes": typeof ComunicacoesRoute;
-  "/login": typeof LoginRoute;
+  "/auth/login": typeof LoginRoute;
   "/records": typeof RecordsRoute;
+  "/auth/esqueci-senha": typeof AuthEsqueciSenhaRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   "/": typeof IndexRoute;
   "/comunicacoes": typeof ComunicacoesRoute;
-  "/login": typeof LoginRoute;
+  "/auth/login": typeof LoginRoute;
   "/records": typeof RecordsRoute;
+  "/auth/esqueci-senha": typeof AuthEsqueciSenhaRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/comunicacoes" | "/login" | "/records";
+  fullPaths:
+    | "/"
+    | "/comunicacoes"
+    | "/auth/login"
+    | "/records"
+    | "/auth/esqueci-senha";
   fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/comunicacoes" | "/login" | "/records";
-  id: "__root__" | "/" | "/comunicacoes" | "/login" | "/records";
+  to:
+    | "/"
+    | "/comunicacoes"
+    | "/auth/login"
+    | "/records"
+    | "/auth/esqueci-senha";
+  id:
+    | "__root__"
+    | "/"
+    | "/comunicacoes"
+    | "/auth/login"
+    | "/records"
+    | "/auth/esqueci-senha";
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
@@ -67,6 +92,7 @@ export interface RootRouteChildren {
   ComunicacoesRoute: typeof ComunicacoesRoute;
   LoginRoute: typeof LoginRoute;
   RecordsRoute: typeof RecordsRoute;
+  AuthEsqueciSenhaRoute: typeof AuthEsqueciSenhaRoute;
 }
 
 declare module "@tanstack/react-router" {
@@ -78,10 +104,10 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof RecordsRouteImport;
       parentRoute: typeof rootRouteImport;
     };
-    "/login": {
-      id: "/login";
-      path: "/login";
-      fullPath: "/login";
+    "/auth/login": {
+      id: "/auth/login";
+      path: "/auth/login";
+      fullPath: "/auth/login";
       preLoaderRoute: typeof LoginRouteImport;
       parentRoute: typeof rootRouteImport;
     };
@@ -99,6 +125,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof IndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    "/auth/esqueci-senha": {
+      id: "/auth/esqueci-senha";
+      path: "/auth/esqueci-senha";
+      fullPath: "/auth/esqueci-senha";
+      preLoaderRoute: typeof AuthEsqueciSenhaRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -107,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   ComunicacoesRoute: ComunicacoesRoute,
   LoginRoute: LoginRoute,
   RecordsRoute: RecordsRoute,
+  AuthEsqueciSenhaRoute: AuthEsqueciSenhaRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

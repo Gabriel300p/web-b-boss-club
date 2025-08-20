@@ -23,12 +23,12 @@ export function LoadingSpinner({
         role="status"
         aria-hidden="true"
         className={cn(
-          "animate-spin rounded-full border-2 border-gray-300 border-t-blue-600",
+          "border-t-primary animate-spin rounded-full border-2 border-neutral-600",
           sizeClasses[size],
           className,
         )}
       />
-      {text && <p className="mt-2 text-sm text-gray-600">{text}</p>}
+      {text && <p className="mt-2 text-sm text-neutral-600">{text}</p>}
     </div>
   );
 }

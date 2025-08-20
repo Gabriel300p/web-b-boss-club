@@ -1,7 +1,7 @@
 import Logo from "@shared/assets/logo/logo-simple.png";
 import { LoginForm } from "../components/LoginForm";
 
-export function LoginPage() {
+export function EsqueciSenhaPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-950 p-4">
       <div className="w-full max-w-md space-y-8">
