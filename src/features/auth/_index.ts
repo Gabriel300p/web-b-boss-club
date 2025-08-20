@@ -7,6 +7,7 @@ export type { AuthStore as AuthState, User } from "@app/store/auth";
 export type { LoginCredentials, RegisterCredentials } from "./types/auth";
 
 // Pages
+export { EsqueciSenhaPage } from "./pages/EsqueciSenhaPage";
 export { LoginPage } from "./pages/LoginPage";
 
 // Schemas (for external validation)
@@ -15,7 +16,7 @@ export {
   registerSchema,
   type LoginFormData,
   type RegisterFormData,
-} from "./schemas/auth.schemas";
+} from "./schemas/auth.schema";
 
 // Main hook (if needed externally)
 // Note: Other hooks should be imported directly for better tree-shaking

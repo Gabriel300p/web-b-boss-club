@@ -4,7 +4,6 @@ import { z } from "zod";
 export const loginSchema = z.object({
   email: emailSchema.max(100, "Email deve ter no máximo 100 caracteres"),
   password: passwordSchema.max(50, "Senha deve ter no máximo 50 caracteres"),
-  rememberMe: z.boolean().optional().default(false),
 });
 
 export const registerSchema = z

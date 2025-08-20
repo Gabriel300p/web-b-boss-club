@@ -9,7 +9,7 @@ import { ToastProvider } from "./ToastProvider";
 export function AppProviders({ children }: PropsWithChildren) {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultMode="light" enableSystem={true}>
+      <ThemeProvider defaultMode="dark" enableSystem={true}>
         <QueryProvider>
           <FiltersProvider>
             <ToastProvider>{children}</ToastProvider>
