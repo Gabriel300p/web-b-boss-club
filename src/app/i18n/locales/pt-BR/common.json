@@ -1,0 +1,24 @@
+{
+  "app": {
+    "title": "Template Frontend",
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro"
+  },
+  "nav": {
+    "home": "Início",
+    "records": "Registros"
+  },
+  "actions": {
+    "create": "Criar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "save": "Salvar"
+  },
+  "feedback": {
+    "success": "Operação realizada com sucesso.",
+    "genericError": "Algo inesperado aconteceu."
+  }
+}

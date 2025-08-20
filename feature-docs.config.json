@@ -1,0 +1,35 @@
+{
+  "analysis": {
+    "includePrivate": false,
+    "includeTests": false,
+    "complexityThreshold": 10,
+    "maxDepth": 5
+  },
+  "output": {
+    "path": "./docs/features",
+    "format": "markdown",
+    "createIndex": true,
+    "groupByFeature": true
+  },
+  "templates": {
+    "default": "standard",
+    "audience": "developer",
+    "language": "pt-BR"
+  },
+  "git": {
+    "enabled": true,
+    "baseBranch": "main",
+    "includeCommitInfo": true
+  },
+  "ui": {
+    "interactive": true,
+    "showPreview": true,
+    "confirmGeneration": true
+  },
+  "ai": {
+    "enabled": true,
+    "model": "gpt-4o-mini",
+    "maxTokens": 2000,
+    "temperature": 0.3
+  }
+}

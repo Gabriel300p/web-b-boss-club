@@ -1,0 +1,726 @@
+{
+  "timestamp": "2025-08-11T14:06:39.530Z",
+  "project": "frontend",
+  "type": "architecture-documentation",
+  "architecture": {
+    "folders": {
+      ".github": {
+        "type": "directory",
+        "children": {
+          "workflows": {
+            "type": "directory",
+            "children": {
+              "ci.yml": {
+                "type": "file",
+                "extension": ".yml",
+                "size": 4889,
+                "purpose": "YAML configuration"
+              },
+              "cleanup.yml": {
+                "type": "file",
+                "extension": ".yml",
+                "size": 3450,
+                "purpose": "YAML configuration"
+              },
+              "deploy.yml": {
+                "type": "file",
+                "extension": ".yml",
+                "size": 6817,
+                "purpose": "YAML configuration"
+              },
+              "README.md": {
+                "type": "file",
+                "extension": ".md",
+                "size": 4218,
+                "purpose": "Documentation file"
+              }
+            },
+            "fileCount": 4,
+            "purpose": "Mixed files"
+          }
+        },
+        "fileCount": 4,
+        "purpose": "Mixed files"
+      },
+      ".tanstack": {
+        "type": "directory",
+        "children": {
+          "tmp": {
+            "type": "directory",
+            "children": {},
+            "fileCount": 0,
+            "purpose": "Mixed files"
+          }
+        },
+        "fileCount": 0,
+        "purpose": "Mixed files"
+      },
+      "components.json": {
+        "type": "file",
+        "extension": ".json",
+        "size": 424,
+        "purpose": "Configuration/data file"
+      },
+      "docs": {
+        "type": "directory",
+        "children": {},
+        "fileCount": 0,
+        "purpose": "Documentation"
+      },
+      "eslint.config.js": {
+        "type": "file",
+        "extension": ".js",
+        "size": 640,
+        "purpose": "JavaScript file"
+      },
+      "lighthouserc.json": {
+        "type": "file",
+        "extension": ".json",
+        "size": 744,
+        "purpose": "Configuration/data file"
+      },
+      "package.json": {
+        "type": "file",
+        "extension": ".json",
+        "size": 2821,
+        "purpose": "Project dependencies and configuration"
+      },
+      "pnpm-lock.yaml": {
+        "type": "file",
+        "extension": ".yaml",
+        "size": 199164,
+        "purpose": "YAML configuration"
+      },
+      "prettier.config.js": {
+        "type": "file",
+        "extension": ".js",
+        "size": 64,
+        "purpose": "JavaScript file"
+      },
+      "public": {
+        "type": "directory",
+        "children": {},
+        "fileCount": 2,
+        "purpose": "Public static files"
+      },
+      "README.md": {
+        "type": "file",
+        "extension": ".md",
+        "size": 9758,
+        "purpose": "Documentation file"
+      },
+      "src": {
+        "type": "directory",
+        "children": {
+          "app": {
+            "type": "directory",
+            "children": {
+              "providers": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 4,
+                "purpose": "React components"
+              },
+              "store": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 3,
+                "purpose": "State management"
+              }
+            },
+            "fileCount": 7,
+            "purpose": "Mixed files"
+          },
+          "App.tsx": {
+            "type": "file",
+            "extension": ".tsx",
+            "size": 568,
+            "purpose": "React TypeScript component"
+          },
+          "assets": {
+            "type": "directory",
+            "children": {},
+            "fileCount": 4,
+            "purpose": "Static assets"
+          },
+          "features": {
+            "type": "directory",
+            "children": {
+              "auth": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 4,
+                "purpose": "JavaScript/TypeScript files"
+              },
+              "comunicacoes": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 27,
+                "purpose": "JavaScript/TypeScript files"
+              },
+              "records": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 17,
+                "purpose": "JavaScript/TypeScript files"
+              }
+            },
+            "fileCount": 48,
+            "purpose": "Mixed files"
+          },
+          "i18n": {
+            "type": "directory",
+            "children": {
+              "init.ts": {
+                "type": "file",
+                "extension": ".ts",
+                "size": 2234,
+                "purpose": "TypeScript file"
+              },
+              "locales": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 4,
+                "purpose": "Mixed files"
+              },
+              "zodErrorMap.ts": {
+                "type": "file",
+                "extension": ".ts",
+                "size": 351,
+                "purpose": "TypeScript file"
+              }
+            },
+            "fileCount": 6,
+            "purpose": "JavaScript/TypeScript files"
+          },
+          "main.tsx": {
+            "type": "file",
+            "extension": ".tsx",
+            "size": 388,
+            "purpose": "React TypeScript component"
+          },
+          "routes": {
+            "type": "directory",
+            "children": {
+              "comunicacoes.tsx": {
+                "type": "file",
+                "extension": ".tsx",
+                "size": 229,
+                "purpose": "React TypeScript component"
+              },
+              "index.tsx": {
+                "type": "file",
+                "extension": ".tsx",
+                "size": 459,
+                "purpose": "Entry point file"
+              },
+              "login.tsx": {
+                "type": "file",
+                "extension": ".tsx",
+                "size": 663,
+                "purpose": "React TypeScript component"
+              },
+              "records.tsx": {
+                "type": "file",
+                "extension": ".tsx",
+                "size": 1484,
+                "purpose": "React TypeScript component"
+              },
+              "__root.tsx": {
+                "type": "file",
+                "extension": ".tsx",
+                "size": 269,
+                "purpose": "React TypeScript component"
+              }
+            },
+            "fileCount": 5,
+            "purpose": "React components"
+          },
+          "routeTree.gen.ts": {
+            "type": "file",
+            "extension": ".ts",
+            "size": 3354,
+            "purpose": "TypeScript file"
+          },
+          "shared": {
+            "type": "directory",
+            "children": {
+              "animations": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 6,
+                "purpose": "JavaScript/TypeScript files"
+              },
+              "components": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 60,
+                "purpose": "UI Components"
+              },
+              "constants": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 2,
+                "purpose": "JavaScript/TypeScript files"
+              },
+              "contexts": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 1,
+                "purpose": "JavaScript/TypeScript files"
+              },
+              "hooks": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 6,
+                "purpose": "React hooks"
+              },
+              "lib": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 9,
+                "purpose": "JavaScript/TypeScript files"
+              },
+              "providers": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 2,
+                "purpose": "React components"
+              },
+              "schemas": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 1,
+                "purpose": "JavaScript/TypeScript files"
+              },
+              "styles": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 1,
+                "purpose": "Stylesheets"
+              },
+              "types": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 1,
+                "purpose": "TypeScript type definitions"
+              },
+              "utils": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 1,
+                "purpose": "Utility functions"
+              }
+            },
+            "fileCount": 90,
+            "purpose": "Mixed files"
+          },
+          "test": {
+            "type": "directory",
+            "children": {
+              "fixtures": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 1,
+                "purpose": "JavaScript/TypeScript files"
+              },
+              "helpers": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 1,
+                "purpose": "Helper functions"
+              },
+              "setup.ts": {
+                "type": "file",
+                "extension": ".ts",
+                "size": 576,
+                "purpose": "TypeScript file"
+              },
+              "utils": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 3,
+                "purpose": "Utility functions"
+              },
+              "__mocks__": {
+                "type": "directory",
+                "children": {},
+                "fileCount": 2,
+                "purpose": "JavaScript/TypeScript files"
+              }
+            },
+            "fileCount": 8,
+            "purpose": "Test files"
+          },
+          "vite-env.d.ts": {
+            "type": "file",
+            "extension": ".ts",
+            "size": 38,
+            "purpose": "TypeScript file"
+          }
+        },
+        "fileCount": 173,
+        "purpose": "Source code"
+      },
+      "tailwind.config.js": {
+        "type": "file",
+        "extension": ".js",
+        "size": 11427,
+        "purpose": "Tailwind CSS configuration"
+      },
+      "tsconfig.app.json": {
+        "type": "file",
+        "extension": ".json",
+        "size": 884,
+        "purpose": "Configuration/data file"
+      },
+      "tsconfig.json": {
+        "type": "file",
+        "extension": ".json",
+        "size": 348,
+        "purpose": "TypeScript configuration"
+      },
+      "tsconfig.node.json": {
+        "type": "file",
+        "extension": ".json",
+        "size": 630,
+        "purpose": "Configuration/data file"
+      },
+      "tsr.config.json": {
+        "type": "file",
+        "extension": ".json",
+        "size": 310,
+        "purpose": "Configuration/data file"
+      },
+      "vercel.json": {
+        "type": "file",
+        "extension": ".json",
+        "size": 1030,
+        "purpose": "Configuration/data file"
+      },
+      "vite.config.ts": {
+        "type": "file",
+        "extension": ".ts",
+        "size": 3174,
+        "purpose": "Vite build configuration"
+      },
+      "vitest.config.ts": {
+        "type": "file",
+        "extension": ".ts",
+        "size": 571,
+        "purpose": "TypeScript file"
+      }
+    },
+    "dependencies": {
+      "framework": [
+        {
+          "name": "@phosphor-icons/react",
+          "version": "^2.1.10"
+        },
+        {
+          "name": "@radix-ui/react-alert-dialog",
+          "version": "^1.1.14"
+        },
+        {
+          "name": "@radix-ui/react-checkbox",
+          "version": "^1.3.2"
+        },
+        {
+          "name": "@radix-ui/react-dialog",
+          "version": "^1.1.14"
+        },
+        {
+          "name": "@radix-ui/react-dropdown-menu",
+          "version": "^2.1.15"
+        },
+        {
+          "name": "@radix-ui/react-popover",
+          "version": "^1.1.14"
+        },
+        {
+          "name": "@radix-ui/react-select",
+          "version": "^2.2.5"
+        },
+        {
+          "name": "@radix-ui/react-slot",
+          "version": "^1.2.3"
+        },
+        {
+          "name": "@tanstack/react-query",
+          "version": "^5.84.1"
+        },
+        {
+          "name": "@tanstack/react-router",
+          "version": "^1.130.12"
+        },
+        {
+          "name": "@tanstack/react-table",
+          "version": "^8.21.3"
+        },
+        {
+          "name": "@types/react-window",
+          "version": "^1.8.8"
+        },
+        {
+          "name": "i18next",
+          "version": "^23.16.8"
+        },
+        {
+          "name": "lucide-react",
+          "version": "^0.534.0"
+        },
+        {
+          "name": "react",
+          "version": "^19.1.0"
+        },
+        {
+          "name": "react-day-picker",
+          "version": "^9.8.1"
+        },
+        {
+          "name": "react-dom",
+          "version": "^19.1.0"
+        },
+        {
+          "name": "react-hook-form",
+          "version": "^7.62.0"
+        },
+        {
+          "name": "react-i18next",
+          "version": "^15.6.1"
+        },
+        {
+          "name": "react-tailwindcss-datepicker",
+          "version": "^2.0.0"
+        },
+        {
+          "name": "react-window",
+          "version": "^1.8.11"
+        },
+        {
+          "name": "react-window-infinite-loader",
+          "version": "^1.0.10"
+        },
+        {
+          "name": "@tanstack/react-query-devtools",
+          "version": "^5.84.1"
+        },
+        {
+          "name": "@testing-library/react",
+          "version": "^16.3.0"
+        },
+        {
+          "name": "@types/react",
+          "version": "^19.1.8"
+        },
+        {
+          "name": "@types/react-dom",
+          "version": "^19.1.6"
+        },
+        {
+          "name": "@vitejs/plugin-react",
+          "version": "^4.6.0"
+        },
+        {
+          "name": "eslint-plugin-react-hooks",
+          "version": "^5.2.0"
+        },
+        {
+          "name": "eslint-plugin-react-refresh",
+          "version": "^0.4.20"
+        }
+      ],
+      "ui": [
+        {
+          "name": "@tailwindcss/vite",
+          "version": "^4.1.11"
+        },
+        {
+          "name": "tailwind-merge",
+          "version": "^3.3.1"
+        },
+        {
+          "name": "tailwindcss",
+          "version": "^4.1.11"
+        },
+        {
+          "name": "prettier-plugin-tailwindcss",
+          "version": "^0.6.14"
+        }
+      ],
+      "state": [
+        {
+          "name": "zustand",
+          "version": "^5.0.7"
+        }
+      ],
+      "routing": [
+        {
+          "name": "@tanstack/router-cli",
+          "version": "^1.130.15"
+        },
+        {
+          "name": "@tanstack/router-devtools",
+          "version": "^1.130.13"
+        }
+      ],
+      "testing": [
+        {
+          "name": "@testing-library/jest-dom",
+          "version": "^6.6.4"
+        },
+        {
+          "name": "@testing-library/user-event",
+          "version": "^14.6.1"
+        },
+        {
+          "name": "@vitest/coverage-v8",
+          "version": "3.2.4"
+        },
+        {
+          "name": "vitest",
+          "version": "^3.2.4"
+        }
+      ],
+      "build": [
+        {
+          "name": "rollup-plugin-visualizer",
+          "version": "^6.0.3"
+        },
+        {
+          "name": "typescript",
+          "version": "~5.8.3"
+        },
+        {
+          "name": "typescript-eslint",
+          "version": "^8.35.1"
+        },
+        {
+          "name": "vite",
+          "version": "^7.0.4"
+        }
+      ],
+      "utility": [
+        {
+          "name": "date-fns",
+          "version": "^4.1.0"
+        }
+      ],
+      "database": [],
+      "other": [
+        {
+          "name": "@hookform/resolvers",
+          "version": "^5.2.1"
+        },
+        {
+          "name": "class-variance-authority",
+          "version": "^0.7.1"
+        },
+        {
+          "name": "clsx",
+          "version": "^2.1.1"
+        },
+        {
+          "name": "cmdk",
+          "version": "^1.1.1"
+        },
+        {
+          "name": "framer-motion",
+          "version": "^12.23.12"
+        },
+        {
+          "name": "nuqs",
+          "version": "^2.4.3"
+        },
+        {
+          "name": "zod",
+          "version": "^4.0.14"
+        },
+        {
+          "name": "@eslint/js",
+          "version": "^9.30.1"
+        },
+        {
+          "name": "@faker-js/faker",
+          "version": "^9.9.0"
+        },
+        {
+          "name": "@types/node",
+          "version": "^24.1.0"
+        },
+        {
+          "name": "cross-env",
+          "version": "^10.0.0"
+        },
+        {
+          "name": "eslint",
+          "version": "^9.30.1"
+        },
+        {
+          "name": "globals",
+          "version": "^16.3.0"
+        },
+        {
+          "name": "jsdom",
+          "version": "^26.1.0"
+        },
+        {
+          "name": "prettier",
+          "version": "^3.6.2"
+        },
+        {
+          "name": "tw-animate-css",
+          "version": "^1.3.6"
+        }
+      ]
+    },
+    "patterns": [],
+    "technologies": [
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Vite"
+    ]
+  },
+  "summary": {
+    "technologies": [
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Vite"
+    ],
+    "patterns": [],
+    "totalFolders": 35,
+    "totalFiles": 31,
+    "mainDependencies": [
+      {
+        "name": "@phosphor-icons/react",
+        "version": "^2.1.10"
+      },
+      {
+        "name": "@radix-ui/react-alert-dialog",
+        "version": "^1.1.14"
+      },
+      {
+        "name": "@radix-ui/react-checkbox",
+        "version": "^1.3.2"
+      },
+      {
+        "name": "@tailwindcss/vite",
+        "version": "^4.1.11"
+      },
+      {
+        "name": "tailwind-merge",
+        "version": "^3.3.1"
+      },
+      {
+        "name": "tailwindcss",
+        "version": "^4.1.11"
+      },
+      {
+        "name": "zustand",
+        "version": "^5.0.7"
+      }
+    ]
+  }
+}

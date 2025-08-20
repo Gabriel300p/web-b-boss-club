@@ -1,0 +1,90 @@
+{
+  "title": "Communications",
+  "breadcrumb": { "section": "Access" },
+  "actions": {
+    "edit": "Edit communication",
+    "delete": "Delete communication",
+    "new": "New Communication"
+  },
+  "empty": {
+    "noData": { "action": "Create first communication" },
+    "filtered": { "action": "Clear filters" }
+  },
+  "error": {
+    "load": "Error loading communications: {{message}}"
+  },
+  "fields": {
+    "title": "Title",
+    "author": "Author",
+    "type": "Type",
+    "description": "Description",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "actions": "Actions"
+  },
+  "filters": {
+    "searchPlaceholder": "Search communications...",
+    "type": "Type",
+    "author": "Author",
+    "authorPlaceholder": "Filter by author...",
+    "createdAt": "Creation Date",
+    "count": "{{count}} communication found",
+    "count_plural": "{{count}} communications found"
+  },
+  "form": {
+    "editTitle": "Edit communication",
+    "addTitle": "Add new post",
+    "placeholders": {
+      "title": "Enter title",
+      "author": "Enter author's name",
+      "description": "Enter communication description",
+      "type": "Select type"
+    },
+    "types": { "comunicado": "Notice", "aviso": "Warning", "noticia": "News" },
+    "close": "Close",
+    "saving": "Saving...",
+    "saveNew": "Add",
+    "saveEdit": "Edit"
+  },
+  "delete": {
+    "title": "Remove this communication?",
+    "description": "This communication won't be permanently deleted. You can restore it later if needed.",
+    "close": "Close",
+    "confirm": "Remove",
+    "removing": "Removing..."
+  },
+  "toasts": {
+    "create": {
+      "title": "Communication created successfully!",
+      "subtitle": "The communication \"{{title}}\" has been added to the system.",
+      "description": "The new communication is now available for viewing by all authorized users."
+    },
+    "update": {
+      "title": "Communication updated successfully!",
+      "subtitle": "Changes to the communication \"{{title}}\" have been saved.",
+      "description": "All modifications are now visible to system users."
+    },
+    "delete": {
+      "title": "Communication deleted successfully!",
+      "subtitle": "The communication has been permanently removed.",
+      "description": "This action cannot be undone. The data has been completely removed from the system."
+    }
+  },
+  "errors": {
+    "create": {
+      "title": "Error creating communication",
+      "subtitle": "Failed to save to the system.",
+      "description": "Check your internet connection and ensure all required fields are correctly filled."
+    },
+    "update": {
+      "title": "Error updating communication",
+      "subtitle": "Failed to save changes.",
+      "description": "The changes could not be saved. Check your connection and try again shortly."
+    },
+    "delete": {
+      "title": "Error deleting communication",
+      "subtitle": "Failed to remove from the system.",
+      "description": "The communication could not be removed. Check your permissions and try again."
+    }
+  }
+}

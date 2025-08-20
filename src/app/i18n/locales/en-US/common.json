@@ -1,0 +1,24 @@
+{
+  "app": {
+    "title": "Frontend Template",
+    "loading": "Loading...",
+    "error": "An error occurred"
+  },
+  "nav": {
+    "home": "Home",
+    "records": "Records"
+  },
+  "actions": {
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save"
+  },
+  "feedback": {
+    "success": "Operation completed successfully.",
+    "genericError": "Something unexpected happened."
+  }
+}

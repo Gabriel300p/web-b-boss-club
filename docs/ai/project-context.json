@@ -1,0 +1,58 @@
+{
+  "timestamp": "2025-08-11T14:02:56.288Z",
+  "project": {
+    "name": "template-default",
+    "type": "monorepo",
+    "structure": {
+      "isMonorepo": true,
+      "projects": [
+        {
+          "name": "automation",
+          "path": "C:\\Desenvolvimento\\template-default\\automation",
+          "type": "automation",
+          "hasPackageJson": true
+        },
+        {
+          "name": "backend",
+          "path": "C:\\Desenvolvimento\\template-default\\backend",
+          "type": "backend",
+          "hasPackageJson": true
+        },
+        {
+          "name": "docs",
+          "path": "C:\\Desenvolvimento\\template-default\\docs",
+          "type": "docs",
+          "hasPackageJson": false
+        },
+        {
+          "name": "frontend",
+          "path": "C:\\Desenvolvimento\\template-default\\frontend",
+          "type": "frontend",
+          "hasPackageJson": true
+        }
+      ],
+      "hasBackend": true,
+      "hasFrontend": true,
+      "hasAutomation": true,
+      "hasDocs": true
+    }
+  },
+  "summary": {
+    "totalProjects": 4,
+    "projectTypes": {
+      "automation": 1,
+      "backend": 1,
+      "docs": 1,
+      "frontend": 1
+    },
+    "technologies": [
+      "NestJS",
+      "Express",
+      "Prisma",
+      "TypeScript",
+      "React",
+      "Tailwind CSS"
+    ],
+    "architecture": "monorepo"
+  }
+}

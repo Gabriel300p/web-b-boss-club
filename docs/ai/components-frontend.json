@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-08-11T14:06:19.211Z",
+  "project": "frontend",
+  "type": "component-documentation",
+  "components": [],
+  "hooks": [],
+  "utils": [],
+  "summary": {
+    "totalComponents": 0,
+    "totalHooks": 0,
+    "totalUtils": 0,
+    "componentTypes": [],
+    "mostUsedImports": []
+  }
+}

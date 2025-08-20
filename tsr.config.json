@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "exactOptionalPropertyTypes": false
+  },
+  "routeFileIgnorePrefix": "-",
+  "routesDirectory": "./src/app/routes",
+  "generatedRouteTree": "./src/routeTree.gen.ts",
+  "routeFileIgnorePattern": "\\.(test|spec)\\.(ts|tsx)$"
+}

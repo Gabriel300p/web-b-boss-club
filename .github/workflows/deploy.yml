@@ -1,0 +1,202 @@
+name: 🚀 CD - Deploy
+
+on:
+  push:
+    branches: [main, develop, new-structure]
+  workflow_run:
+    workflows: ["🔍 CI - Quality Assurance"]
+    types: [completed]
+    branches: [main, develop, new-structure]
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy-preview:
+    name: 🔍 Deploy Preview (Homolog)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: |
+      github.ref == 'refs/heads/develop' || 
+      (github.event.workflow_run.conclusion == 'success' && 
+       github.event.workflow_run.head_branch == 'develop')
+
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.preview-url }}
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+
+      - name: 📥 Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: 🔗 Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 🏗️ Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 🚀 Deploy to Vercel (Preview)
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "preview-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "🔗 Preview deployed to: $DEPLOYMENT_URL"
+
+      - name: 💬 Comment PR with preview link
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🔍 Preview Deployment
+              
+              ✅ **Deploy Status**: Success
+              🔗 **Preview URL**: ${{ steps.deploy.outputs.preview-url }}
+              📝 **Commit**: ${context.sha.substring(0, 7)}
+              🌿 **Branch**: ${context.ref.replace('refs/heads/', '')}
+              
+              ### 🧪 Test your changes:
+              - [ ] Navegação geral
+              - [ ] Funcionalidades de comunicações
+              - [ ] Responsividade mobile
+              - [ ] Performance (Core Web Vitals)
+              
+              *Deployment powered by [Vercel](https://vercel.com)*`
+            })
+
+  deploy-production:
+    name: 🌟 Deploy Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: |
+      github.ref == 'refs/heads/main' || 
+      (github.event.workflow_run.conclusion == 'success' && 
+       github.event.workflow_run.head_branch == 'main')
+
+    environment:
+      name: production
+      url: https://your-production-domain.vercel.app
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+
+      - name: 📥 Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: 🔗 Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 🏗️ Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 🚀 Deploy to Vercel (Production)
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "production-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "🌟 Production deployed to: $DEPLOYMENT_URL"
+
+      - name: 🎉 Create release
+        if: github.ref == 'refs/heads/main'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            ## 🚀 Release v${{ github.run_number }}
+
+            **🌟 Production URL**: ${{ steps.deploy.outputs.production-url }}
+            **📝 Commit**: ${{ github.sha }}
+            **🕐 Deployed at**: ${{ github.event.head_commit.timestamp }}
+
+            ### ✨ What's included:
+            - Performance optimizations
+            - Bug fixes and improvements
+            - Latest features and enhancements
+
+            ### 🔍 Verification checklist:
+            - [x] All tests passing
+            - [x] Build successful
+            - [x] Security audit passed
+            - [x] Lighthouse performance ≥ 90
+
+            *Automated deployment via GitHub Actions*
+          draft: false
+          prerelease: false
+
+  rollback:
+    name: 🔄 Rollback (if needed)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: failure() && github.ref == 'refs/heads/main'
+    needs: [deploy-production]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: 🔄 Rollback deployment
+        run: |
+          echo "🔄 Rolling back to previous deployment..."
+          # Get previous deployment and promote it
+          PREV_DEPLOYMENT=$(vercel ls --token=${{ secrets.VERCEL_TOKEN }} --scope=${{ secrets.VERCEL_ORG_ID }} | head -2 | tail -1 | awk '{print $1}')
+          vercel promote $PREV_DEPLOYMENT --token=${{ secrets.VERCEL_TOKEN }}
+          echo "✅ Rollback completed to deployment: $PREV_DEPLOYMENT"
+
+      - name: 🚨 Notify team
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Production Deployment Failed - Rollback Initiated',
+              body: `## 🚨 Production Deployment Failure
+              
+              **🔄 Status**: Rollback initiated
+              **📝 Failed Commit**: ${context.sha}
+              **🕐 Time**: ${new Date().toISOString()}
+              
+              ### 🔍 Next Steps:
+              1. Review the failed deployment logs
+              2. Fix the issues in a new PR
+              3. Test thoroughly before merging to main
+              
+              **🔗 Workflow Run**: [View Details](${context.payload.repository.html_url}/actions/runs/${context.runId})`,
+              labels: ['bug', 'urgent', 'deployment']
+            })

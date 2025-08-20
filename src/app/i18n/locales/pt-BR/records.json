@@ -1,0 +1,94 @@
+{
+  "title": "Comunicações",
+  "breadcrumb": { "section": "Acessos" },
+  "actions": {
+    "edit": "Editar comunicação",
+    "delete": "Excluir comunicação",
+    "new": "Nova Comunicação"
+  },
+  "empty": {
+    "noData": { "action": "Criar primeira comunicação" },
+    "filtered": { "action": "Limpar filtros" }
+  },
+  "error": {
+    "load": "Erro ao carregar comunicações: {{message}}"
+  },
+  "fields": {
+    "title": "Título",
+    "author": "Autor",
+    "type": "Tipo",
+    "description": "Descrição",
+    "createdAt": "Data criação",
+    "updatedAt": "Data atualização",
+    "actions": "Ações"
+  },
+  "filters": {
+    "searchPlaceholder": "Pesquisar comunicações...",
+    "type": "Tipo",
+    "author": "Autor",
+    "authorPlaceholder": "Filtrar por autor...",
+    "createdAt": "Data de Criação",
+    "count": "{{count}} comunicação encontrada",
+    "count_plural": "{{count}} comunicações encontradas"
+  },
+  "form": {
+    "editTitle": "Editar comunicação",
+    "addTitle": "Adicionar nova postagem",
+    "placeholders": {
+      "title": "Digite o título",
+      "author": "Digite o nome do autor",
+      "description": "Digite a descrição da comunicação",
+      "type": "Selecione o tipo"
+    },
+    "types": {
+      "comunicado": "Comunicado",
+      "aviso": "Aviso",
+      "noticia": "Notícia"
+    },
+    "close": "Fechar",
+    "saving": "Salvando...",
+    "saveNew": "Adicionar",
+    "saveEdit": "Editar"
+  },
+  "delete": {
+    "title": "Deseja remover essa comunicação?",
+    "description": "Esta comunicação não será excluída permanentemente. Você poderá recuperá-la posteriormente, se necessário.",
+    "close": "Fechar",
+    "confirm": "Remover",
+    "removing": "Removendo..."
+  },
+  "toasts": {
+    "create": {
+      "title": "Comunicação criada com sucesso!",
+      "subtitle": "A comunicação \"{{title}}\" foi adicionada ao sistema.",
+      "description": "A nova comunicação está agora disponível para visualização por todos os usuários autorizados."
+    },
+    "update": {
+      "title": "Comunicação atualizada com sucesso!",
+      "subtitle": "As alterações na comunicação \"{{title}}\" foram salvas.",
+      "description": "Todas as modificações estão agora visíveis para os usuários do sistema."
+    },
+    "delete": {
+      "title": "Comunicação excluída com sucesso!",
+      "subtitle": "A comunicação foi removida permanentemente.",
+      "description": "Esta ação não pode ser desfeita. Os dados foram completamente removidos do sistema."
+    }
+  },
+  "errors": {
+    "create": {
+      "title": "Erro ao criar comunicação",
+      "subtitle": "Falha ao salvar no sistema.",
+      "description": "Verifique sua conexão com a internet e certifique-se de que todos os campos obrigatórios foram preenchidos corretamente."
+    },
+    "update": {
+      "title": "Erro ao atualizar comunicação",
+      "subtitle": "Falha ao salvar alterações.",
+      "description": "As alterações não puderam ser salvas. Verifique sua conexão e tente novamente em alguns instantes."
+    },
+    "delete": {
+      "title": "Erro ao excluir comunicação",
+      "subtitle": "Falha ao remover do sistema.",
+      "description": "A comunicação não pôde ser removida do sistema. Verifique suas permissões e tente novamente."
+    }
+  }
+}
