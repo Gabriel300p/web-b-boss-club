@@ -19,18 +19,17 @@ import { loginSchema } from "../schemas/auth.schema.ts";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const { mutate: login, isPending: isLoading } = useLogin();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const loginMutation = useLogin();
-
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((values) => loginMutation.mutate(values))}
+        onSubmit={form.handleSubmit((values) => login(values))}
         className="space-y-8"
       >
         <div className="space-y-4">
@@ -90,11 +89,11 @@ export function LoginForm() {
 
         <Button
           type="submit"
-          disabled={loginMutation.isPending}
+          disabled={isLoading}
           className="w-full font-medium"
           size="lg"
         >
-          {loginMutation.isPending ? (
+          {isLoading ? (
             <>
               Entrando... <LoadingSpinner className="ml-2 size-5" />
             </>

@@ -1,20 +1,21 @@
-import Logo from "@shared/assets/logo/logo-simple.png";
+import { AuthForm, AuthPageWrapper } from "../components/AuthAnimations";
 import { MfaVerificationForm } from "../components/MfaVerificationForm";
+import { useCurrentUserEmail } from "../hooks/useAuth";
 
 export function MfaVerificationPage() {
+  const userEmail = useCurrentUserEmail();
+  const maskedEmail = userEmail
+    ? `${userEmail.slice(0, 3)}...${userEmail.slice(-10)}`
+    : "seu email";
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-950 p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="flex flex-col items-center gap-5">
-          <img src={Logo} alt="Logo" className="size-20" />
-          <div className="space-y-1 text-center">
-            <p className="text-neutral-400">
-              Nós enviamos o código de verificação para gabriel.andra...
-            </p>
-          </div>
-        </div>
+    <AuthPageWrapper className="bg-neutral-950">
+      <AuthForm
+        title="Verificação de Segurança"
+        subtitle={`Enviamos o código de verificação para ${maskedEmail}`}
+      >
         <MfaVerificationForm />
-      </div>
-    </div>
+      </AuthForm>
+    </AuthPageWrapper>
   );
 }

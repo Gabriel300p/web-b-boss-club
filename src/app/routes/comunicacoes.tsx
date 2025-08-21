@@ -1,5 +1,5 @@
-import { RouteSkeleton } from "@shared/components/skeletons/_index";
 import { MainLayout } from "@shared/components/layout/MainLayout";
+import { RouteSkeleton } from "@shared/components/skeletons/_index";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 
@@ -10,12 +10,20 @@ const ComunicacoesPage = lazy(() =>
   })),
 );
 
+const AuthGuard = lazy(() =>
+  import("@features/auth/_index").then((module) => ({
+    default: module.AuthGuard,
+  })),
+);
+
 export const Route = createFileRoute("/comunicacoes")({
   component: () => (
-    <MainLayout>
-      <Suspense fallback={<RouteSkeleton />}>
-        <ComunicacoesPage />
-      </Suspense>
-    </MainLayout>
+    <AuthGuard requireAuth={true}>
+      <MainLayout>
+        <Suspense fallback={<RouteSkeleton />}>
+          <ComunicacoesPage />
+        </Suspense>
+      </MainLayout>
+    </AuthGuard>
   ),
 });

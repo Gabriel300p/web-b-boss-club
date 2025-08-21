@@ -1,23 +1,15 @@
-import Logo from "@shared/assets/logo/logo-simple.png";
+import { AuthForm, AuthPageWrapper } from "../components/AuthAnimations";
 import { ForgotPasswordForm } from "../components/ForgotPasswordForm";
 
 export function ForgotPasswordPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-950 p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="flex flex-col items-center gap-5">
-          <img src={Logo} alt="Logo" className="size-20" />
-          <div className="space-y-1 text-center">
-            <h2 className="text-lg font-semibold text-neutral-50">
-              Esqueci a senha
-            </h2>
-            <p className="text-neutral-400">
-              Iremos enviar um e-mail para recuperar a senha
-            </p>
-          </div>
-        </div>
+    <AuthPageWrapper className="bg-neutral-950">
+      <AuthForm
+        title="Esqueci a senha"
+        subtitle="Iremos enviar um e-mail para recuperar a senha"
+      >
         <ForgotPasswordForm />
-      </div>
-    </div>
+      </AuthForm>
+    </AuthPageWrapper>
   );
 }
