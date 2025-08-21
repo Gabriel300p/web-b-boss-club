@@ -1,7 +1,7 @@
 import Logo from "@shared/assets/logo/logo-simple.png";
-import { LoginForm } from "../components/LoginForm";
+import { ForgotPasswordForm } from "../components/ForgotPasswordForm";
 
-export function EsqueciSenhaPage() {
+export function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-950 p-4">
       <div className="w-full max-w-md space-y-8">
@@ -9,12 +9,14 @@ export function EsqueciSenhaPage() {
           <img src={Logo} alt="Logo" className="size-20" />
           <div className="space-y-1 text-center">
             <h2 className="text-lg font-semibold text-neutral-50">
-              Faça o login no B-Boss Club
+              Esqueci a senha
             </h2>
-            <p className="text-neutral-400">Bem-vindo de volta!</p>
+            <p className="text-neutral-400">
+              Iremos enviar um e-mail para recuperar a senha
+            </p>
           </div>
         </div>
-        <LoginForm />
+        <ForgotPasswordForm />
       </div>
     </div>
   );

@@ -9,14 +9,17 @@ import {
 } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRightIcon } from "@phosphor-icons/react";
+import { ArrowRightIcon, Eye, EyeSlash } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type z from "zod";
 import { useLogin } from "../hooks/useLogin";
 import { loginSchema } from "../schemas/auth.schema.ts";
 
 export function LoginForm() {
+  const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
@@ -40,7 +43,6 @@ export function LoginForm() {
                 <FormControl>
                   <Input {...field} placeholder="email@exemplo.com" />
                 </FormControl>
-                {/* <FormMessage /> */}
               </FormItem>
             )}
           />
@@ -52,12 +54,30 @@ export function LoginForm() {
               <FormItem>
                 <FormLabel>Senha</FormLabel>
                 <FormControl>
-                  <Input {...field} type="password" placeholder="••••••••" />
+                  <div className="relative">
+                    <Input
+                      {...field}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute inset-y-0 right-3 flex items-center text-neutral-400 transition hover:text-neutral-200"
+                    >
+                      {showPassword ? (
+                        <EyeSlash className="size-5" />
+                      ) : (
+                        <Eye className="size-5" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
-                {/* <FormMessage /> */}
               </FormItem>
             )}
           />
+
           <div>
             <Link
               to="/auth/esqueci-senha"
@@ -67,6 +87,7 @@ export function LoginForm() {
             </Link>
           </div>
         </div>
+
         <Button
           type="submit"
           disabled={loginMutation.isPending}

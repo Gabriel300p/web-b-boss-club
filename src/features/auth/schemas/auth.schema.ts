@@ -6,6 +6,18 @@ export const loginSchema = z.object({
   password: passwordSchema.max(50, "Senha deve ter no máximo 50 caracteres"),
 });
 
+export const forgotPasswordSchema = z.object({
+  email: emailSchema.max(100, "Email deve ter no máximo 100 caracteres"),
+});
+
+export const mfaVerificationSchema = z.object({
+  email: emailSchema.max(100, "Email deve ter no máximo 100 caracteres"),
+  code: z
+    .string()
+    .min(8, "Código deve ter 8 caracteres")
+    .max(8, "Código deve ter 8 caracteres"),
+});
+
 export const registerSchema = z
   .object({
     name: z
@@ -30,4 +42,5 @@ export const registerSchema = z
   });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;

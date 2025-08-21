@@ -7,8 +7,9 @@ export type { AuthStore as AuthState, User } from "@app/store/auth";
 export type { LoginCredentials, RegisterCredentials } from "./types/auth";
 
 // Pages
-export { EsqueciSenhaPage } from "./pages/EsqueciSenhaPage";
+export { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 export { LoginPage } from "./pages/LoginPage";
+export { MfaVerificationPage } from "./pages/MfaVerificationPage";
 
 // Schemas (for external validation)
 export {

@@ -18,3 +18,33 @@ export async function loginRequest(values: {
 
   return data;
 }
+
+export async function forgotPasswordRequest(values: { email: string }) {
+  const { data } = await axios.post(
+    `${import.meta.env.VITE_SUPABASE_URL}/auth/reset-password`,
+    values,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
+      },
+    },
+  );
+
+  return data;
+}
+
+export async function mfaVerificationRequest(values: { email: string }) {
+  const { data } = await axios.post(
+    `${import.meta.env.VITE_SUPABASE_URL}/auth/verify-mfa`,
+    values,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
+      },
+    },
+  );
+
+  return data;
+}
