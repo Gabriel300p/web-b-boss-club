@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRightIcon } from "@phosphor-icons/react";
 import { useForm } from "react-hook-form";
 import type z from "zod";
-import { useForgotPassword } from "../../hooks/useForgotPassword.ts";
+import { useForgotPasswordAuth } from "../../hooks/useForgotPasswordAuth";
 import { forgotPasswordSchema } from "../../schemas/auth.schema.ts";
 
 export function ForgotPasswordForm() {
@@ -21,14 +21,12 @@ export function ForgotPasswordForm() {
     defaultValues: { email: "" },
   });
 
-  const forgotPasswordMutation = useForgotPassword();
+  const { forgotPassword, isLoading } = useForgotPasswordAuth();
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((values) =>
-          forgotPasswordMutation.mutate(values),
-        )}
+        onSubmit={form.handleSubmit((values) => forgotPassword(values))}
         className="space-y-8"
       >
         <div className="space-y-4">
@@ -48,11 +46,11 @@ export function ForgotPasswordForm() {
 
         <Button
           type="submit"
-          disabled={forgotPasswordMutation.isPending}
+          disabled={isLoading}
           className="w-full font-medium"
           size="lg"
         >
-          {forgotPasswordMutation.isPending ? (
+          {isLoading ? (
             <>
               Enviando... <LoadingSpinner className="ml-2 size-5" />
             </>

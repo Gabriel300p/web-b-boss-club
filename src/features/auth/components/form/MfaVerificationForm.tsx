@@ -12,23 +12,21 @@ import { ArrowRightIcon, PaperPlaneTilt } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import type z from "zod";
-import {
-  useMfaVerification,
-  useResendMfaCode,
-} from "../../hooks/useMfaVerification";
+import { useCurrentUserEmail } from "../../hooks/useAuth";
+import { useMfaAuth } from "../../hooks/useMfaAuth";
 import { mfaVerificationSchema } from "../../schemas/auth.schema";
 
 export function MfaVerificationForm() {
+  const userEmail = useCurrentUserEmail();
   const form = useForm<z.infer<typeof mfaVerificationSchema>>({
     resolver: zodResolver(mfaVerificationSchema),
-    defaultValues: { email: "" },
+    defaultValues: { email: userEmail || "" },
   });
   const [value, setValue] = React.useState("");
   const [countdown, setCountdown] = useState(30);
   const [canResend, setCanResend] = useState(false);
 
-  const mfaVerificationMutation = useMfaVerification();
-  const resendMfaCodeMutation = useResendMfaCode();
+  const { verifyMfa, resendMfaCode, isVerifying, isResending } = useMfaAuth();
 
   // Countdown timer effect
   useEffect(() => {
@@ -44,25 +42,20 @@ export function MfaVerificationForm() {
 
   // Function to handle resend code
   const handleResendCode = async () => {
-    try {
-      await resendMfaCodeMutation.mutateAsync();
+    resendMfaCode();
 
-      // Reset countdown and states
-      setCountdown(60);
-      setCanResend(false);
-      setValue(""); // Clear the OTP input
-      form.reset(); // Reset form
-    } catch (error) {
-      // Error is handled by the mutation's onError callback
-      console.error("Erro ao reenviar código:", error);
-    }
+    // Reset countdown and states
+    setCountdown(60);
+    setCanResend(false);
+    setValue(""); // Clear the OTP input
+    form.reset(); // Reset form
   };
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((values) =>
-          mfaVerificationMutation.mutate(values),
+          verifyMfa({ ...values, code: value }),
         )}
         className="flex flex-col items-center justify-center gap-8"
       >
@@ -110,10 +103,10 @@ export function MfaVerificationForm() {
                 variant="link"
                 size="sm"
                 onClick={handleResendCode}
-                disabled={resendMfaCodeMutation.isPending}
+                disabled={isResending}
                 className="text-primary hover:text-primary/80"
               >
-                {resendMfaCodeMutation.isPending ? (
+                {isResending ? (
                   <>
                     <LoadingSpinner className="size-3" />
                     Reenviando...
@@ -131,11 +124,11 @@ export function MfaVerificationForm() {
 
         <Button
           type="submit"
-          disabled={mfaVerificationMutation.isPending || value.length !== 6}
+          disabled={isVerifying || value.length !== 6}
           className="w-full font-medium"
           size="lg"
         >
-          {mfaVerificationMutation.isPending ? (
+          {isVerifying ? (
             <>
               Verificando... <LoadingSpinner className="ml-2 size-5" />
             </>

@@ -23,12 +23,17 @@ export function LoadingSpinner({
         role="status"
         aria-hidden="true"
         className={cn(
-          "border-t-primary animate-spin rounded-full border-2 border-neutral-600",
+          "border-t-primary animate-spin rounded-full border-2",
+          "border-neutral-600 dark:border-neutral-400",
           sizeClasses[size],
           className,
         )}
       />
-      {text && <p className="mt-2 text-sm text-neutral-600">{text}</p>}
+      {text && (
+        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
+          {text}
+        </p>
+      )}
     </div>
   );
 }
@@ -43,7 +48,7 @@ export function PageLoader() {
 
 export function FullPageLoader() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm dark:bg-slate-900/80">
       <LoadingSpinner size="lg" text="Carregando aplicação..." />
     </div>
   );

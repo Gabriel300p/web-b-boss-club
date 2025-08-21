@@ -9,7 +9,9 @@ import type {
   AuthContextType,
   AuthError,
   AuthResponse,
+  ForgotPasswordCredentials,
   LoginCredentials,
+  MfaVerificationCredentials,
 } from "../types/auth";
 import { AuthContext } from "./authContextDefinition";
 
@@ -100,10 +102,97 @@ export function AuthProvider({ children }: PropsWithChildren) {
     },
   });
 
+  // Forgot password mutation
+  const forgotPasswordMutation = useMutation({
+    mutationFn: (credentials: ForgotPasswordCredentials) => {
+      setLoading(true);
+      setError(null);
+      return authService.forgotPassword(credentials);
+    },
+    onSuccess: () => {
+      showToast({
+        type: "success",
+        title: "Email de recuperação enviado!",
+        message:
+          "Verifique sua caixa de entrada para instruções de reset de senha.",
+        expandable: true,
+        duration: 5000,
+      });
+
+      // Navigate to MFA verification if needed
+      setTimeout(() => {
+        navigate({ to: "/auth/mfa-verification" });
+      }, 300);
+    },
+    onError: (error: AuthError, variables: ForgotPasswordCredentials) => {
+      setError(error.message);
+      handleAuthError(error, "forgot-password", variables.email);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+
+  // MFA verification mutation
+  const mfaVerificationMutation = useMutation({
+    mutationFn: (credentials: MfaVerificationCredentials) => {
+      setLoading(true);
+      setError(null);
+      return authService.verifyMfa(credentials);
+    },
+    onSuccess: (data: AuthResponse) => {
+      // Store user and token
+      storeLogin(data.user);
+      localStorage.setItem("access_token", data.access_token);
+
+      showToast({
+        type: "success",
+        title: "Verificação MFA concluída!",
+        message: `Código validado com sucesso. Bem-vindo, ${data.user.name}!`,
+        expandable: true,
+        duration: 3000,
+      });
+
+      setTimeout(() => {
+        navigate({ to: "/comunicacoes" });
+      }, 300);
+    },
+    onError: (error: AuthError, variables: MfaVerificationCredentials) => {
+      setError(error.message);
+      handleAuthError(error, "mfa-verification", variables.email);
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+
+  // Resend MFA code mutation
+  const resendMfaCodeMutation = useMutation({
+    mutationFn: authService.resendMfaCode,
+    onSuccess: () => {
+      showToast({
+        type: "success",
+        title: "Código reenviado!",
+        message: "Um novo código de verificação foi enviado para seu email.",
+        duration: 3000,
+      });
+    },
+    onError: (error: AuthError) => {
+      handleAuthError(error, "resend-mfa");
+    },
+  });
+
   // Enhanced error handling with 4 strategies
   const handleAuthError = (
     error: AuthError,
-    context: "login" | "logout" | "check" | "refresh",
+    context:
+      | "login"
+      | "logout"
+      | "check"
+      | "refresh"
+      | "forgot-password"
+      | "mfa-verification"
+      | "resend-mfa",
     email?: string,
   ) => {
     const errorContext = email ? ` para ${email}` : "";
@@ -200,12 +289,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // Update loading state based on queries
   useEffect(() => {
     setLoading(
-      isCheckingAuth || loginMutation.isPending || logoutMutation.isPending,
+      isCheckingAuth ||
+        loginMutation.isPending ||
+        logoutMutation.isPending ||
+        forgotPasswordMutation.isPending ||
+        mfaVerificationMutation.isPending ||
+        resendMfaCodeMutation.isPending,
     );
   }, [
     isCheckingAuth,
     loginMutation.isPending,
     logoutMutation.isPending,
+    forgotPasswordMutation.isPending,
+    mfaVerificationMutation.isPending,
+    resendMfaCodeMutation.isPending,
     setLoading,
   ]);
 
@@ -220,14 +317,29 @@ export function AuthProvider({ children }: PropsWithChildren) {
     // Actions
     login: loginMutation.mutate,
     logout: logoutMutation.mutate,
+    forgotPassword: forgotPasswordMutation.mutate,
+    verifyMfa: mfaVerificationMutation.mutate,
+    resendMfaCode: resendMfaCodeMutation.mutate,
     clearError,
     checkAuth: () => authService.checkAuth(),
 
-    // Mutation states
+    // Mutation states - Login
     isLoginPending: loginMutation.isPending,
-    isLogoutPending: logoutMutation.isPending,
     loginError: loginMutation.error,
+
+    // Mutation states - Logout
+    isLogoutPending: logoutMutation.isPending,
     logoutError: logoutMutation.error,
+
+    // Mutation states - Forgot Password
+    isForgotPasswordPending: forgotPasswordMutation.isPending,
+    forgotPasswordError: forgotPasswordMutation.error,
+
+    // Mutation states - MFA
+    isMfaVerificationPending: mfaVerificationMutation.isPending,
+    mfaVerificationError: mfaVerificationMutation.error,
+    isResendMfaCodePending: resendMfaCodeMutation.isPending,
+    resendMfaCodeError: resendMfaCodeMutation.error,
   };
 
   return (

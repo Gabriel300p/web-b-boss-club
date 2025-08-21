@@ -32,12 +32,81 @@ export function useAuthStatus() {
 
 // Hook for auth actions
 export function useAuthActions() {
-  const { login, logout, clearError, checkAuth } = useAuth();
+  const {
+    login,
+    logout,
+    forgotPassword,
+    verifyMfa,
+    resendMfaCode,
+    clearError,
+    checkAuth,
+  } = useAuth();
 
   return {
     login,
     logout,
+    forgotPassword,
+    verifyMfa,
+    resendMfaCode,
     clearError,
     checkAuth,
+  };
+}
+
+// Hook for loading states
+export function useAuthLoadingStates() {
+  const {
+    isLoading,
+    isLoginPending,
+    isLogoutPending,
+    isForgotPasswordPending,
+    isMfaVerificationPending,
+    isResendMfaCodePending,
+  } = useAuth();
+
+  return {
+    isLoading,
+    isLoginPending,
+    isLogoutPending,
+    isForgotPasswordPending,
+    isMfaVerificationPending,
+    isResendMfaCodePending,
+    // Convenience computed states
+    isAnyActionPending:
+      isLoginPending ||
+      isLogoutPending ||
+      isForgotPasswordPending ||
+      isMfaVerificationPending ||
+      isResendMfaCodePending,
+  };
+}
+
+// Hook for error states
+export function useAuthErrors() {
+  const {
+    error,
+    loginError,
+    logoutError,
+    forgotPasswordError,
+    mfaVerificationError,
+    resendMfaCodeError,
+  } = useAuth();
+
+  return {
+    error,
+    loginError,
+    logoutError,
+    forgotPasswordError,
+    mfaVerificationError,
+    resendMfaCodeError,
+    // Convenience computed state
+    hasAnyError: !!(
+      error ||
+      loginError ||
+      logoutError ||
+      forgotPasswordError ||
+      mfaVerificationError ||
+      resendMfaCodeError
+    ),
   };
 }

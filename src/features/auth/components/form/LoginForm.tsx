@@ -14,13 +14,12 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type z from "zod";
-import { useAuthActions, useAuthStatus } from "../../hooks/useAuth.ts";
+import { useLoginAuth } from "../../hooks/useLoginAuth";
 import { loginSchema } from "../../schemas/auth.schema.ts";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuthActions();
-  const { isLoading } = useAuthStatus();
+  const { login, isLoading } = useLoginAuth();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),

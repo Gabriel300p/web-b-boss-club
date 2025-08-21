@@ -35,6 +35,17 @@ export interface AuthError extends Error {
   message: string;
 }
 
+// Forgot password credentials
+export interface ForgotPasswordCredentials {
+  email: string;
+}
+
+// MFA verification credentials
+export interface MfaVerificationCredentials {
+  email: string;
+  code: string;
+}
+
 export interface AuthContextType {
   // State
   user: AuthResponse["user"] | null;
@@ -46,12 +57,27 @@ export interface AuthContextType {
   // Actions
   login: (credentials: LoginCredentials) => void;
   logout: () => void;
+  forgotPassword: (credentials: ForgotPasswordCredentials) => void;
+  verifyMfa: (credentials: MfaVerificationCredentials) => void;
+  resendMfaCode: () => void;
   clearError: () => void;
   checkAuth: () => Promise<{ user: AuthResponse["user"] }>;
 
-  // Mutation states
+  // Mutation states - Login
   isLoginPending: boolean;
-  isLogoutPending: boolean;
   loginError: AuthError | null;
+
+  // Mutation states - Logout
+  isLogoutPending: boolean;
   logoutError: AuthError | null;
+
+  // Mutation states - Forgot Password
+  isForgotPasswordPending: boolean;
+  forgotPasswordError: AuthError | null;
+
+  // Mutation states - MFA
+  isMfaVerificationPending: boolean;
+  mfaVerificationError: AuthError | null;
+  isResendMfaCodePending: boolean;
+  resendMfaCodeError: AuthError | null;
 }

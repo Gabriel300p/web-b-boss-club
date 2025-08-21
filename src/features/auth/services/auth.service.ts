@@ -116,34 +116,124 @@ export const authService = {
   login: loginRequest,
   checkAuth: checkAuthRequest,
   logout: logoutRequest,
+  forgotPassword: forgotPasswordRequest,
+  verifyMfa: mfaVerificationRequest,
+  resendMfaCode: resendMfaCodeRequest,
 };
 
-export async function forgotPasswordRequest(values: { email: string }) {
-  const { data } = await axios.post(
-    `${import.meta.env.VITE_SUPABASE_URL}/auth/reset-password`,
-    values,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
+export async function forgotPasswordRequest(values: {
+  email: string;
+}): Promise<{ message: string }> {
+  try {
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_SUPABASE_URL}/auth/reset-password`,
+      values,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
+        },
       },
-    },
-  );
+    );
 
-  return data;
+    return data;
+  } catch (error: unknown) {
+    interface AxiosError {
+      response?: { status: number };
+      code?: string;
+      message?: string;
+    }
+    const axiosError = error as AxiosError;
+
+    if (axiosError.response?.status === 404) {
+      throw createAuthError("user_not_found", "Email não encontrado");
+    }
+    if (!navigator.onLine || axiosError.code === "NETWORK_ERROR") {
+      throw createAuthError("network_error", "Erro de conexão com o servidor");
+    }
+
+    throw createAuthError(
+      "server_error",
+      axiosError.message || "Erro ao solicitar reset de senha",
+    );
+  }
 }
 
-export async function mfaVerificationRequest(values: { email: string }) {
-  const { data } = await axios.post(
-    `${import.meta.env.VITE_SUPABASE_URL}/auth/verify-mfa`,
-    values,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
+export async function mfaVerificationRequest(values: {
+  email: string;
+  code: string;
+}): Promise<AuthResponse> {
+  try {
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_SUPABASE_URL}/auth/verify-mfa`,
+      values,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
+        },
       },
-    },
-  );
+    );
 
-  return data;
+    return data;
+  } catch (error: unknown) {
+    interface AxiosError {
+      response?: { status: number };
+      code?: string;
+      message?: string;
+    }
+    const axiosError = error as AxiosError;
+
+    if (axiosError.response?.status === 401) {
+      throw createAuthError("invalid_credentials", "Código MFA inválido");
+    }
+    if (axiosError.response?.status === 404) {
+      throw createAuthError("user_not_found", "Usuário não encontrado");
+    }
+    if (!navigator.onLine || axiosError.code === "NETWORK_ERROR") {
+      throw createAuthError("network_error", "Erro de conexão com o servidor");
+    }
+
+    throw createAuthError(
+      "server_error",
+      axiosError.message || "Erro ao verificar código MFA",
+    );
+  }
+}
+
+export async function resendMfaCodeRequest(): Promise<{ message: string }> {
+  try {
+    // Simulate API call for now
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // In a real app, this would call your backend API
+    // const { data } = await axios.post(
+    //   `${import.meta.env.VITE_SUPABASE_URL}/auth/resend-mfa-code`,
+    //   {},
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
+    //     },
+    //   },
+    // );
+
+    return { message: "Código reenviado com sucesso" };
+  } catch (error: unknown) {
+    interface AxiosError {
+      response?: { status: number };
+      code?: string;
+      message?: string;
+    }
+    const axiosError = error as AxiosError;
+
+    if (!navigator.onLine || axiosError.code === "NETWORK_ERROR") {
+      throw createAuthError("network_error", "Erro de conexão com o servidor");
+    }
+
+    throw createAuthError(
+      "server_error",
+      axiosError.message || "Erro ao reenviar código MFA",
+    );
+  }
 }

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './app/routes/__root'
 import { Route as RecordsRouteImport } from './app/routes/records'
+import { Route as HomeRouteImport } from './app/routes/home'
 import { Route as ComunicacoesRouteImport } from './app/routes/comunicacoes'
 import { Route as IndexRouteImport } from './app/routes/index'
 import { Route as AuthMfaVerificationRouteImport } from './app/routes/auth/mfa-verification'
@@ -19,6 +20,11 @@ import { Route as AuthForgotPasswordRouteImport } from './app/routes/auth/forgot
 const RecordsRoute = RecordsRouteImport.update({
   id: '/records',
   path: '/records',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComunicacoesRoute = ComunicacoesRouteImport.update({
@@ -50,6 +56,7 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/comunicacoes': typeof ComunicacoesRoute
+  '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/comunicacoes': typeof ComunicacoesRoute
+  '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/comunicacoes': typeof ComunicacoesRoute
+  '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/comunicacoes'
+    | '/home'
     | '/records'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/comunicacoes'
+    | '/home'
     | '/records'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/comunicacoes'
+    | '/home'
     | '/records'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComunicacoesRoute: typeof ComunicacoesRoute
+  HomeRoute: typeof HomeRoute
   RecordsRoute: typeof RecordsRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/records'
       fullPath: '/records'
       preLoaderRoute: typeof RecordsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/comunicacoes': {
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComunicacoesRoute: ComunicacoesRoute,
+  HomeRoute: HomeRoute,
   RecordsRoute: RecordsRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
