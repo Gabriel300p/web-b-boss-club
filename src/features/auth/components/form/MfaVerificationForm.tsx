@@ -26,7 +26,13 @@ export function MfaVerificationForm() {
   const [countdown, setCountdown] = useState(30);
   const [canResend, setCanResend] = useState(false);
 
-  const { verifyMfa, resendMfaCode, isVerifying, isResending } = useMfaAuth();
+  const {
+    verifyMfa,
+    resendMfaCode,
+    isVerifying,
+    isResending,
+    verificationError,
+  } = useMfaAuth();
 
   // Countdown timer effect
   useEffect(() => {
@@ -121,6 +127,17 @@ export function MfaVerificationForm() {
             </div>
           )}
         </div>
+
+        {/* Error message display */}
+        {verificationError && (
+          <div className="rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-950">
+            <div className="text-sm text-red-800 dark:text-red-200">
+              <strong>Erro de Verificação:</strong>{" "}
+              {verificationError.message ||
+                "Código MFA inválido. Verifique o código ou solicite um novo."}
+            </div>
+          </div>
+        )}
 
         <Button
           type="submit"

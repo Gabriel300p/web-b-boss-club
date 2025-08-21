@@ -49,7 +49,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // Login mutation with enhanced error handling
   const loginMutation = useMutation({
     mutationFn: (credentials: LoginCredentials) => {
-      setLoading(true);
       setError(null);
       return authService.login(credentials);
     },
@@ -69,7 +68,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       // Navigate with slight delay for animation
       setTimeout(() => {
-        navigate({ to: "/comunicacoes" });
+        navigate({ to: "/home" });
       }, 300);
     },
     onError: (error: AuthError, variables: LoginCredentials) => {
@@ -77,7 +76,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       handleAuthError(error, "login", variables.email);
     },
     onSettled: () => {
-      setLoading(false);
+      // Loading state is now handled by loginMutation.isPending directly
     },
   });
 
@@ -105,7 +104,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // Forgot password mutation
   const forgotPasswordMutation = useMutation({
     mutationFn: (credentials: ForgotPasswordCredentials) => {
-      setLoading(true);
       setError(null);
       return authService.forgotPassword(credentials);
     },
@@ -128,15 +126,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setError(error.message);
       handleAuthError(error, "forgot-password", variables.email);
     },
-    onSettled: () => {
-      setLoading(false);
-    },
   });
 
   // MFA verification mutation
   const mfaVerificationMutation = useMutation({
     mutationFn: (credentials: MfaVerificationCredentials) => {
-      setLoading(true);
       setError(null);
       return authService.verifyMfa(credentials);
     },
@@ -154,15 +148,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
       });
 
       setTimeout(() => {
-        navigate({ to: "/comunicacoes" });
+        navigate({ to: "/home" });
       }, 300);
     },
     onError: (error: AuthError, variables: MfaVerificationCredentials) => {
       setError(error.message);
       handleAuthError(error, "mfa-verification", variables.email);
-    },
-    onSettled: () => {
-      setLoading(false);
     },
   });
 
@@ -203,7 +194,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     switch (error.code) {
       case "invalid_credentials":
-        userMessage = `Credenciais inválidas${errorContext}. Verifique seu email e senha.`;
+        userMessage = `Credenciais inválidas${errorContext}. Verifique seu email e senha ou clique em "Redefinir Senha" para receber um novo código de verificação.`;
         title = "Login Inválido";
         break;
       case "user_not_found":
@@ -228,8 +219,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
       switch (error.code) {
         case "invalid_credentials":
           return {
-            label: "Tentar Novamente",
-            onClick: () => clearError(),
+            label: "Redefinir Senha",
+            onClick: () => navigate({ to: "/auth/forgot-password" }),
           };
         case "network_error":
           return {
@@ -251,24 +242,25 @@ export function AuthProvider({ children }: PropsWithChildren) {
       message: userMessage,
       expandable: true,
       duration: 8000,
+
       action: getRetryAction(),
     });
 
     // For invalid credentials, also show forgot password option
-    if (error.code === "invalid_credentials") {
-      setTimeout(() => {
-        showToast({
-          type: "info",
-          title: "Esqueceu sua senha?",
-          message: "Clique aqui para redefinir sua senha",
-          duration: 5000,
-          action: {
-            label: "Redefinir Senha",
-            onClick: () => navigate({ to: "/auth/forgot-password" }),
-          },
-        });
-      }, 1000);
-    }
+    // if (error.code === "invalid_credentials") {
+    //   setTimeout(() => {
+    //     showToast({
+    //       type: "info",
+    //       title: "Esqueceu sua senha?",
+    //       message: "Clique aqui para redefinir sua senha",
+    //       duration: 5000,
+    //       action: {
+    //         label: "Redefinir Senha",
+    //         onClick: () => navigate({ to: "/auth/forgot-password" }),
+    //       },
+    //     });
+    //   }, 1000);
+    // }
 
     // Additional console logging for development
     console.error(`Auth Error [${context}]:`, {
@@ -287,10 +279,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, [authData, isAuthenticated, storeLogin]);
 
   // Update loading state based on queries
+  // Note: loginMutation.isPending is NOT included here to prevent AuthGuard from showing skeleton during login errors
   useEffect(() => {
     setLoading(
       isCheckingAuth ||
-        loginMutation.isPending ||
         logoutMutation.isPending ||
         forgotPasswordMutation.isPending ||
         mfaVerificationMutation.isPending ||
@@ -298,7 +290,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
     );
   }, [
     isCheckingAuth,
-    loginMutation.isPending,
     logoutMutation.isPending,
     forgotPasswordMutation.isPending,
     mfaVerificationMutation.isPending,

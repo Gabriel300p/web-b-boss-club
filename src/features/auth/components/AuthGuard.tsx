@@ -37,13 +37,19 @@ export function AuthGuard({
     }
   }, [isAuthenticated, requireAuth, navigate, redirectTo, isLoading]);
 
-  // Show loading while checking auth status or during redirects
-  if (
-    isLoading ||
-    (requireAuth && !isAuthenticated) ||
-    (!requireAuth && isAuthenticated)
-  ) {
+  // Show loading ONLY while checking initial auth status or during navigation
+  // This prevents skeleton from showing during login errors
+  if (isLoading) {
     return fallback || <RouteSkeleton />;
+  }
+
+  // If we're on a page that requires auth but user is not authenticated,
+  // or if we're on login page but user is authenticated, we'll be redirected
+  // but we don't need to show skeleton during this process
+  if ((requireAuth && !isAuthenticated) || (!requireAuth && isAuthenticated)) {
+    // Return null or a simple loading state instead of full skeleton
+    // This prevents the jarring skeleton flash during redirects
+    return null;
   }
 
   // Render children with fade-in animation

@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import type z from "zod";
 import { useForgotPasswordAuth } from "../../hooks/useForgotPasswordAuth";
 import { forgotPasswordSchema } from "../../schemas/auth.schema.ts";
+import { AuthError } from "../AuthAnimations.tsx";
 
 export function ForgotPasswordForm() {
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
@@ -21,7 +22,7 @@ export function ForgotPasswordForm() {
     defaultValues: { email: "" },
   });
 
-  const { forgotPassword, isLoading } = useForgotPasswordAuth();
+  const { forgotPassword, isLoading, error } = useForgotPasswordAuth();
 
   return (
     <Form {...form}>
@@ -43,6 +44,16 @@ export function ForgotPasswordForm() {
             )}
           />
         </div>
+
+        {/* Error message display */}
+        {error && (
+          <AuthError
+            message={
+              error.message ||
+              "Erro ao enviar email de recuperação. Tente novamente."
+            }
+          />
+        )}
 
         <Button
           type="submit"

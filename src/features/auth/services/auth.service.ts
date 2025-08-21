@@ -33,6 +33,9 @@ export async function loginRequest(
     }
     const axiosError = error as AxiosError;
     // Enhanced error handling
+    if (axiosError.response?.status === 400) {
+      throw createAuthError("invalid_credentials", "Email ou senha incorretos");
+    }
     if (axiosError.response?.status === 401) {
       throw createAuthError("invalid_credentials", "Email ou senha incorretos");
     }

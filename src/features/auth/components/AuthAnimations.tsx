@@ -169,12 +169,17 @@ export function AuthButton({
 interface AuthErrorProps {
   message: string;
   className?: string;
+  children?: ReactNode;
 }
 
-export function AuthError({ message, className = "" }: AuthErrorProps) {
+export function AuthError({
+  message,
+  className = "",
+  children,
+}: AuthErrorProps) {
   return (
     <motion.div
-      className={`rounded-lg border border-red-900/30 bg-red-950/20 p-3 text-center text-sm text-red-400 ${className} `}
+      className={`flex flex-col gap-1 rounded-lg border border-red-900/30 bg-red-950/20 p-3 text-center text-sm text-red-400 ${className} `}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{
         opacity: 1,
@@ -187,7 +192,8 @@ export function AuthError({ message, className = "" }: AuthErrorProps) {
         x: { duration: 0.5, ease: "easeInOut" },
       }}
     >
-      {message}
+      {message && <span className="text-sm">{message}</span>}
+      {children && <div>{children}</div>}
     </motion.div>
   );
 }

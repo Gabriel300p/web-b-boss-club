@@ -20,3 +20,4 @@ export function useForgotPasswordAuth() {
     error: forgotPasswordError,
   };
 }
+

@@ -16,10 +16,11 @@ import { useForm } from "react-hook-form";
 import type z from "zod";
 import { useLoginAuth } from "../../hooks/useLoginAuth";
 import { loginSchema } from "../../schemas/auth.schema.ts";
+import { AuthError } from "../AuthAnimations.tsx";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading } = useLoginAuth();
+  const { login, isLoading, error } = useLoginAuth();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -80,15 +81,34 @@ export function LoginForm() {
               </FormItem>
             )}
           />
-
-          <div>
-            <Link
-              to="/auth/forgot-password"
-              className="text-sm font-medium text-neutral-200 underline transition-opacity duration-200 hover:opacity-80"
+          {/* Error message display */}
+          {error ? (
+            <AuthError
+              message={
+                error.message ||
+                "Credenciais inválidas. Verifique seu email e senha."
+              }
             >
-              Esqueci minha senha
-            </Link>
-          </div>
+              <span className="text-sm text-neutral-200 dark:text-neutral-300">
+                Esqueceu sua senha?{" "}
+                <Link
+                  to="/auth/forgot-password"
+                  className="underline transition-opacity duration-200 hover:opacity-80 dark:text-neutral-200"
+                >
+                  Clique aqui para redefinir
+                </Link>
+              </span>
+            </AuthError>
+          ) : (
+            <div>
+              <Link
+                to="/auth/forgot-password"
+                className="text-sm font-medium text-neutral-200 underline transition-opacity duration-200 hover:opacity-80"
+              >
+                Esqueci minha senha
+              </Link>
+            </div>
+          )}
         </div>
 
         <Button
