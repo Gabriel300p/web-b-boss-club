@@ -57,12 +57,12 @@ export async function loginRequest(
 }
 
 export async function checkAuthRequest(): Promise<{
-  user: AuthResponse["user"] | null;
+  user: AuthResponse["user"];
 }> {
   try {
     const token = localStorage.getItem("access_token");
     if (!token) {
-      return { user: null }; // Return null instead of throwing error
+      throw createAuthError("unauthorized", "Token não encontrado");
     }
 
     const { data } = await axios.get(
@@ -85,10 +85,9 @@ export async function checkAuthRequest(): Promise<{
 
     if (axiosError.response?.status === 401) {
       localStorage.removeItem("access_token");
+      throw createAuthError("unauthorized", "Sessão expirada");
     }
-
-    // Return null instead of throwing error for failed auth checks
-    return { user: null };
+    throw createAuthError("server_error", "Erro ao verificar autenticação");
   }
 }
 

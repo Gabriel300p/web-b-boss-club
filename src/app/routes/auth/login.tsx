@@ -8,16 +8,6 @@ const LoginPage = lazy(() =>
   })),
 );
 
-const AuthGuard = lazy(() =>
-  import("@features/auth/_index").then((module) => ({
-    default: module.AuthGuard,
-  })),
-);
-
 export const Route = createFileRoute("/auth/login")({
-  component: () => (
-    <AuthGuard requireAuth={false}>
-      <LoginPage />
-    </AuthGuard>
-  ),
+  component: () => <LoginPage />,
 });

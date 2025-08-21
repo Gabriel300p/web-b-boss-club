@@ -13,15 +13,13 @@ export type {
 } from "./types/auth";
 
 // Context and Hooks
+export { AuthProvider } from "./contexts/AuthContext";
 export {
   useAuth,
   useAuthActions,
   useAuthStatus,
   useCurrentUserEmail,
 } from "./hooks/useAuth";
-
-// Components
-export { AuthGuard } from "./components/AuthGuard";
 
 // Pages
 export { ForgotPasswordPage } from "./pages/ForgotPasswordPage";

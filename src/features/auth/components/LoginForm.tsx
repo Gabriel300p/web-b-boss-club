@@ -14,24 +14,29 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type z from "zod";
-import { useLogin } from "../hooks/useLogin";
+import { useAuthActions, useAuthStatus } from "../hooks/useAuth";
 import { loginSchema } from "../schemas/auth.schema.ts";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const { mutate: login, isPending: isLoading } = useLogin();
+  const { login } = useAuthActions();
+  const { isLoading } = useAuthStatus();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
+  const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
+    await login({
+      email: values.email,
+      password: values.password,
+    });
+  };
+
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((values) => login(values))}
-        className="space-y-8"
-      >
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         <div className="space-y-4">
           <FormField
             control={form.control}

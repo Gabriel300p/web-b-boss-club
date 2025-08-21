@@ -1,4 +1,3 @@
-import { useAuthStore } from "@app/store/auth";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -6,11 +5,5 @@ export const Route = createFileRoute("/")({
 });
 
 function IndexComponent() {
-  const { isAuthenticated } = useAuthStore();
-
-  return isAuthenticated ? (
-    <Navigate to="/comunicacoes" />
-  ) : (
-    <Navigate to="/auth/login" />
-  );
+  return <Navigate to="/auth/login" />;
 }

@@ -10,20 +10,12 @@ const ComunicacoesPage = lazy(() =>
   })),
 );
 
-const AuthGuard = lazy(() =>
-  import("@features/auth/_index").then((module) => ({
-    default: module.AuthGuard,
-  })),
-);
-
 export const Route = createFileRoute("/comunicacoes")({
   component: () => (
-    <AuthGuard requireAuth={true}>
-      <MainLayout>
-        <Suspense fallback={<RouteSkeleton />}>
-          <ComunicacoesPage />
-        </Suspense>
-      </MainLayout>
-    </AuthGuard>
+    <MainLayout>
+      <Suspense fallback={<RouteSkeleton />}>
+        <ComunicacoesPage />
+      </Suspense>
+    </MainLayout>
   ),
 });

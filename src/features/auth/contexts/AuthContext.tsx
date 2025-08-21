@@ -1,9 +1,9 @@
-import { useAuthStore } from "@app/store/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
-import { useToast } from "../../../shared/hooks";
+import { useAuthStore } from "../../../app/store/auth";
+import { useToast } from "../../../shared/hooks/useToast";
 import { authService } from "../services/auth.service";
 import type {
   AuthContextType,
@@ -15,7 +15,6 @@ import { AuthContext } from "./authContextDefinition";
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const navigate = useNavigate();
-  const location = useLocation();
   const { showToast } = useToast();
 
   // Zustand store integration
@@ -43,7 +42,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
     retry: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
-    enabled: true, // Ensure it runs
   });
 
   // Login mutation with enhanced error handling
@@ -196,11 +194,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     if (authData?.user && !isAuthenticated) {
       storeLogin(authData.user);
-    } else if (authData?.user === null && isAuthenticated) {
-      // User was logged out or token expired
-      storeLogout();
     }
-  }, [authData, isAuthenticated, storeLogin, storeLogout]);
+  }, [authData, isAuthenticated, storeLogin]);
 
   // Update loading state based on queries
   useEffect(() => {
@@ -213,34 +208,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
     logoutMutation.isPending,
     setLoading,
   ]);
-
-  // 🎯 Intelligent Auto-Redirect Logic
-  useEffect(() => {
-    // Don't redirect while still checking auth status
-    if (isCheckingAuth || isLoading) return;
-
-    const currentPath = location.pathname;
-    const isAuthRoute = currentPath.startsWith("/auth/");
-    const isPublicRoute = currentPath === "/" || currentPath === "/home";
-
-    // If user is authenticated and on auth pages, redirect to app
-    if (isAuthenticated && isAuthRoute) {
-      navigate({ to: "/comunicacoes" });
-      return;
-    }
-
-    // If user is not authenticated and trying to access protected routes
-    if (!isAuthenticated && !isAuthRoute && !isPublicRoute) {
-      navigate({ to: "/auth/login" });
-      return;
-    }
-
-    // If user is not authenticated and on root, redirect to login
-    if (!isAuthenticated && currentPath === "/") {
-      navigate({ to: "/auth/login" });
-      return;
-    }
-  }, [isAuthenticated, isCheckingAuth, isLoading, location.pathname, navigate]);
 
   const contextValue: AuthContextType = {
     // State
