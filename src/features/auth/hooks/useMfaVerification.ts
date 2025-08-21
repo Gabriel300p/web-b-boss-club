@@ -33,3 +33,39 @@ export function useMfaVerification() {
     },
   });
 }
+
+// Mock function - replace with actual API call
+async function resendMfaCodeRequest(): Promise<void> {
+  // Simulate API call
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  // In a real app, this would call your backend API
+  // const response = await axios.post('/auth/resend-mfa-code', { email });
+  // return response.data;
+}
+
+export function useResendMfaCode() {
+  const { showToast } = useToast();
+
+  return useMutation({
+    mutationFn: resendMfaCodeRequest,
+    onSuccess: () => {
+      showToast({
+        type: "success",
+        title: "Código reenviado",
+        message: "Um novo código de verificação foi enviado para seu email.",
+        expandable: false,
+        duration: 3000,
+      });
+    },
+    onError: (error: Error) => {
+      showToast({
+        type: "error",
+        title: "Erro ao reenviar código",
+        message: `Não foi possível reenviar o código. ${error.message}`,
+        expandable: false,
+        duration: 5000,
+      });
+    },
+  });
+}

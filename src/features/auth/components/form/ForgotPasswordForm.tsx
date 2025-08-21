@@ -12,8 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRightIcon } from "@phosphor-icons/react";
 import { useForm } from "react-hook-form";
 import type z from "zod";
-import { useForgotPassword } from "../hooks/useForgotPassword.ts";
-import { forgotPasswordSchema } from "../schemas/auth.schema.ts";
+import { useForgotPassword } from "../../hooks/useForgotPassword.ts";
+import { forgotPasswordSchema } from "../../schemas/auth.schema.ts";
 
 export function ForgotPasswordForm() {
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({

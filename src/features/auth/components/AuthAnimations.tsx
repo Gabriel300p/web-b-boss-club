@@ -12,6 +12,7 @@ import {
   StaggeredList,
 } from "@/shared/animations";
 import { ANIMATION_DURATION } from "@/shared/animations/config";
+import Logo from "@shared/assets/logo/logo-simple.png";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
@@ -65,7 +66,10 @@ export function AuthForm({
     <StaggeredList className={`space-y-6 ${className}`}>
       <StaggeredItem>
         <FadeIn delay={0.1}>
-          <div className="space-y-2 text-center">
+          <div className="mb-8 flex flex-col items-center gap-5">
+            <img src={Logo} alt="Logo" className="size-20" />
+          </div>
+          <div className="space-y-3 text-center">
             <motion.h1
               className="text-2xl font-bold tracking-tight text-neutral-50"
               initial={{ opacity: 0, y: -10 }}
@@ -79,7 +83,7 @@ export function AuthForm({
             </motion.h1>
             {subtitle && (
               <motion.p
-                className="text-sm text-neutral-400"
+                className="text-base text-neutral-400"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
@@ -95,7 +99,7 @@ export function AuthForm({
       </StaggeredItem>
 
       <StaggeredItem>
-        <FadeIn delay={0.4}>{children}</FadeIn>
+        <FadeIn delay={1}>{children}</FadeIn>
       </StaggeredItem>
     </StaggeredList>
   );

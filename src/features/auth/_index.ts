@@ -35,6 +35,9 @@ export {
   AuthSuccess as AuthSuccessMessage,
 } from "./components/AuthAnimations";
 
+// Components
+export { AuthGuard } from "./components/AuthGuard";
+
 // Schemas (for external validation)
 export {
   loginSchema,

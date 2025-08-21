@@ -14,8 +14,8 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type z from "zod";
-import { useAuthActions, useAuthStatus } from "../hooks/useAuth";
-import { loginSchema } from "../schemas/auth.schema.ts";
+import { useAuthActions, useAuthStatus } from "../../hooks/useAuth.ts";
+import { loginSchema } from "../../schemas/auth.schema.ts";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
