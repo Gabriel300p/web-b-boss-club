@@ -13,7 +13,7 @@ export type {
 } from "./types/auth";
 
 // Context and Hooks
-export { AuthProvider } from "./contexts/AuthContext";
+export { AuthProvider } from "./contexts/AuthContext.tsx";
 export {
   useAuth,
   useAuthActions,
