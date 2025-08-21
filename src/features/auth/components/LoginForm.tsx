@@ -80,7 +80,7 @@ export function LoginForm() {
 
           <div>
             <Link
-              to="/auth/esqueci-senha"
+              to="/auth/forgot-password"
               className="text-sm font-medium text-neutral-200 underline transition-opacity duration-200 hover:opacity-80"
             >
               Esqueci minha senha
