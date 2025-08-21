@@ -1,5 +1,6 @@
 import { AnimatedBox } from "@/shared/components/animations/motion";
 import { RouteSkeleton } from "@/shared/components/skeletons/RouteSkeleton";
+import { useDelayedLoading } from "@/shared/hooks/useDelayedLoading";
 import { useNavigate } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
@@ -20,6 +21,9 @@ export function AuthGuard({
   const { isAuthenticated, isLoading } = useAuthStatus();
   const navigate = useNavigate();
 
+  // Só mostra skeleton se loading demorar mais que 200ms
+  const shouldShowSkeleton = useDelayedLoading(isLoading, 200);
+
   useEffect(() => {
     // Don't redirect while still loading
     if (isLoading) return;
@@ -37,9 +41,9 @@ export function AuthGuard({
     }
   }, [isAuthenticated, requireAuth, navigate, redirectTo, isLoading]);
 
-  // Show loading ONLY while checking initial auth status or during navigation
-  // This prevents skeleton from showing during login errors
-  if (isLoading) {
+  // Show loading ONLY while checking initial auth status AND se passou do delay mínimo
+  // Isso previne o skeleton de "piscar" em carregamentos rápidos
+  if (shouldShowSkeleton) {
     return fallback || <RouteSkeleton />;
   }
 

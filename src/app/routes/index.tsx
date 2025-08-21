@@ -14,14 +14,14 @@ function IndexComponent() {
   if (isLoading) {
     return (
       <AnimatedBox variant="fadeIn" className="min-h-screen">
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-neutral-50 to-neutral-100">
           <div className="space-y-4 text-center">
             <LoadingSpinner size="lg" className="mx-auto" />
             <div className="space-y-2">
-              <p className="text-lg font-medium text-slate-700">
+              <p className="text-lg font-medium text-neutral-700">
                 Carregando B-Boss Club...
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-neutral-500">
                 Preparando sua experiência
               </p>
             </div>
@@ -32,7 +32,5 @@ function IndexComponent() {
   }
 
   // Redirect based on auth status
-  return (
-    <Navigate to={isAuthenticated ? "/comunicacoes" : "/auth/login"} replace />
-  );
+  return <Navigate to={isAuthenticated ? "/home" : "/auth/login"} replace />;
 }

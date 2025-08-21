@@ -46,7 +46,7 @@ export const createColumns = ({
         </TableSort>
       ),
       cell: ({ row }) => (
-        <div className="text-center font-medium text-slate-600">
+        <div className="text-center font-medium text-neutral-600">
           {row.getValue("autor")}
         </div>
       ),
@@ -94,7 +94,7 @@ export const createColumns = ({
       cell: ({ row }) => {
         const date = row.getValue("dataCriacao") as Date;
         return (
-          <div className="text-center text-sm font-medium text-slate-600">
+          <div className="text-center text-sm font-medium text-neutral-600">
             {format(date, "dd/MM/yyyy", { locale: ptBR })}
           </div>
         );
@@ -110,7 +110,7 @@ export const createColumns = ({
       cell: ({ row }) => {
         const date = row.getValue("dataAtualizacao") as Date;
         return (
-          <div className="text-center text-sm font-medium text-slate-600">
+          <div className="text-center text-sm font-medium text-neutral-600">
             {format(date, "dd/MM/yyyy", { locale: ptBR })}
           </div>
         );

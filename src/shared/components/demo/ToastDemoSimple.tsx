@@ -70,10 +70,10 @@ export function ToastDemoSimple() {
   return (
     <div className="space-y-4 rounded-xl bg-white p-6 shadow-lg">
       <div className="mb-6 text-center">
-        <h2 className="mb-2 text-xl font-bold text-slate-700">
+        <h2 className="mb-2 text-xl font-bold text-neutral-700">
           🍞 Sistema de Toast Renovado
         </h2>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-neutral-500">
           Teste as novas funcionalidades: design limpo, mensagens expansíveis e
           controle de pausa
         </p>
@@ -161,13 +161,13 @@ export function ToastDemoSimple() {
         </Button>
       </div>
 
-      <div className="mt-6 rounded-lg bg-slate-50 p-4">
-        <h3 className="mb-2 text-sm font-semibold text-slate-700">
+      <div className="mt-6 rounded-lg bg-neutral-50 p-4">
+        <h3 className="mb-2 text-sm font-semibold text-neutral-700">
           ✨ Novidades:
         </h3>
-        <ul className="space-y-1 text-xs text-slate-600">
+        <ul className="space-y-1 text-xs text-neutral-600">
           <li>• Design limpo com fundo branco e ícones coloridos</li>
-          <li>• Títulos em slate-700, mensagens em slate-500</li>
+          <li>• Títulos em neutral-700, mensagens em neutral-500</li>
           <li>
             • <strong>Mensagens expansíveis</strong> com truncamento inteligente
           </li>

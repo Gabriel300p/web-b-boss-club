@@ -39,7 +39,7 @@ export function LanguageSwitcher() {
       {open && (
         <ul
           role="listbox"
-          className="absolute right-0 z-10 mt-1 min-w-[4rem] overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg"
+          className="absolute right-0 z-10 mt-1 min-w-[4rem] overflow-hidden rounded-md border border-neutral-200 bg-white shadow-lg"
         >
           {OPTIONS.map((opt) => (
             <li key={opt.code}>
@@ -48,7 +48,7 @@ export function LanguageSwitcher() {
                 role="option"
                 aria-selected={current === opt.code}
                 onClick={() => change(opt.code)}
-                className={`w-full px-3 py-1 text-left text-xs text-gray-600 hover:bg-slate-100 ${current === opt.code ? "font-bold" : ""}`}
+                className={`w-full px-3 py-1 text-left text-xs text-gray-600 hover:bg-neutral-100 ${current === opt.code ? "font-bold" : ""}`}
               >
                 {opt.label}
               </button>

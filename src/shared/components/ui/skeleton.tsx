@@ -24,7 +24,7 @@ export function Skeleton({
     <motion.div
       className={cn(
         "animate-pulse rounded-md",
-        "bg-slate-200 dark:bg-slate-700", // Dark mode support
+        "bg-neutral-200 dark:bg-neutral-700", // Dark mode support
         className,
       )}
       style={style}

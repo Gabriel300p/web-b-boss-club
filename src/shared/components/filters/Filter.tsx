@@ -45,13 +45,13 @@ const itemVariants = {
   visible: (index: number) => ({
     opacity: 1,
     x: 0,
-    transition: { delay: index * 0.05, duration: 0.2 }
-  })
+    transition: { delay: index * 0.05, duration: 0.2 },
+  }),
 };
 
 const buttonVariants = {
   hover: { scale: 1.02 },
-  tap: { scale: 0.98 }
+  tap: { scale: 0.98 },
 };
 
 export function Filter<TData, TValue>({
@@ -90,19 +90,24 @@ export function Filter<TData, TValue>({
   const AnimationWrapper = animated ? motion.div : React.Fragment;
 
   const ItemWrapper = animated ? motion.div : React.Fragment;
-  const getItemProps = (index: number) => animated ? {
-    variants: itemVariants,
-    initial: "hidden",
-    animate: "visible",
-    custom: index
-  } : {};
+  const getItemProps = (index: number) =>
+    animated
+      ? {
+          variants: itemVariants,
+          initial: "hidden",
+          animate: "visible",
+          custom: index,
+        }
+      : {};
 
   const ButtonWrapper = animated ? motion.div : React.Fragment;
-  const buttonProps = animated ? {
-    whileHover: buttonVariants.hover,
-    whileTap: buttonVariants.tap,
-    transition: { duration: 0.2 }
-  } : {};
+  const buttonProps = animated
+    ? {
+        whileHover: buttonVariants.hover,
+        whileTap: buttonVariants.tap,
+        transition: { duration: 0.2 },
+      }
+    : {};
 
   return (
     <Popover>
@@ -111,7 +116,7 @@ export function Filter<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
-            className="hover:bg-accent/50 h-10 gap-1.5 border border-slate-200 text-sm transition-colors"
+            className="hover:bg-accent/50 h-10 gap-1.5 border border-neutral-200 text-sm transition-colors"
           >
             {icon}
             {title}
@@ -154,12 +159,14 @@ export function Filter<TData, TValue>({
       <PopoverContent className="w-fit max-w-md p-0" align="start">
         <AnimatePresence>
           <AnimationWrapper
-            {...(animated ? {
-              initial: { opacity: 0, scale: 0.95 },
-              animate: { opacity: 1, scale: 1 },
-              exit: { opacity: 0, scale: 0.95 },
-              transition: { duration: 0.2 }
-            } : {})}
+            {...(animated
+              ? {
+                  initial: { opacity: 0, scale: 0.95 },
+                  animate: { opacity: 1, scale: 1 },
+                  exit: { opacity: 0, scale: 0.95 },
+                  transition: { duration: 0.2 },
+                }
+              : {})}
           >
             <Command>
               <CommandInput
@@ -229,9 +236,7 @@ export function Filter<TData, TValue>({
                             <span>{option.label}</span>
                           </div>
                           {count > 0 && (
-                            <span
-                              className="ml-auto flex h-4 w-4 items-center justify-center text-xs"
-                            >
+                            <span className="ml-auto flex h-4 w-4 items-center justify-center text-xs">
                               {count}
                             </span>
                           )}
