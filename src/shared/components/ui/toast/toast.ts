@@ -50,7 +50,7 @@ export const generateToastId = (): string => {
 };
 
 // 🎨 Toast Styling Classes
-export const getToastClasses = (type: ToastType): string => {
+export const getToastClasses = (): string => {
   const baseClasses = [
     "relative",
     "flex",
@@ -59,6 +59,7 @@ export const getToastClasses = (type: ToastType): string => {
     "items-start",
     "gap-3",
     "rounded-xl",
+    "rounded-bl-sm",
     "border",
     "p-4",
     "shadow-xl",
@@ -69,39 +70,16 @@ export const getToastClasses = (type: ToastType): string => {
     "hover:shadow-2xl",
     "hover:scale-[1.02]",
     "group",
+    "border-neutral-200",
+    "dark:border-neutral-700",
+    "dark:bg-neutral-800",
+    "bg-white",
+    "dark:text-gray-200",
+    "text-gray-700",
+    "shadow-gray-800/50",
   ].join(" ");
 
-  const typeClasses = {
-    success: [
-      "border-gray-200",
-      "bg-white",
-      "text-gray-900",
-      "shadow-gray-100/50",
-    ].join(" "),
-
-    error: [
-      "border-gray-200",
-      "bg-white",
-      "text-gray-900",
-      "shadow-gray-100/50",
-    ].join(" "),
-
-    warning: [
-      "border-gray-200",
-      "bg-white",
-      "text-gray-900",
-      "shadow-gray-100/50",
-    ].join(" "),
-
-    info: [
-      "border-gray-200",
-      "bg-white",
-      "text-gray-900",
-      "shadow-gray-100/50",
-    ].join(" "),
-  };
-
-  return `${baseClasses} ${typeClasses[type]}`;
+  return `${baseClasses} `;
 };
 
 // 🎨 Icon Classes
@@ -123,7 +101,7 @@ export const getProgressBarClasses = (type: ToastType): string => {
   const baseClasses = [
     "absolute",
     "bottom-0",
-    "left-0",
+    "left-1",
     "h-1",
     "rounded-b-lg",
     "transition-all",

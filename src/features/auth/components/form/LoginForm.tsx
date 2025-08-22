@@ -89,7 +89,7 @@ export function LoginForm() {
                 "Credenciais inválidas. Verifique seu email e senha."
               }
             >
-              <span className="text-sm text-neutral-200 dark:text-neutral-300">
+              <span className="text-sm text-neutral-200 dark:text-neutral-400">
                 Esqueceu sua senha?{" "}
                 <Link
                   to="/auth/forgot-password"
