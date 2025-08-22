@@ -13,12 +13,14 @@ import { ArrowRightIcon, Eye, EyeSlash } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import type z from "zod";
 import { useLoginAuth } from "../../hooks/useLoginAuth";
 import { loginSchema } from "../../schemas/auth.schema.ts";
 import { AuthError } from "../AuthAnimations.tsx";
 
 export function LoginForm() {
+  const { t } = useTranslation("auth");
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading, error } = useLoginAuth();
 
@@ -43,9 +45,12 @@ export function LoginForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t("forms.login.fields.email")}</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="email@exemplo.com" />
+                  <Input
+                    {...field}
+                    placeholder={t("forms.login.fields.emailPlaceholder")}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -56,13 +61,13 @@ export function LoginForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Senha</FormLabel>
+                <FormLabel>{t("forms.login.fields.password")}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
                       {...field}
                       type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
+                      placeholder={t("forms.login.fields.passwordPlaceholder")}
                       className="pr-10"
                     />
                     <button
@@ -85,17 +90,16 @@ export function LoginForm() {
           {error ? (
             <AuthError
               message={
-                error.message ||
-                "Credenciais inválidas. Verifique seu email e senha."
+                error.message || t("forms.login.errors.invalidCredentials")
               }
             >
               <span className="text-sm text-neutral-200 dark:text-neutral-400">
-                Esqueceu sua senha?{" "}
+                {t("forms.login.actions.forgotPasswordQuestion")}{" "}
                 <Link
                   to="/auth/forgot-password"
                   className="underline transition-opacity duration-200 hover:opacity-80 dark:text-neutral-200"
                 >
-                  Clique aqui para redefinir
+                  {t("forms.login.actions.forgotPasswordLink")}
                 </Link>
               </span>
             </AuthError>
@@ -105,7 +109,7 @@ export function LoginForm() {
                 to="/auth/forgot-password"
                 className="text-sm font-medium text-neutral-200 underline transition-opacity duration-200 hover:opacity-80"
               >
-                Esqueci minha senha
+                {t("forms.login.actions.forgotPassword")}
               </Link>
             </div>
           )}
@@ -119,11 +123,13 @@ export function LoginForm() {
         >
           {isLoading ? (
             <>
-              Entrando... <LoadingSpinner className="ml-2 size-5" />
+              {t("forms.login.actions.loading")}{" "}
+              <LoadingSpinner className="ml-2 size-5" />
             </>
           ) : (
             <>
-              Continuar <ArrowRightIcon className="size-5" weight="fill" />
+              {t("forms.login.actions.submit")}{" "}
+              <ArrowRightIcon className="size-5" weight="fill" />
             </>
           )}
         </Button>

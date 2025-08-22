@@ -11,12 +11,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRightIcon, PaperPlaneTilt } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import type z from "zod";
 import { useCurrentUserEmail } from "../../hooks/useAuth";
 import { useMfaAuth } from "../../hooks/useMfaAuth";
 import { mfaVerificationSchema } from "../../schemas/auth.schema";
 
 export function MfaVerificationForm() {
+  const { t } = useTranslation("auth");
   const userEmail = useCurrentUserEmail();
   const form = useForm<z.infer<typeof mfaVerificationSchema>>({
     resolver: zodResolver(mfaVerificationSchema),
@@ -63,7 +65,7 @@ export function MfaVerificationForm() {
         onSubmit={form.handleSubmit((values) =>
           verifyMfa({ ...values, code: value }),
         )}
-        className="flex flex-col items-center justify-center gap-8"
+        className="flex flex-col items-stretch justify-center gap-8"
       >
         <div className="space-y-4">
           <FormField
@@ -95,14 +97,14 @@ export function MfaVerificationForm() {
         <div className="space-y-2 text-center">
           {!canResend ? (
             <span className="text-base font-normal text-neutral-300">
-              Reenviar código em{" "}
+              {t("forms.mfaVerification.messages.countdownText")}{" "}
               <span className="font-semibold underline">{countdown}</span>{" "}
-              segundos
+              {t("forms.mfaVerification.messages.countdownSeconds")}
             </span>
           ) : (
             <div className="space-y-2">
               <span className="text-base text-neutral-400">
-                Não recebeu o código?
+                {t("forms.mfaVerification.messages.noCodeReceived")}
               </span>
               <Button
                 type="button"
@@ -115,12 +117,12 @@ export function MfaVerificationForm() {
                 {isResending ? (
                   <>
                     <LoadingSpinner className="size-3" />
-                    Reenviando...
+                    {t("forms.mfaVerification.actions.resending")}
                   </>
                 ) : (
                   <>
                     <PaperPlaneTilt className="size-3" weight="fill" />
-                    Reenviar código
+                    {t("forms.mfaVerification.actions.resend")}
                   </>
                 )}
               </Button>
@@ -132,9 +134,9 @@ export function MfaVerificationForm() {
         {verificationError && (
           <div className="rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-950">
             <div className="text-sm text-red-800 dark:text-red-200">
-              <strong>Erro de Verificação:</strong>{" "}
+              <strong>{t("forms.mfaVerification.errors.title")}</strong>{" "}
               {verificationError.message ||
-                "Código MFA inválido. Verifique o código ou solicite um novo."}
+                t("forms.mfaVerification.errors.invalidCode")}
             </div>
           </div>
         )}
@@ -147,11 +149,12 @@ export function MfaVerificationForm() {
         >
           {isVerifying ? (
             <>
-              Verificando... <LoadingSpinner className="ml-2 size-5" />
+              {t("forms.mfaVerification.actions.loading")}{" "}
+              <LoadingSpinner className="ml-2 size-5" />
             </>
           ) : (
             <>
-              Verificar código
+              {t("forms.mfaVerification.actions.submit")}
               <ArrowRightIcon className="size-5" weight="fill" />
             </>
           )}

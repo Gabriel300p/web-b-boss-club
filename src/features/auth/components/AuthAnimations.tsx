@@ -12,6 +12,7 @@ import {
   StaggeredList,
 } from "@/shared/animations";
 import { ANIMATION_DURATION } from "@/shared/animations/config";
+import { LanguageSwitcher } from "@/shared/components/i18n/LanguageSwitcher";
 import Logo from "@shared/assets/logo/logo-simple.png";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
@@ -28,6 +29,9 @@ export function AuthPageWrapper({
 }: AuthPageWrapperProps) {
   return (
     <PageTransition variant="slideUp" duration={ANIMATION_DURATION.slow}>
+      <div className="absolute top-6 right-6">
+        <LanguageSwitcher />
+      </div>
       <div
         className={`flex min-h-screen items-center justify-center p-4 ${className}`}
       >

@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../../app/store/auth";
 import { useToast } from "../../../shared/hooks/useToast";
 import { authService } from "../services/auth.service";
@@ -16,6 +17,7 @@ import type {
 import { AuthContext } from "./authContextDefinition";
 
 export function AuthProvider({ children }: PropsWithChildren) {
+  const { t } = useTranslation("auth");
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -60,8 +62,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
       // Success toast with animation
       showToast({
         type: "success",
-        title: "Login realizado com sucesso!",
-        message: `Bem-vindo de volta, ${data.user.name}!`,
+        title: t("toasts.success.loginTitle"),
+        message: t("toasts.success.loginMessage", { name: data.user.name }),
         expandable: true,
         duration: 3000,
       });
@@ -89,8 +91,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       showToast({
         type: "info",
-        title: "Logout realizado",
-        message: "Você foi desconectado com sucesso.",
+        title: t("toasts.success.logoutTitle"),
+        message: t("toasts.success.logoutMessage"),
         duration: 2000,
       });
 
@@ -110,9 +112,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
     onSuccess: () => {
       showToast({
         type: "success",
-        title: "Email de recuperação enviado!",
-        message:
-          "Verifique sua caixa de entrada para instruções de reset de senha.",
+        title: t("toasts.success.forgotPasswordTitle"),
+        message: t("toasts.success.forgotPasswordMessage"),
         expandable: true,
         duration: 5000,
       });
@@ -141,8 +142,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       showToast({
         type: "success",
-        title: "Verificação MFA concluída!",
-        message: `Código validado com sucesso. Bem-vindo, ${data.user.name}!`,
+        title: t("toasts.success.mfaTitle"),
+        message: t("toasts.success.mfaMessage", { name: data.user.name }),
         expandable: true,
         duration: 3000,
       });
@@ -163,8 +164,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
     onSuccess: () => {
       showToast({
         type: "success",
-        title: "Código reenviado!",
-        message: "Um novo código de verificação foi enviado para seu email.",
+        title: t("toasts.success.mfaCodeResentTitle"),
+        message: t("toasts.success.mfaCodeResentMessage"),
         duration: 3000,
       });
     },
@@ -189,26 +190,31 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const errorContext = email ? ` para ${email}` : "";
 
     // Strategy 1: User-friendly messages
-    let userMessage = "Ocorreu um erro inesperado.";
-    let title = "Erro de Autenticação";
+    let userMessage = t("toasts.errors.messages.unexpectedError");
+    let title = t("toasts.errors.titles.authError");
 
     switch (error.code) {
       case "invalid_credentials":
-        userMessage = `Credenciais inválidas${errorContext}. Verifique seu email e senha ou clique em "Redefinir Senha" para receber um novo código de verificação.`;
-        title = "Login Inválido";
+        userMessage = t("toasts.errors.messages.invalidCredentials", {
+          context: errorContext,
+        });
+        title = t("toasts.errors.titles.invalidLogin");
         break;
       case "user_not_found":
-        userMessage = `Usuário não encontrado${errorContext}.`;
-        title = "Usuário Não Encontrado";
+        userMessage = t("toasts.errors.messages.userNotFound", {
+          context: errorContext,
+        });
+        title = t("toasts.errors.titles.userNotFound");
         break;
       case "account_locked":
-        userMessage = `Conta temporariamente bloqueada${errorContext} por segurança.`;
-        title = "Conta Bloqueada";
+        userMessage = t("toasts.errors.messages.accountLocked", {
+          context: errorContext,
+        });
+        title = t("toasts.errors.titles.accountLocked");
         break;
       case "network_error":
-        userMessage =
-          "Erro de conexão. Verifique sua internet e tente novamente.";
-        title = "Erro de Conexão";
+        userMessage = t("toasts.errors.messages.networkError");
+        title = t("toasts.errors.titles.connectionError");
         break;
       default:
         userMessage = error.message || userMessage;
@@ -219,17 +225,17 @@ export function AuthProvider({ children }: PropsWithChildren) {
       switch (error.code) {
         case "invalid_credentials":
           return {
-            label: "Redefinir Senha",
+            label: t("toasts.errors.actions.resetPassword"),
             onClick: () => navigate({ to: "/auth/forgot-password" }),
           };
         case "network_error":
           return {
-            label: "Recarregar",
+            label: t("toasts.errors.actions.reload"),
             onClick: () => window.location.reload(),
           };
         default:
           return {
-            label: "Tentar Novamente",
+            label: t("toasts.errors.actions.tryAgain"),
             onClick: () => clearError(),
           };
       }
@@ -251,11 +257,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     //   setTimeout(() => {
     //     showToast({
     //       type: "info",
-    //       title: "Esqueceu sua senha?",
-    //       message: "Clique aqui para redefinir sua senha",
+    //       title: t("toasts.info.forgotPasswordTitle"),
+    //       message: t("toasts.info.forgotPasswordMessage"),
     //       duration: 5000,
     //       action: {
-    //         label: "Redefinir Senha",
+    //         label: t("toasts.errors.actions.resetPassword"),
     //         onClick: () => navigate({ to: "/auth/forgot-password" }),
     //       },
     //     });
