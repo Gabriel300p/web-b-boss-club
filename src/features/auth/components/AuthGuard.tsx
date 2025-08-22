@@ -1,5 +1,4 @@
 import { AnimatedBox } from "@/shared/components/animations/motion";
-import { RouteSkeleton } from "@/shared/components/skeletons/RouteSkeleton";
 import { useDelayedLoading } from "@/shared/hooks/useDelayedLoading";
 import { useNavigate } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
@@ -41,10 +40,10 @@ export function AuthGuard({
     }
   }, [isAuthenticated, requireAuth, navigate, redirectTo, isLoading]);
 
-  // Show loading ONLY while checking initial auth status AND se passou do delay mínimo
-  // Isso previne o skeleton de "piscar" em carregamentos rápidos
-  if (shouldShowSkeleton) {
-    return fallback || <RouteSkeleton />;
+  // Para telas de auth (requireAuth=false), nunca mostrar skeleton
+  // Para outras telas, mostrar skeleton apenas se explicitamente solicitado via fallback
+  if (shouldShowSkeleton && requireAuth) {
+    return fallback || null; // Remove RouteSkeleton padrão
   }
 
   // If we're on a page that requires auth but user is not authenticated,

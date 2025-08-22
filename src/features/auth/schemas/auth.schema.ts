@@ -10,6 +10,19 @@ export const forgotPasswordSchema = z.object({
   email: emailSchema.max(100, "Email deve ter no máximo 100 caracteres"),
 });
 
+export const resetPasswordSchema = z
+  .object({
+    password: passwordSchema.max(50, "Senha deve ter no máximo 50 caracteres"),
+    confirmPassword: passwordSchema.max(
+      50,
+      "Confirmar senha deve ter no máximo 50 caracteres",
+    ),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Senhas não coincidem",
+    path: ["confirmPassword"],
+  });
+
 export const mfaVerificationSchema = z.object({
   email: emailSchema.max(100, "Email deve ter no máximo 100 caracteres"),
   code: z

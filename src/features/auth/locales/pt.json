@@ -11,6 +11,10 @@
     "mfaVerification": {
       "title": "Verificação de Segurança",
       "subtitle": "Enviamos o código de verificação para {{email}}"
+    },
+    "resetPassword": {
+      "title": "Redefinir a senha",
+      "subtitle": "Altere sua senha como desejar"
     }
   },
   "forms": {
@@ -18,6 +22,7 @@
       "fields": {
         "email": "Email",
         "password": "Senha",
+        "confirmPassword": "Confirmar Senha",
         "emailPlaceholder": "email@exemplo.com",
         "passwordPlaceholder": "••••••••"
       },

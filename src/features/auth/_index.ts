@@ -25,6 +25,7 @@ export {
 export { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 export { LoginPage } from "./pages/LoginPage";
 export { MfaVerificationPage } from "./pages/MfaVerificationPage";
+export { ResetPasswordPage } from "./pages/ResetPasswordPage";
 
 // Animation Components
 export {
