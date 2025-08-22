@@ -8,140 +8,203 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./app/routes/__root";
-import { Route as AuthEsqueciSenhaRouteImport } from "./app/routes/auth/esqueci-senha";
-import { Route as LoginRouteImport } from "./app/routes/auth/login";
-import { Route as ComunicacoesRouteImport } from "./app/routes/comunicacoes";
-import { Route as IndexRouteImport } from "./app/routes/index";
-import { Route as RecordsRouteImport } from "./app/routes/records";
+import { Route as rootRouteImport } from './app/routes/__root'
+import { Route as RecordsRouteImport } from './app/routes/records'
+import { Route as HomeRouteImport } from './app/routes/home'
+import { Route as ComunicacoesRouteImport } from './app/routes/comunicacoes'
+import { Route as IndexRouteImport } from './app/routes/index'
+import { Route as AuthResetPasswordRouteImport } from './app/routes/auth/reset-password'
+import { Route as AuthMfaVerificationRouteImport } from './app/routes/auth/mfa-verification'
+import { Route as AuthLoginRouteImport } from './app/routes/auth/login'
+import { Route as AuthForgotPasswordRouteImport } from './app/routes/auth/forgot-password'
 
 const RecordsRoute = RecordsRouteImport.update({
-  id: "/records",
-  path: "/records",
+  id: '/records',
+  path: '/records',
   getParentRoute: () => rootRouteImport,
-} as any);
-const LoginRoute = LoginRouteImport.update({
-  id: "/auth/login",
-  path: "/auth/login",
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ComunicacoesRoute = ComunicacoesRouteImport.update({
-  id: "/comunicacoes",
-  path: "/comunicacoes",
+  id: '/comunicacoes',
+  path: '/comunicacoes',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
-const AuthEsqueciSenhaRoute = AuthEsqueciSenhaRouteImport.update({
-  id: "/auth/esqueci-senha",
-  path: "/auth/esqueci-senha",
+} as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/auth/reset-password',
+  path: '/auth/reset-password',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const AuthMfaVerificationRoute = AuthMfaVerificationRouteImport.update({
+  id: '/auth/mfa-verification',
+  path: '/auth/mfa-verification',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/comunicacoes": typeof ComunicacoesRoute;
-  "/auth/login": typeof LoginRoute;
-  "/records": typeof RecordsRoute;
-  "/auth/esqueci-senha": typeof AuthEsqueciSenhaRoute;
+  '/': typeof IndexRoute
+  '/comunicacoes': typeof ComunicacoesRoute
+  '/home': typeof HomeRoute
+  '/records': typeof RecordsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/mfa-verification': typeof AuthMfaVerificationRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/comunicacoes": typeof ComunicacoesRoute;
-  "/auth/login": typeof LoginRoute;
-  "/records": typeof RecordsRoute;
-  "/auth/esqueci-senha": typeof AuthEsqueciSenhaRoute;
+  '/': typeof IndexRoute
+  '/comunicacoes': typeof ComunicacoesRoute
+  '/home': typeof HomeRoute
+  '/records': typeof RecordsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/mfa-verification': typeof AuthMfaVerificationRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/comunicacoes": typeof ComunicacoesRoute;
-  "/auth/login": typeof LoginRoute;
-  "/records": typeof RecordsRoute;
-  "/auth/esqueci-senha": typeof AuthEsqueciSenhaRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/comunicacoes': typeof ComunicacoesRoute
+  '/home': typeof HomeRoute
+  '/records': typeof RecordsRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/mfa-verification': typeof AuthMfaVerificationRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/comunicacoes"
-    | "/auth/login"
-    | "/records"
-    | "/auth/esqueci-senha";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/comunicacoes'
+    | '/home'
+    | '/records'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/mfa-verification'
+    | '/auth/reset-password'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/comunicacoes"
-    | "/auth/login"
-    | "/records"
-    | "/auth/esqueci-senha";
+    | '/'
+    | '/comunicacoes'
+    | '/home'
+    | '/records'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/mfa-verification'
+    | '/auth/reset-password'
   id:
-    | "__root__"
-    | "/"
-    | "/comunicacoes"
-    | "/auth/login"
-    | "/records"
-    | "/auth/esqueci-senha";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/comunicacoes'
+    | '/home'
+    | '/records'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/mfa-verification'
+    | '/auth/reset-password'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  ComunicacoesRoute: typeof ComunicacoesRoute;
-  LoginRoute: typeof LoginRoute;
-  RecordsRoute: typeof RecordsRoute;
-  AuthEsqueciSenhaRoute: typeof AuthEsqueciSenhaRoute;
+  IndexRoute: typeof IndexRoute
+  ComunicacoesRoute: typeof ComunicacoesRoute
+  HomeRoute: typeof HomeRoute
+  RecordsRoute: typeof RecordsRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthMfaVerificationRoute: typeof AuthMfaVerificationRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/records": {
-      id: "/records";
-      path: "/records";
-      fullPath: "/records";
-      preLoaderRoute: typeof RecordsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/auth/login": {
-      id: "/auth/login";
-      path: "/auth/login";
-      fullPath: "/auth/login";
-      preLoaderRoute: typeof LoginRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/comunicacoes": {
-      id: "/comunicacoes";
-      path: "/comunicacoes";
-      fullPath: "/comunicacoes";
-      preLoaderRoute: typeof ComunicacoesRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/auth/esqueci-senha": {
-      id: "/auth/esqueci-senha";
-      path: "/auth/esqueci-senha";
-      fullPath: "/auth/esqueci-senha";
-      preLoaderRoute: typeof AuthEsqueciSenhaRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/records': {
+      id: '/records'
+      path: '/records'
+      fullPath: '/records'
+      preLoaderRoute: typeof RecordsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/comunicacoes': {
+      id: '/comunicacoes'
+      path: '/comunicacoes'
+      fullPath: '/comunicacoes'
+      preLoaderRoute: typeof ComunicacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/auth/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/mfa-verification': {
+      id: '/auth/mfa-verification'
+      path: '/auth/mfa-verification'
+      fullPath: '/auth/mfa-verification'
+      preLoaderRoute: typeof AuthMfaVerificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComunicacoesRoute: ComunicacoesRoute,
-  LoginRoute: LoginRoute,
+  HomeRoute: HomeRoute,
   RecordsRoute: RecordsRoute,
-  AuthEsqueciSenhaRoute: AuthEsqueciSenhaRoute,
-};
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthMfaVerificationRoute: AuthMfaVerificationRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()

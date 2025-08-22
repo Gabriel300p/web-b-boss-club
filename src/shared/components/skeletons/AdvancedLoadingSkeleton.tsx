@@ -20,7 +20,7 @@ export function AdvancedLoadingSkeleton({
         animate={{ rotate: 360 }}
         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
       >
-        <div className="h-16 w-16 rounded-full border-4 border-slate-200">
+        <div className="h-16 w-16 rounded-full border-4 border-neutral-200">
           <div
             className="h-full w-full rounded-full border-4 border-blue-600 border-t-transparent"
             style={{
@@ -37,7 +37,7 @@ export function AdvancedLoadingSkeleton({
         animate={{ opacity: 1, y: 0 }}
         className="text-center"
       >
-        <p className="text-lg font-medium text-slate-900">
+        <p className="text-lg font-medium text-neutral-900">
           {stages[currentStage] || stages[0]}
         </p>
         <div className="mt-2 flex justify-center space-x-2">
@@ -45,7 +45,7 @@ export function AdvancedLoadingSkeleton({
             <div
               key={i}
               className={`h-2 w-2 rounded-full transition-colors ${
-                i <= currentStage ? "bg-blue-600" : "bg-slate-300"
+                i <= currentStage ? "bg-blue-600" : "bg-neutral-300"
               }`}
             />
           ))}

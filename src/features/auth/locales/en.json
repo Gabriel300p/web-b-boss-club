@@ -1,0 +1,111 @@
+{
+  "pages": {
+    "login": {
+      "title": "Sign in to B-Boss Club",
+      "subtitle": "Welcome back!"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "We will send you an email to recover your password"
+    },
+    "mfaVerification": {
+      "title": "Security Verification",
+      "subtitle": "We sent a verification code to {{email}}"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Change your password as you wish"
+    }
+  },
+  "forms": {
+    "login": {
+      "fields": {
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "emailPlaceholder": "email@example.com",
+        "passwordPlaceholder": "••••••••"
+      },
+      "actions": {
+        "submit": "Continue",
+        "loading": "Signing in...",
+        "forgotPassword": "Forgot my password",
+        "forgotPasswordQuestion": "Forgot your password?",
+        "forgotPasswordLink": "Click here to reset"
+      },
+      "errors": {
+        "invalidCredentials": "Invalid credentials. Check your email and password."
+      }
+    },
+    "forgotPassword": {
+      "fields": {
+        "email": "Email",
+        "emailPlaceholder": "email@example.com"
+      },
+      "actions": {
+        "submit": "Send password recovery",
+        "loading": "Sending..."
+      },
+      "errors": {
+        "sendError": "Error sending recovery email. Please try again."
+      }
+    },
+    "mfaVerification": {
+      "actions": {
+        "submit": "Verify code",
+        "loading": "Verifying...",
+        "resend": "Resend code",
+        "resending": "Resending..."
+      },
+      "messages": {
+        "countdownText": "Resend code in",
+        "countdownSeconds": "seconds",
+        "noCodeReceived": "Didn't receive the code?",
+        "maskedEmailFallback": "your email"
+      },
+      "errors": {
+        "title": "Verification Error:",
+        "invalidCode": "Invalid MFA code. Check the code or request a new one."
+      }
+    }
+  },
+  "toasts": {
+    "success": {
+      "loginTitle": "Login successful!",
+      "loginMessage": "Welcome back, {{name}}!",
+      "logoutTitle": "Logout completed",
+      "logoutMessage": "You have been successfully logged out.",
+      "forgotPasswordTitle": "Recovery email sent!",
+      "forgotPasswordMessage": "Check your inbox for password reset instructions.",
+      "mfaTitle": "MFA verification completed!",
+      "mfaMessage": "Code validated successfully. Welcome, {{name}}!",
+      "mfaCodeResentTitle": "Code resent!",
+      "mfaCodeResentMessage": "A new verification code has been sent to your email."
+    },
+    "errors": {
+      "titles": {
+        "authError": "Authentication Error",
+        "invalidLogin": "Invalid Login",
+        "userNotFound": "User Not Found",
+        "accountLocked": "Account Locked",
+        "connectionError": "Connection Error"
+      },
+      "messages": {
+        "invalidCredentials": "Invalid credentials{{context}}. Check your email and password or click \"Reset Password\" to receive a new verification code.",
+        "userNotFound": "User not found{{context}}.",
+        "accountLocked": "Account temporarily locked{{context}} for security.",
+        "networkError": "Connection error. Check your internet and try again.",
+        "unexpectedError": "An unexpected error occurred."
+      },
+      "actions": {
+        "resetPassword": "Reset Password",
+        "reload": "Reload",
+        "tryAgain": "Try Again"
+      }
+    },
+    "info": {
+      "forgotPasswordTitle": "Forgot your password?",
+      "forgotPasswordMessage": "Click here to reset your password"
+    }
+  }
+}

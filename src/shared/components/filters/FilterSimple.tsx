@@ -36,13 +36,13 @@ const itemVariants = {
   visible: (index: number) => ({
     opacity: 1,
     x: 0,
-    transition: { delay: index * 0.05, duration: 0.2 }
-  })
+    transition: { delay: index * 0.05, duration: 0.2 },
+  }),
 };
 
 const buttonVariants = {
   hover: { scale: 1.02 },
-  tap: { scale: 0.98 }
+  tap: { scale: 0.98 },
 };
 
 export function FilterSimple<TData, TValue>({
@@ -81,8 +81,8 @@ export function FilterSimple<TData, TValue>({
   // Filter options based on search term
   const filteredOptions = React.useMemo(() => {
     if (!searchTerm) return options;
-    return options.filter(option => 
-      option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    return options.filter((option) =>
+      option.label.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [options, searchTerm]);
 
@@ -105,9 +105,7 @@ export function FilterSimple<TData, TValue>({
       if (externalOnChange) {
         externalOnChange(filterValues as (string | boolean)[]);
       } else {
-        column?.setFilterValue(
-          filterValues.length ? filterValues : undefined,
-        );
+        column?.setFilterValue(filterValues.length ? filterValues : undefined);
       }
     }
   };
@@ -123,19 +121,24 @@ export function FilterSimple<TData, TValue>({
   // Conditional wrapper for animations
   const AnimationWrapper = animated ? motion.div : React.Fragment;
   const ItemWrapper = animated ? motion.div : React.Fragment;
-  const getItemProps = (index: number) => animated ? {
-    variants: itemVariants,
-    initial: "hidden",
-    animate: "visible",
-    custom: index
-  } : {};
+  const getItemProps = (index: number) =>
+    animated
+      ? {
+          variants: itemVariants,
+          initial: "hidden",
+          animate: "visible",
+          custom: index,
+        }
+      : {};
 
   const ButtonWrapper = animated ? motion.div : React.Fragment;
-  const buttonProps = animated ? {
-    whileHover: buttonVariants.hover,
-    whileTap: buttonVariants.tap,
-    transition: { duration: 0.2 }
-  } : {};
+  const buttonProps = animated
+    ? {
+        whileHover: buttonVariants.hover,
+        whileTap: buttonVariants.tap,
+        transition: { duration: 0.2 },
+      }
+    : {};
 
   return (
     <Popover>
@@ -144,7 +147,7 @@ export function FilterSimple<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
-            className="hover:bg-accent/50 h-10 gap-1.5 border border-slate-200 text-sm transition-colors"
+            className="hover:bg-accent/50 h-10 gap-1.5 border border-neutral-200 text-sm transition-colors"
           >
             {icon}
             {title}
@@ -187,22 +190,26 @@ export function FilterSimple<TData, TValue>({
       <PopoverContent className="w-fit max-w-md p-0" align="start">
         <AnimatePresence>
           <AnimationWrapper
-            {...(animated ? {
-              initial: { opacity: 0, scale: 0.95 },
-              animate: { opacity: 1, scale: 1 },
-              exit: { opacity: 0, scale: 0.95 },
-              transition: { duration: 0.2 }
-            } : {})}
+            {...(animated
+              ? {
+                  initial: { opacity: 0, scale: 0.95 },
+                  animate: { opacity: 1, scale: 1 },
+                  exit: { opacity: 0, scale: 0.95 },
+                  transition: { duration: 0.2 },
+                }
+              : {})}
           >
             <div className="p-2">
               {/* Search Input */}
               {options.length > 5 && (
                 <input
                   type="text"
-                  placeholder={placeholder || `Filtrar ${title?.toLowerCase()}...`}
+                  placeholder={
+                    placeholder || `Filtrar ${title?.toLowerCase()}...`
+                  }
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-3 py-2 mb-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mb-2 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               )}
 
@@ -215,7 +222,8 @@ export function FilterSimple<TData, TValue>({
                 ) : (
                   filteredOptions.map((option, index) => {
                     const isSelected = selectedValues.has(option.value);
-                    const count = option.count || facets?.get(option.value) || 0;
+                    const count =
+                      option.count || facets?.get(option.value) || 0;
 
                     return (
                       <ItemWrapper
@@ -223,7 +231,7 @@ export function FilterSimple<TData, TValue>({
                         {...getItemProps(index)}
                       >
                         <div
-                          className="flex items-center gap-2 p-2 hover:bg-gray-100 cursor-pointer rounded transition-colors"
+                          className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-100"
                           onClick={() => handleOptionClick(option)}
                         >
                           {animated ? (
@@ -237,12 +245,12 @@ export function FilterSimple<TData, TValue>({
                           ) : (
                             <Checkbox checked={isSelected} />
                           )}
-                          <div className="flex items-center gap-1.5 flex-1">
+                          <div className="flex flex-1 items-center gap-1.5">
                             {option.icon}
                             <span className="text-sm">{option.label}</span>
                           </div>
                           {count > 0 && (
-                            <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
+                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500">
                               {count}
                             </span>
                           )}
@@ -259,7 +267,7 @@ export function FilterSimple<TData, TValue>({
                   <Separator className="my-2" />
                   <button
                     onClick={handleClearAll}
-                    className="w-full p-2 text-sm text-red-600 hover:bg-red-50 rounded transition-colors"
+                    className="w-full rounded p-2 text-sm text-red-600 transition-colors hover:bg-red-50"
                   >
                     Limpar filtro
                   </button>

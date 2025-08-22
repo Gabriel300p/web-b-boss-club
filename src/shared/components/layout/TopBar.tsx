@@ -1,7 +1,7 @@
 import Logo from "@shared/assets/logo.svg";
-import { LogOut } from "lucide-react";
 import { LanguageSwitcher } from "@shared/components/i18n/LanguageSwitcher";
 import { Button } from "@shared/components/ui/button";
+import { LogOut } from "lucide-react";
 
 export function TopBar() {
   const handleLogout = () => {
@@ -36,7 +36,7 @@ export function TopBar() {
               Gabriel
             </span>
           </div>
-          <hr className="h-4 w-px border border-slate-600 md:h-6" />
+          <hr className="h-4 w-px border border-neutral-600 md:h-6" />
           <LanguageSwitcher />
           {/* Botão de Logout */}
           <Button

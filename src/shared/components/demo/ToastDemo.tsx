@@ -1,5 +1,5 @@
 import { Button } from "@shared/components/ui/button";
-import { useToast } from "@shared/hooks";
+import { useToast } from "../../hooks/useToast";
 
 export function ToastDemo() {
   const { success, error, warning, info, showToast } = useToast();
@@ -69,6 +69,7 @@ export function ToastDemo() {
       message:
         "Tanto a mensagem quanto a descrição podem ser expandíveis! Esta mensagem longa demonstra como o texto é truncado inicialmente com reticências e pode ser expandido para mostrar o conteúdo completo.",
       expandable: true,
+      showStopMessage: true,
       description:
         "E aqui temos uma descrição adicional que também pode ser expandida separadamente. Isso oferece máxima flexibilidade para diferentes tipos de conteúdo.",
       duration: 12000,

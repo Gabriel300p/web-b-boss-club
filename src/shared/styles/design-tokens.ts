@@ -94,7 +94,7 @@ export const semanticColors = {
 // 🌊 Neutral Colors (Slate-based)
 export const neutralColors = {
   white: "oklch(1 0 0)",
-  slate: {
+  neutral: {
     50: "oklch(0.984 0.003 264.695)",
     100: "oklch(0.967 0.006 264.695)",
     200: "oklch(0.928 0.013 264.695)",

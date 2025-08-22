@@ -67,13 +67,13 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
       {/* Informações e seletor de items por página */}
       <div className="flex w-full flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <p className="text-xs font-medium text-slate-700 sm:text-sm">
+          <p className="text-xs font-medium text-neutral-700 sm:text-sm">
             {totalItems}{" "}
-            <span className="font-normal text-slate-400">itens</span>
+            <span className="font-normal text-neutral-400">itens</span>
           </p>
-          <hr className="hidden h-4 border border-slate-200 sm:block md:h-6" />
+          <hr className="hidden h-4 border border-neutral-200 sm:block md:h-6" />
           <div className="flex items-center space-x-2">
-            <p className="hidden text-xs whitespace-nowrap text-slate-600 sm:block sm:text-sm">
+            <p className="hidden text-xs whitespace-nowrap text-neutral-600 sm:block sm:text-sm">
               Linhas por página
             </p>
             <Select
@@ -97,7 +97,7 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
         </div>
         {/* Navegação de páginas */}
         <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
-          <span className="hidden text-center text-xs font-medium text-slate-600 sm:block sm:text-left sm:text-sm">
+          <span className="hidden text-center text-xs font-medium text-neutral-600 sm:block sm:text-left sm:text-sm">
             Página {currentPage} de {totalPages}
           </span>
           <div className="flex items-center justify-center space-x-1 sm:space-x-2">
@@ -120,7 +120,7 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
                   return (
                     <span
                       key={index}
-                      className="hidden px-1 text-xs text-slate-400 sm:inline sm:px-2 sm:text-sm"
+                      className="hidden px-1 text-xs text-neutral-400 sm:inline sm:px-2 sm:text-sm"
                     >
                       ...
                     </span>
@@ -139,7 +139,7 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
                     className={`h-7 w-7 p-0 text-xs sm:h-8 sm:w-8 sm:text-sm ${
                       isActive
                         ? "bg-primary text-white transition-opacity duration-300 hover:opacity-80"
-                        : "text-slate-600 hover:text-slate-900"
+                        : "text-neutral-600 hover:text-neutral-900"
                     }`}
                   >
                     {pageNum}

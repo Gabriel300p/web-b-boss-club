@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 // 🎯 Skeleton para carregamento de rota/página - Similar ao layout real
 export function RouteSkeleton() {
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-neutral-100 dark:bg-neutral-900">
       {/* Breadcrumb skeleton */}
       <div className="mx-4 pt-6 md:mx-8 md:pt-8 lg:mx-16 lg:pt-12">
         <SkeletonLine width="100px" className="h-4" />
@@ -16,7 +16,7 @@ export function RouteSkeleton() {
 
       {/* Page content skeleton */}
       <main className="mx-4 py-6 md:mx-8 md:py-8 lg:mx-16 lg:py-12">
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
+        <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
           {/* Header skeleton */}
           <div className="mb-6 flex items-center justify-between">
             <SkeletonLine width="150px" className="h-7" />
@@ -51,7 +51,7 @@ export function RouteSkeleton() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: i * 0.1 }}
-                className="grid grid-cols-6 gap-4 border-b border-slate-100 py-3"
+                className="grid grid-cols-6 gap-4 border-b border-neutral-100 py-3 dark:border-neutral-700"
               >
                 <SkeletonLine width="85%" className="h-4" />
                 <SkeletonLine width="70%" className="h-4" />

@@ -1,3 +1,4 @@
+import { AuthGuard } from "@features/auth/components/AuthGuard";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy } from "react";
 
@@ -9,5 +10,9 @@ const LoginPage = lazy(() =>
 );
 
 export const Route = createFileRoute("/auth/login")({
-  component: () => <LoginPage />,
+  component: () => (
+    <AuthGuard requireAuth={false}>
+      <LoginPage />
+    </AuthGuard>
+  ),
 });

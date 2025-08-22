@@ -15,7 +15,7 @@ export function TableSkeleton({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="space-y-4 rounded-lg border border-slate-200 p-5"
+      className="space-y-4 rounded-lg border border-neutral-200 p-5"
     >
       {/* Header */}
       <div
@@ -34,7 +34,7 @@ export function TableSkeleton({
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * 0.1 }}
-          className={`grid gap-4 border-b border-slate-100 py-3`}
+          className={`grid gap-4 border-b border-neutral-100 py-3`}
           style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
         >
           {Array.from({ length: columns - (hasActions ? 1 : 0) }, (_, j) => (

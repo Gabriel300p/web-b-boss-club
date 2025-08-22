@@ -1,0 +1,111 @@
+{
+  "pages": {
+    "login": {
+      "title": "Faça o login no B-Boss Club",
+      "subtitle": "Bem-vindo de volta!"
+    },
+    "forgotPassword": {
+      "title": "Esqueci a senha",
+      "subtitle": "Iremos enviar um e-mail para recuperar a senha"
+    },
+    "mfaVerification": {
+      "title": "Verificação de Segurança",
+      "subtitle": "Enviamos o código de verificação para {{email}}"
+    },
+    "resetPassword": {
+      "title": "Redefinir a senha",
+      "subtitle": "Altere sua senha como desejar"
+    }
+  },
+  "forms": {
+    "login": {
+      "fields": {
+        "email": "Email",
+        "password": "Senha",
+        "confirmPassword": "Confirmar Senha",
+        "emailPlaceholder": "email@exemplo.com",
+        "passwordPlaceholder": "••••••••"
+      },
+      "actions": {
+        "submit": "Continuar",
+        "loading": "Entrando...",
+        "forgotPassword": "Esqueci minha senha",
+        "forgotPasswordQuestion": "Esqueceu sua senha?",
+        "forgotPasswordLink": "Clique aqui para redefinir"
+      },
+      "errors": {
+        "invalidCredentials": "Credenciais inválidas. Verifique seu email e senha."
+      }
+    },
+    "forgotPassword": {
+      "fields": {
+        "email": "Email",
+        "emailPlaceholder": "email@exemplo.com"
+      },
+      "actions": {
+        "submit": "Enviar recuperação de senha",
+        "loading": "Enviando..."
+      },
+      "errors": {
+        "sendError": "Erro ao enviar email de recuperação. Tente novamente."
+      }
+    },
+    "mfaVerification": {
+      "actions": {
+        "submit": "Verificar código",
+        "loading": "Verificando...",
+        "resend": "Reenviar código",
+        "resending": "Reenviando..."
+      },
+      "messages": {
+        "countdownText": "Reenviar código em",
+        "countdownSeconds": "segundos",
+        "noCodeReceived": "Não recebeu o código?",
+        "maskedEmailFallback": "seu email"
+      },
+      "errors": {
+        "title": "Erro de Verificação:",
+        "invalidCode": "Código MFA inválido. Verifique o código ou solicite um novo."
+      }
+    }
+  },
+  "toasts": {
+    "success": {
+      "loginTitle": "Login realizado com sucesso!",
+      "loginMessage": "Bem-vindo de volta, {{name}}!",
+      "logoutTitle": "Logout realizado",
+      "logoutMessage": "Você foi desconectado com sucesso.",
+      "forgotPasswordTitle": "Email de recuperação enviado!",
+      "forgotPasswordMessage": "Verifique sua caixa de entrada para instruções de reset de senha.",
+      "mfaTitle": "Verificação MFA concluída!",
+      "mfaMessage": "Código validado com sucesso. Bem-vindo, {{name}}!",
+      "mfaCodeResentTitle": "Código reenviado!",
+      "mfaCodeResentMessage": "Um novo código de verificação foi enviado para seu email."
+    },
+    "errors": {
+      "titles": {
+        "authError": "Erro de Autenticação",
+        "invalidLogin": "Login Inválido",
+        "userNotFound": "Usuário Não Encontrado",
+        "accountLocked": "Conta Bloqueada",
+        "connectionError": "Erro de Conexão"
+      },
+      "messages": {
+        "invalidCredentials": "Credenciais inválidas{{context}}. Verifique seu email e senha ou clique em \"Redefinir Senha\" para receber um novo código de verificação.",
+        "userNotFound": "Usuário não encontrado{{context}}.",
+        "accountLocked": "Conta temporariamente bloqueada{{context}} por segurança.",
+        "networkError": "Erro de conexão. Verifique sua internet e tente novamente.",
+        "unexpectedError": "Ocorreu um erro inesperado."
+      },
+      "actions": {
+        "resetPassword": "Redefinir Senha",
+        "reload": "Recarregar",
+        "tryAgain": "Tentar Novamente"
+      }
+    },
+    "info": {
+      "forgotPasswordTitle": "Esqueceu sua senha?",
+      "forgotPasswordMessage": "Clique aqui para redefinir sua senha"
+    }
+  }
+}

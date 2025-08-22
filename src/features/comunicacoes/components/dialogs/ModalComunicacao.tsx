@@ -190,13 +190,13 @@ export const ModalComunicacao = memo(function ModalComunicacao({
             <Button
               type="button"
               variant="outline"
-              className="font-medium text-slate-600"
+              className="font-medium text-neutral-600"
               onClick={onClose}
               disabled={isSubmitting}
             >
               <ProhibitIcon
                 style={{ width: 20, height: 20 }}
-                className="text-slate-500"
+                className="text-neutral-500"
               />
               {t("form.close")}
             </Button>

@@ -1,3 +1,4 @@
+import { Button } from "@shared/components/ui/button";
 import { motion } from "framer-motion";
 import {
   AlertCircle,
@@ -9,9 +10,13 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "@shared/components/ui/button";
 import type { ToastData } from "./toast";
-import { getIconClasses, getToastClasses, TOAST_CONFIG } from "./toast";
+import {
+  getIconClasses,
+  getProgressBarClasses,
+  getToastClasses,
+  TOAST_CONFIG,
+} from "./toast";
 
 interface ToastProps {
   toast: ToastData;
@@ -123,7 +128,7 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
         stiffness: 200,
         mass: 0.5,
       }}
-      className={getToastClasses(toast.type)}
+      className={getToastClasses()}
       style={{
         marginBottom: TOAST_CONFIG.spacing,
       }}
@@ -139,7 +144,7 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
             {/* Icon */}
             <Icon className={getIconClasses(toast.type)} aria-hidden="true" />
             {/* Title */}
-            <h3 className="text-sm leading-tight font-semibold text-slate-700">
+            <h3 className="text-sm leading-tight font-semibold text-neutral-700 dark:text-neutral-100">
               {toast.title}
             </h3>
           </div>
@@ -185,7 +190,7 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
                 <>
                   {/* Truncated Message */}
                   {!isMessageExpanded && (
-                    <p className="line-clamp-1 text-sm leading-relaxed text-slate-500">
+                    <p className="line-clamp-1 text-sm leading-relaxed text-neutral-500 dark:text-neutral-300">
                       {toast.message}
                     </p>
                   )}
@@ -204,7 +209,7 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
                     className="overflow-hidden"
                   >
                     {isMessageExpanded && (
-                      <p className="text-sm leading-relaxed text-slate-500">
+                      <p className="text-sm leading-relaxed text-neutral-500 dark:text-neutral-300">
                         {toast.message}
                       </p>
                     )}
@@ -212,7 +217,7 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
                 </>
               ) : (
                 /* Normal Message */
-                <p className="text-sm leading-relaxed text-slate-500">
+                <p className="text-sm leading-relaxed text-neutral-500 dark:text-neutral-300">
                   {toast.message}
                 </p>
               )}
@@ -222,11 +227,11 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
           {showStopMessage && (
             <>
               {!toast.persistent && !isPermanentlyPaused && timeLeft > 0 && (
-                <div className="mt-3 text-xs text-slate-400">
+                <div className="mt-3 text-xs text-neutral-400">
                   Essa mensagem fechará em {timeLeft}s.{" "}
                   <button
                     onClick={handlePermanentPause}
-                    className="text-slate-600 underline transition-colors hover:text-slate-800"
+                    className="cursor-pointer text-neutral-600 underline transition-opacity hover:opacity-80 dark:text-neutral-100"
                   >
                     Clique para parar
                   </button>
@@ -254,26 +259,7 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
       {/* 📊 Progress Bar */}
       {!toast.persistent && !isPermanentlyPaused && progress > 0 && (
         <motion.div
-          className="absolute bottom-0 left-0 h-1 rounded-b-xl"
-          style={{
-            background: `linear-gradient(90deg, ${
-              toast.type === "success"
-                ? "#10b981"
-                : toast.type === "error"
-                  ? "#ef4444"
-                  : toast.type === "warning"
-                    ? "#f59e0b"
-                    : "#3b82f6"
-            } 0%, ${
-              toast.type === "success"
-                ? "#34d399"
-                : toast.type === "error"
-                  ? "#f87171"
-                  : toast.type === "warning"
-                    ? "#fbbf24"
-                    : "#60a5fa"
-            } 100%)`,
-          }}
+          className={`absolute bottom-0 left-0 h-1 rounded-b-xl ${getProgressBarClasses(toast.type)}`}
           initial={{ width: "100%" }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.1, ease: "linear" }}

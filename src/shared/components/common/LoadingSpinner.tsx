@@ -1,4 +1,5 @@
 import { cn } from "@/shared/lib/utils";
+import { CircleNotchIcon } from "@phosphor-icons/react";
 
 interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";
@@ -19,16 +20,21 @@ export function LoadingSpinner({
 }: LoadingSpinnerProps) {
   return (
     <div className="flex flex-col items-center justify-center">
-      <div
+      <CircleNotchIcon
         role="status"
         aria-hidden="true"
+        weight="bold"
         className={cn(
-          "border-t-primary animate-spin rounded-full border-2 border-neutral-600",
+          "animate-spin text-neutral-800",
           sizeClasses[size],
           className,
         )}
       />
-      {text && <p className="mt-2 text-sm text-neutral-600">{text}</p>}
+      {text && (
+        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
+          {text}
+        </p>
+      )}
     </div>
   );
 }
@@ -43,7 +49,7 @@ export function PageLoader() {
 
 export function FullPageLoader() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm dark:bg-neutral-800/80">
       <LoadingSpinner size="lg" text="Carregando aplicação..." />
     </div>
   );

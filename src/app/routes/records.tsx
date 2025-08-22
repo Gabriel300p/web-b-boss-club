@@ -1,5 +1,6 @@
-import { RouteSkeleton } from "@shared/components/skeletons/_index";
+import { AuthGuard } from "@features/auth/components/AuthGuard";
 import { MainLayout } from "@shared/components/layout/MainLayout";
+import { RouteSkeleton } from "@shared/components/skeletons/_index";
 import { useLoadingConfig } from "@shared/hooks/useLoadingConfig";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
@@ -34,14 +35,18 @@ function RecordsPageLoader() {
   }
 
   // Loading direto sem lazy loading (importação estática)
-  const RecordsPage = lazy(() => import("@features/records").then(m => ({ default: m.RecordsPage })));
+  const RecordsPage = lazy(() =>
+    import("@features/records").then((m) => ({ default: m.RecordsPage })),
+  );
   return <RecordsPage />;
 }
 
 export const Route = createFileRoute("/records")({
   component: () => (
-    <MainLayout>
-      <RecordsPageLoader />
-    </MainLayout>
+    <AuthGuard requireAuth={true}>
+      <MainLayout>
+        <RecordsPageLoader />
+      </MainLayout>
+    </AuthGuard>
   ),
 });

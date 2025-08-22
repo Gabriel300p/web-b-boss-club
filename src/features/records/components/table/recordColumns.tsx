@@ -47,7 +47,7 @@ export const createRecordColumns = ({
         </TableSort>
       ),
       cell: ({ row }) => (
-        <div className="text-center font-medium text-slate-600">
+        <div className="text-center font-medium text-neutral-600">
           {row.getValue("autor")}
         </div>
       ),
@@ -97,7 +97,7 @@ export const createRecordColumns = ({
       cell: ({ row }) => {
         const descricao = row.getValue("descricao") as string;
         return (
-          <div className="max-w-xs truncate text-slate-600" title={descricao}>
+          <div className="max-w-xs truncate text-neutral-600" title={descricao}>
             {descricao}
           </div>
         );
@@ -113,7 +113,7 @@ export const createRecordColumns = ({
       cell: ({ row }) => {
         const date = row.getValue("dataCriacao") as Date;
         return (
-          <div className="text-center text-sm text-slate-500">
+          <div className="text-center text-sm text-neutral-500">
             {format(new Date(date), "dd/MM/yyyy", { locale: ptBR })}
           </div>
         );
@@ -129,7 +129,7 @@ export const createRecordColumns = ({
       cell: ({ row }) => {
         const date = row.getValue("dataAtualizacao") as Date;
         return (
-          <div className="text-center text-sm text-slate-500">
+          <div className="text-center text-sm text-neutral-500">
             {format(new Date(date), "dd/MM/yyyy", { locale: ptBR })}
           </div>
         );

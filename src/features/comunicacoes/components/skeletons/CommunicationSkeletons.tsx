@@ -14,7 +14,7 @@ export function CommunicationTableSkeleton({ rows = 5 }: { rows?: number }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
       transition={{ duration: 0.3 }}
-      className="space-y-4 rounded-lg border border-slate-200 p-5"
+      className="space-y-4 rounded-lg border border-neutral-200 p-5"
     >
       {/* Header da tabela */}
       <div className="grid grid-cols-5 gap-4 border-b pb-2">

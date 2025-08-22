@@ -32,7 +32,7 @@ export function RecordTableSkeleton() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: i * 0.1 }}
-          className="grid grid-cols-6 gap-4 border-b border-slate-100 py-3"
+          className="grid grid-cols-6 gap-4 border-b border-neutral-100 py-3"
         >
           <SkeletonLine width="85%" className="h-4" />
           <SkeletonLine width="70%" className="h-4" />
