@@ -5,9 +5,12 @@ import { useLoadingConfig } from "@shared/hooks/useLoadingConfig";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 
-// 🚀 Lazy loading da página de records
+// 🚀 Import direto para quando lazy loading está desabilitado
+import { HomePage as DirectHomePage } from "@/features/home/_index";
+
+// 🚀 Lazy loading da página de home
 const LazyHomePage = lazy(() =>
-  import("@features/home").then((module) => ({
+  import("@/features/home/_index").then((module) => ({
     default: module.HomePage,
   })),
 );
@@ -35,10 +38,7 @@ function HomePageLoader() {
   }
 
   // Loading direto sem lazy loading (importação estática)
-  const HomePage = lazy(() =>
-    import("@features/home").then((m) => ({ default: m.HomePage })),
-  );
-  return <HomePage />;
+  return <DirectHomePage />;
 }
 
 export const Route = createFileRoute("/home")({
