@@ -93,8 +93,8 @@ export class ApiService {
     localStorage.removeItem("temp_token");
 
     // Redireciona para login se não estiver na página de login
-    if (window.location.pathname !== "/login") {
-      window.location.href = "/login";
+    if (window.location.pathname !== "/auth/login") {
+      window.location.href = "/auth/login";
     }
   }
 

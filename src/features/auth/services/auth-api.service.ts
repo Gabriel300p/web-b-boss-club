@@ -173,7 +173,7 @@ export class AuthApiService {
   logout(): void {
     apiService.clearTokens();
     // Redireciona para login
-    window.location.href = "/login";
+    window.location.href = "/auth/login";
   }
 
   /**
