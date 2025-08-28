@@ -18,6 +18,7 @@ import { Route as AuthMfaVerificationRouteImport } from './app/routes/auth/mfa-v
 import { Route as AuthLoginRouteImport } from './app/routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './app/routes/auth/forgot-password'
 import { Route as AuthFirstLoginRouteImport } from './app/routes/auth/first-login'
+import { Route as AuthCreateBarbershopRouteImport } from './app/routes/auth/create-barbershop'
 
 const RecordsRoute = RecordsRouteImport.update({
   id: '/records',
@@ -64,12 +65,18 @@ const AuthFirstLoginRoute = AuthFirstLoginRouteImport.update({
   path: '/auth/first-login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCreateBarbershopRoute = AuthCreateBarbershopRouteImport.update({
+  id: '/auth/create-barbershop',
+  path: '/auth/create-barbershop',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/comunicacoes': typeof ComunicacoesRoute
   '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
+  '/auth/create-barbershop': typeof AuthCreateBarbershopRoute
   '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/comunicacoes': typeof ComunicacoesRoute
   '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
+  '/auth/create-barbershop': typeof AuthCreateBarbershopRoute
   '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/comunicacoes': typeof ComunicacoesRoute
   '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
+  '/auth/create-barbershop': typeof AuthCreateBarbershopRoute
   '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/comunicacoes'
     | '/home'
     | '/records'
+    | '/auth/create-barbershop'
     | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/comunicacoes'
     | '/home'
     | '/records'
+    | '/auth/create-barbershop'
     | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/comunicacoes'
     | '/home'
     | '/records'
+    | '/auth/create-barbershop'
     | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -140,6 +152,7 @@ export interface RootRouteChildren {
   ComunicacoesRoute: typeof ComunicacoesRoute
   HomeRoute: typeof HomeRoute
   RecordsRoute: typeof RecordsRoute
+  AuthCreateBarbershopRoute: typeof AuthCreateBarbershopRoute
   AuthFirstLoginRoute: typeof AuthFirstLoginRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthFirstLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/create-barbershop': {
+      id: '/auth/create-barbershop'
+      path: '/auth/create-barbershop'
+      fullPath: '/auth/create-barbershop'
+      preLoaderRoute: typeof AuthCreateBarbershopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -220,6 +240,7 @@ const rootRouteChildren: RootRouteChildren = {
   ComunicacoesRoute: ComunicacoesRoute,
   HomeRoute: HomeRoute,
   RecordsRoute: RecordsRoute,
+  AuthCreateBarbershopRoute: AuthCreateBarbershopRoute,
   AuthFirstLoginRoute: AuthFirstLoginRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,

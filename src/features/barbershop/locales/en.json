@@ -1,0 +1,64 @@
+{
+  "pages": {
+    "createBarbershop": {
+      "title": "Create New Barbershop",
+      "subtitle": "Configure your barbershop in two simple steps"
+    }
+  },
+  "forms": {
+    "barbershopInfo": {
+      "title": "Barbershop Information",
+      "subtitle": "Configure the basic data of your barbershop",
+      "fields": {
+        "name": "Barbershop Name",
+        "namePlaceholder": "Ex: John's Barbershop",
+        "description": "Description",
+        "descriptionPlaceholder": "Tell us about your barbershop...",
+        "phone": "Phone",
+        "phonePlaceholder": "(11) 99999-9999",
+        "website": "Website",
+        "websitePlaceholder": "https://mybarbershop.com",
+        "logo_url": "Logo URL",
+        "logo_urlPlaceholder": "https://example.com/logo.png",
+        "cover_url": "Cover URL",
+        "cover_urlPlaceholder": "https://example.com/cover.png",
+        "appointment_link": "Appointment Link",
+        "appointment_linkPlaceholder": "https://appointment.com"
+      }
+    },
+    "userInfo": {
+      "title": "Owner Information",
+      "subtitle": "Configure your account data",
+      "fields": {
+        "email": "Email",
+        "emailPlaceholder": "your@email.com",
+        "cpf": "CPF",
+        "cpfPlaceholder": "123.456.789-00",
+        "phone": "Phone",
+        "phonePlaceholder": "(11) 99999-9999",
+        "isforeigner": "I am a foreigner",
+        "terms": "I accept the terms and conditions"
+      }
+    }
+  },
+  "actions": {
+    "next": "Next",
+    "previous": "Previous",
+    "create": "Create Barbershop",
+    "creating": "Creating...",
+    "skip": "Skip"
+  },
+  "steps": {
+    "barbershop": "Barbershop",
+    "owner": "Owner"
+  },
+  "messages": {
+    "success": "Barbershop created successfully!",
+    "checkEmail": "Check your email to receive your access credentials.",
+    "redirecting": "Redirecting to login..."
+  },
+  "errors": {
+    "createFailed": "Error creating barbershop. Please try again.",
+    "validationFailed": "Please correct the errors in the form."
+  }
+}

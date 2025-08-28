@@ -9,6 +9,8 @@ import ptBRRecords from "./locales/pt-BR/records.json";
 // Feature-specific namespaces (statically bundled for now)
 import enUSAuth from "@/features/auth/locales/en.json";
 import ptBRAuth from "@/features/auth/locales/pt.json";
+import enUSBarbershop from "@/features/barbershop/locales/en.json";
+import ptBRBarbershop from "@/features/barbershop/locales/pt.json";
 import enUSComunicacoes from "@/features/comunicacoes/i18n/en-US.json";
 import ptBRComunicacoes from "@/features/comunicacoes/i18n/pt-BR.json";
 
@@ -45,12 +47,14 @@ const resources = {
     records: ptBRRecords,
     comunicacoes: ptBRComunicacoes,
     auth: ptBRAuth,
+    barbershop: ptBRBarbershop,
   },
   "en-US": {
     common: enUSCommon,
     records: enUSRecords,
     comunicacoes: enUSComunicacoes,
     auth: enUSAuth,
+    barbershop: enUSBarbershop,
   },
 };
 
@@ -62,7 +66,7 @@ if (!i18n.isInitialized) {
       lng: detectLocale(),
       fallbackLng: FALLBACK_LOCALE,
       defaultNS: "common",
-      ns: ["common", "records", "comunicacoes", "auth"],
+      ns: ["common", "records", "comunicacoes", "auth", "barbershop"],
       interpolation: { escapeValue: false },
       returnEmptyString: false,
       initImmediate: true,
