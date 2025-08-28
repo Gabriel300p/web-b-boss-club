@@ -77,7 +77,7 @@ export function LanguageSwitcher() {
                 role="option"
                 aria-selected={current === opt.code}
                 onClick={() => change(opt.code)}
-                className={`flex w-full cursor-pointer items-center gap-3 px-3 py-1 text-left text-sm text-gray-600 transition-opacity duration-300 hover:opacity-60 dark:text-gray-200 ${
+                className={`flex w-full cursor-pointer items-center gap-3 px-3 py-1 text-left text-sm text-neutral-600 transition-opacity duration-300 hover:opacity-60 dark:text-neutral-200 ${
                   current === opt.code ? "font-bold" : ""
                 }`}
               >

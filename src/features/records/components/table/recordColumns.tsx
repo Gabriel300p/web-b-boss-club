@@ -72,7 +72,7 @@ export const createRecordColumns = ({
             case "Notícia":
               return "bg-green-100 text-green-700";
             default:
-              return "bg-gray-100 text-gray-700";
+              return "bg-neutral-100 text-neutral-700";
           }
         };
 

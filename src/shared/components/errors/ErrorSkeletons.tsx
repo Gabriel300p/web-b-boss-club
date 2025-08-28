@@ -11,7 +11,7 @@ export function ErrorBoundarySkeleton() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex min-h-screen items-center justify-center bg-gray-50 p-8"
+      className="flex min-h-screen items-center justify-center bg-neutral-50 p-8"
     >
       <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-lg">
         {/* Error icon placeholder */}
@@ -48,7 +48,7 @@ export function ToastSkeleton() {
     <motion.div
       initial={{ opacity: 0, x: 300 }}
       animate={{ opacity: 1, x: 0 }}
-      className="flex w-full max-w-md items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-lg"
+      className="flex w-full max-w-md items-start gap-3 rounded-xl border border-neutral-200 bg-white p-4 shadow-lg"
     >
       {/* Icon */}
       <SkeletonBox width={20} height={20} className="mt-0.5 rounded-full" />

@@ -11,7 +11,7 @@ export function DefaultErrorFallback({ error, resetError }: FallbackProps) {
       <div className="mx-auto max-w-max">
         <main className="sm:flex">
           <div className="sm:ml-6">
-            <div className="sm:border-l sm:border-gray-200 sm:pl-6">
+            <div className="sm:border-l sm:border-neutral-200 sm:pl-6">
               <h1 className="text-4xl font-bold tracking-tight text-neutral-100 sm:text-5xl">
                 Oops! Algo deu errado
               </h1>

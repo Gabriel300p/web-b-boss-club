@@ -94,7 +94,7 @@ export function BreadcrumbSkeleton() {
       {Array.from({ length: 3 }, (_, i) => (
         <div key={i} className="flex items-center gap-2">
           <SkeletonLine width="60px" className="h-4" />
-          {i < 2 && <span className="text-gray-400">/</span>}
+          {i < 2 && <span className="text-neutral-400">/</span>}
         </div>
       ))}
     </motion.div>

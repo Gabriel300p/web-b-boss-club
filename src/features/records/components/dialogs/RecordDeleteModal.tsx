@@ -55,31 +55,31 @@ export const RecordDeleteModal = memo(function RecordDeleteModal({
           <DialogDescription className="pt-2">
             {t("delete.confirmation", { title: record.titulo })}
             <br />
-            <span className="mt-2 block text-sm text-gray-500">
+            <span className="mt-2 block text-sm text-neutral-500">
               {t("delete.warning")}
             </span>
           </DialogDescription>
         </DialogHeader>
 
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
           <div className="space-y-2">
             <div className="text-sm">
-              <span className="font-medium text-gray-700">
+              <span className="font-medium text-neutral-700">
                 {t("fields.title")}:
               </span>{" "}
-              <span className="text-gray-900">{record.titulo}</span>
+              <span className="text-neutral-900">{record.titulo}</span>
             </div>
             <div className="text-sm">
-              <span className="font-medium text-gray-700">
+              <span className="font-medium text-neutral-700">
                 {t("fields.author")}:
               </span>{" "}
-              <span className="text-gray-900">{record.autor}</span>
+              <span className="text-neutral-900">{record.autor}</span>
             </div>
             <div className="text-sm">
-              <span className="font-medium text-gray-700">
+              <span className="font-medium text-neutral-700">
                 {t("fields.type")}:
               </span>{" "}
-              <span className="text-gray-900">{record.tipo}</span>
+              <span className="text-neutral-900">{record.tipo}</span>
             </div>
           </div>
         </div>

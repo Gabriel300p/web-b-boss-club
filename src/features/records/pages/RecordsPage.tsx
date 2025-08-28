@@ -1,3 +1,13 @@
+import { RecordTableSkeleton } from "@features/records/components/skeletons/_index";
+import {
+  useRecordFilters,
+  useRecordModals,
+  useRecords,
+} from "@features/records/hooks/_index";
+import type {
+  BaseRecord,
+  RecordForm,
+} from "@features/records/schemas/record.schemas";
 import { EmptyState } from "@shared/components/common/EmptyState";
 import { FilterToolbarSkeleton } from "@shared/components/filters/FilterSkeletons";
 import { PlusCircleIcon } from "@shared/components/icons";
@@ -13,9 +23,6 @@ import {
   RecordModal,
   RecordsToolbar,
 } from "../components/_index";
-import { RecordTableSkeleton } from "@features/records/components/skeletons/_index";
-import { useRecordFilters, useRecordModals, useRecords } from "@features/records/hooks/_index";
-import type { BaseRecord, RecordForm } from "@features/records/schemas/record.schemas";
 
 export default function RecordsPage() {
   const { t } = useTranslation("records");
@@ -117,7 +124,7 @@ export default function RecordsPage() {
           <span className="text-primary text-sm font-medium underline">
             {t("breadcrumb.section")}
           </span>
-          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+          <h1 className="text-2xl font-bold text-neutral-900">{t("title")}</h1>
         </div>
         <Button
           onClick={openAddModal}

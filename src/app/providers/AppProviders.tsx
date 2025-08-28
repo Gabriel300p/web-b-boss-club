@@ -1,5 +1,6 @@
 import "@/app/i18n/init"; // i18n initialization side-effect
 import { ErrorBoundary } from "@/shared/components/errors/ErrorBoundary";
+import { SidebarProvider } from "@/shared/contexts/SidebarContext";
 import type { PropsWithChildren } from "react";
 import { FiltersProvider } from "./FiltersProvider";
 import { QueryProvider } from "./QueryProvider";
@@ -12,7 +13,9 @@ export function AppProviders({ children }: PropsWithChildren) {
       <ThemeProvider defaultMode="dark" enableSystem={true}>
         <QueryProvider>
           <FiltersProvider>
-            <ToastProvider>{children}</ToastProvider>
+            <SidebarProvider>
+              <ToastProvider>{children}</ToastProvider>
+            </SidebarProvider>
           </FiltersProvider>
         </QueryProvider>
       </ThemeProvider>
