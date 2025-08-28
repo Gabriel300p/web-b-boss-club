@@ -7,7 +7,7 @@ import type {
 import axios from "axios";
 
 // Tipos para as respostas da API
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T;
   status: number;
   message?: string;
@@ -18,7 +18,7 @@ export interface ApiError {
   error: string;
   message: string;
   code?: string;
-  details?: any;
+  details?: unknown;
   timestamp: string;
 }
 
@@ -133,7 +133,7 @@ export class ApiService {
    */
   async post<T>(
     url: string,
-    data?: any,
+    data?: unknown,
     config?: AxiosRequestConfig,
   ): Promise<ApiResponse<T>> {
     const response = await this.api.post<T>(url, data, config);
@@ -148,7 +148,7 @@ export class ApiService {
    */
   async put<T>(
     url: string,
-    data?: any,
+    data?: unknown,
     config?: AxiosRequestConfig,
   ): Promise<ApiResponse<T>> {
     const response = await this.api.put<T>(url, data, config);
@@ -163,7 +163,7 @@ export class ApiService {
    */
   async patch<T>(
     url: string,
-    data?: any,
+    data?: unknown,
     config?: AxiosRequestConfig,
   ): Promise<ApiResponse<T>> {
     const response = await this.api.patch<T>(url, data, config);

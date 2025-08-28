@@ -1,5 +1,5 @@
-import type { ApiResponse } from "./api.service.js";
-import { apiService } from "./api.service.js";
+import type { ApiResponse } from "../../../shared/services/api.service.js";
+import { apiService } from "../../../shared/services/api.service.js";
 
 // Tipos para as APIs de autenticação
 export interface LoginRequest {

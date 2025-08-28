@@ -1,6 +1,6 @@
-// Auth types
+// Auth types para o novo fluxo backend
 export interface LoginCredentials {
-  email: string;
+  credential: string; // email ou CPF
   password: string;
 }
 
@@ -9,6 +9,33 @@ export interface RegisterCredentials extends LoginCredentials {
   confirmPassword: string;
 }
 
+// Resposta do login que pode requerer MFA
+export interface LoginResponse {
+  mfaRequired: boolean;
+  tempToken?: string;
+  token?: string;
+  user?: {
+    id: string;
+    email: string;
+    role: string;
+    displayName?: string;
+  };
+}
+
+// Resposta da verificação MFA
+export interface MfaVerificationResponse {
+  success: boolean;
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    role: string;
+    displayName?: string;
+    mfaVerified: boolean;
+  };
+}
+
+// Resposta de autenticação completa (após MFA)
 export interface AuthResponse {
   user: {
     id: string;
@@ -31,7 +58,10 @@ export interface AuthError extends Error {
     | "network_error"
     | "unauthorized"
     | "server_error"
-    | "validation_error";
+    | "validation_error"
+    | "mfa_required"
+    | "mfa_invalid"
+    | "mfa_expired";
   message: string;
 }
 
@@ -40,10 +70,9 @@ export interface ForgotPasswordCredentials {
   email: string;
 }
 
-// MFA verification credentials
+// MFA verification credentials (apenas código)
 export interface MfaVerificationCredentials {
-  email: string;
-  code: string;
+  code: string; // código de 6 dígitos
 }
 
 export interface AuthContextType {
@@ -53,6 +82,8 @@ export interface AuthContextType {
   isLoading: boolean;
   error: string | null;
   currentLoginEmail: string | null;
+  mfaRequired: boolean;
+  tempToken: string | null;
 
   // Actions
   login: (credentials: LoginCredentials) => void;
@@ -62,6 +93,7 @@ export interface AuthContextType {
   resendMfaCode: () => void;
   clearError: () => void;
   checkAuth: () => Promise<{ user: AuthResponse["user"] }>;
+  setMfaRequired: (required: boolean, tempToken?: string) => void;
 
   // Mutation states - Login
   isLoginPending: boolean;

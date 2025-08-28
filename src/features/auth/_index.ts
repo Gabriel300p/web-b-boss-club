@@ -48,7 +48,7 @@ export {
 } from "./schemas/auth.schema";
 
 // Services (if needed externally)
-export { authService } from "./services/auth.service";
+export { authApiService, authService } from "./services";
 
 // Main hook (if needed externally)
 // Note: Other hooks should be imported directly for better tree-shaking

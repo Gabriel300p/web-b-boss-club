@@ -12,6 +12,7 @@ import type {
   AuthResponse,
   ForgotPasswordCredentials,
   LoginCredentials,
+  LoginResponse,
   MfaVerificationCredentials,
 } from "../types/auth";
 import { AuthContext } from "./authContextDefinition";
@@ -48,34 +49,73 @@ export function AuthProvider({ children }: PropsWithChildren) {
     refetchOnWindowFocus: false,
   });
 
-  // Login mutation with enhanced error handling
+  // Login mutation with enhanced error handling and MFA support
   const loginMutation = useMutation({
     mutationFn: (credentials: LoginCredentials) => {
       setError(null);
       return authService.login(credentials);
     },
-    onSuccess: (data: AuthResponse) => {
-      // Store user and token
-      storeLogin(data.user);
-      localStorage.setItem("access_token", data.access_token);
+    onSuccess: (data: LoginResponse, variables: LoginCredentials) => {
+      if (data.mfaRequired && data.tempToken) {
+        // MFA é necessário - salva token temporário e redireciona para MFA
+        localStorage.setItem("temp_token", data.tempToken);
 
-      // Success toast with animation
-      showToast({
-        type: "success",
-        title: t("toasts.success.loginTitle"),
-        message: t("toasts.success.loginMessage", { name: data.user.name }),
-        expandable: true,
-        duration: 3000,
-      });
+        // Extrai email do credential para usar na página MFA
+        const email = data.user?.email || variables.credential;
 
-      // Navigate with slight delay for animation
-      setTimeout(() => {
-        navigate({ to: "/home" });
-      }, 300);
+        showToast({
+          type: "info",
+          title: "Verificação MFA necessária",
+          message: `Um código de 6 dígitos foi enviado para ${email}`,
+          expandable: true,
+          duration: 5000,
+        });
+
+        // Redireciona para verificação MFA
+        setTimeout(() => {
+          navigate({ to: "/auth/mfa-verification" });
+        }, 300);
+
+        return;
+      }
+
+      // Login direto sem MFA
+      if (data.token && data.user) {
+        // Constrói usuário no formato esperado pelo store
+        const user = {
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.displayName || data.user.email,
+          role: data.user.role as "admin" | "user" | "moderator",
+          avatar: undefined,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        // Store user and token
+        storeLogin(user);
+        localStorage.setItem("access_token", data.token);
+
+        // Success toast with animation
+        showToast({
+          type: "success",
+          title: t("toasts.success.loginTitle"),
+          message: t("toasts.success.loginMessage", {
+            name: data.user.displayName || data.user.email,
+          }),
+          expandable: true,
+          duration: 3000,
+        });
+
+        // Navigate with slight delay for animation
+        setTimeout(() => {
+          navigate({ to: "/home" });
+        }, 300);
+      }
     },
     onError: (error: AuthError, variables: LoginCredentials) => {
       setError(error.message);
-      handleAuthError(error, "login", variables.email);
+      handleAuthError(error, "login", variables.credential);
     },
     onSettled: () => {
       // Loading state is now handled by loginMutation.isPending directly
@@ -88,6 +128,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     onSuccess: () => {
       storeLogout();
       localStorage.removeItem("access_token");
+      localStorage.removeItem("temp_token");
 
       showToast({
         type: "info",
@@ -152,9 +193,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
         navigate({ to: "/home" });
       }, 300);
     },
-    onError: (error: AuthError, variables: MfaVerificationCredentials) => {
+    onError: (error: AuthError) => {
       setError(error.message);
-      handleAuthError(error, "mfa-verification", variables.email);
+      handleAuthError(error, "mfa-verification");
     },
   });
 
@@ -212,6 +253,18 @@ export function AuthProvider({ children }: PropsWithChildren) {
         });
         title = t("toasts.errors.titles.accountLocked");
         break;
+      case "mfa_required":
+        userMessage = "Verificação MFA é necessária para continuar";
+        title = "Verificação MFA Necessária";
+        break;
+      case "mfa_invalid":
+        userMessage = "Código MFA inválido ou expirado";
+        title = "Código MFA Inválido";
+        break;
+      case "mfa_expired":
+        userMessage = "Código MFA expirado. Solicite um novo código";
+        title = "Código MFA Expirado";
+        break;
       case "network_error":
         userMessage = t("toasts.errors.messages.networkError");
         title = t("toasts.errors.titles.connectionError");
@@ -233,6 +286,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
             label: t("toasts.errors.actions.reload"),
             onClick: () => window.location.reload(),
           };
+        case "mfa_invalid":
+        case "mfa_expired":
+          return {
+            label: "Reenviar Código",
+            onClick: () => resendMfaCodeMutation.mutate(),
+          };
         default:
           return {
             label: t("toasts.errors.actions.tryAgain"),
@@ -251,22 +310,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       action: getRetryAction(),
     });
-
-    // For invalid credentials, also show forgot password option
-    // if (error.code === "invalid_credentials") {
-    //   setTimeout(() => {
-    //     showToast({
-    //       type: "info",
-    //       title: t("toasts.info.forgotPasswordTitle"),
-    //       message: t("toasts.info.forgotPasswordMessage"),
-    //       duration: 5000,
-    //       action: {
-    //         label: t("toasts.errors.actions.resetPassword"),
-    //         onClick: () => navigate({ to: "/auth/forgot-password" }),
-    //       },
-    //     });
-    //   }, 1000);
-    // }
 
     // Additional console logging for development
     console.error(`Auth Error [${context}]:`, {
@@ -310,6 +353,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
     isLoading: isLoading || isCheckingAuth,
     error,
     currentLoginEmail,
+    mfaRequired: false, // Será gerenciado pelo estado do login
+    tempToken: null, // Será gerenciado pelo estado do login
 
     // Actions
     login: loginMutation.mutate,
@@ -319,6 +364,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     resendMfaCode: resendMfaCodeMutation.mutate,
     clearError,
     checkAuth: () => authService.checkAuth(),
+    setMfaRequired: () => {}, // Implementar se necessário
 
     // Mutation states - Login
     isLoginPending: loginMutation.isPending,

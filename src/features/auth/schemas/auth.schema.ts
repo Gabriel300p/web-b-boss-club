@@ -1,9 +1,22 @@
 import { emailSchema, passwordSchema } from "@shared/schemas/common";
 import { z } from "zod";
 
+// Schema para login com credential (email ou CPF)
 export const loginSchema = z.object({
-  email: emailSchema.max(100, "Email deve ter no máximo 100 caracteres"),
+  credential: z
+    .string()
+    .min(1, "Email ou CPF é obrigatório")
+    .max(100, "Email ou CPF deve ter no máximo 100 caracteres"),
   password: passwordSchema.max(50, "Senha deve ter no máximo 50 caracteres"),
+});
+
+// Schema para verificação MFA (6 dígitos numéricos)
+export const mfaVerificationSchema = z.object({
+  code: z
+    .string()
+    .min(6, "Código deve ter 6 dígitos")
+    .max(6, "Código deve ter 6 dígitos")
+    .regex(/^\d{6}$/, "Código deve conter apenas 6 dígitos numéricos"),
 });
 
 export const forgotPasswordSchema = z.object({
@@ -22,14 +35,6 @@ export const resetPasswordSchema = z
     message: "Senhas não coincidem",
     path: ["confirmPassword"],
   });
-
-export const mfaVerificationSchema = z.object({
-  email: emailSchema.max(100, "Email deve ter no máximo 100 caracteres"),
-  code: z
-    .string()
-    .min(8, "Código deve ter 8 caracteres")
-    .max(8, "Código deve ter 8 caracteres"),
-});
 
 export const registerSchema = z
   .object({
@@ -55,5 +60,6 @@ export const registerSchema = z
   });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
+export type MfaVerificationFormData = z.infer<typeof mfaVerificationSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
