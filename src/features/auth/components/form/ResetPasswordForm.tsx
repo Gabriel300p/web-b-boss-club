@@ -58,7 +58,9 @@ export function ResetPasswordForm() {
       }
     } catch (err: unknown) {
       const errorMessage =
-        err instanceof Error ? err.message : "Erro ao alterar senha";
+        err instanceof Error
+          ? err.message
+          : t("forms.resetPassword.errors.changePasswordError");
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -74,13 +76,17 @@ export function ResetPasswordForm() {
             name="newPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nova Senha</FormLabel>
+                <FormLabel>
+                  {t("forms.resetPassword.fields.newPassword")}
+                </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
                       {...field}
                       type={showPassword ? "text" : "password"}
-                      placeholder="Digite sua nova senha"
+                      placeholder={t(
+                        "forms.resetPassword.fields.newPasswordPlaceholder",
+                      )}
                       className="pr-10"
                     />
                     <button
@@ -105,13 +111,17 @@ export function ResetPasswordForm() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirmar Nova Senha</FormLabel>
+                <FormLabel>
+                  {t("forms.resetPassword.fields.confirmPassword")}
+                </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
                       {...field}
                       type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirme sua nova senha"
+                      placeholder={t(
+                        "forms.resetPassword.fields.confirmPasswordPlaceholder",
+                      )}
                       className="pr-10"
                     />
                     <button
@@ -155,11 +165,12 @@ export function ResetPasswordForm() {
           >
             {isLoading ? (
               <>
-                Alterando Senha... <LoadingSpinner className="ml-2 size-5" />
+                {t("forms.resetPassword.actions.loading")}{" "}
+                <LoadingSpinner className="ml-2 size-5" />
               </>
             ) : (
               <>
-                Alterar Senha{" "}
+                {t("forms.resetPassword.actions.submit")}{" "}
                 <ArrowRightIcon className="size-5" weight="fill" />
               </>
             )}
@@ -174,7 +185,7 @@ export function ResetPasswordForm() {
               className="w-full"
               size="lg"
             >
-              Pular e Continuar
+              {t("forms.resetPassword.actions.skip")}
             </Button>
           )}
         </div>

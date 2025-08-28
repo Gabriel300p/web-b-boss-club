@@ -14,11 +14,13 @@ export function ResetPasswordPage() {
     <AuthPageWrapper className="bg-neutral-950">
       <AuthForm
         title={
-          isFirstLogin ? "Definir Nova Senha" : t("pages.resetPassword.title")
+          isFirstLogin
+            ? t("pages.resetPassword.firstLoginTitle")
+            : t("pages.resetPassword.title")
         }
         subtitle={
           isFirstLogin
-            ? "Como é seu primeiro acesso, defina uma nova senha para sua conta"
+            ? t("pages.resetPassword.firstLoginSubtitle")
             : t("pages.resetPassword.subtitle")
         }
       >
