@@ -40,7 +40,7 @@ export function TopBarNotifications({ className }: TopBarNotificationsProps) {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-80 p-0" sideOffset={8}>
+      <DropdownMenuContent align="end" className="w-lg p-0" sideOffset={8}>
         <div className="border-b p-4">
           <h3 className="text-sm font-semibold">Notificações</h3>
           <p className="text-muted-foreground text-xs">

@@ -13,7 +13,7 @@ export function TopBar({ className }: TopBarProps) {
     <header
       className={cn("bg-neutral-900 text-neutral-200 shadow-md", className)}
     >
-      <div className="flex items-center justify-between px-4 py-3 md:px-8 md:py-5 lg:px-16">
+      <div className="flex items-center justify-between px-4 py-3 md:px-8 md:py-4 lg:pr-12 lg:pl-6">
         {/* Lado esquerdo: Botão sidebar e busca */}
         <div className="flex items-center gap-4">
           <TopBarSidebarToggle />

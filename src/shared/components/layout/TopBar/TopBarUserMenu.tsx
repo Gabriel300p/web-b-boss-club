@@ -85,8 +85,8 @@ export function TopBarUserMenu({ className }: TopBarUserMenuProps) {
           aria-label="Menu do usuário"
         >
           {/* Avatar */}
-          <div className="bg-primary flex size-8 flex-shrink-0 items-center justify-center rounded-full">
-            <span className="text-primary-foreground text-sm font-medium">
+          <div className="bg-primary flex size-9 flex-shrink-0 items-center justify-center rounded-full">
+            <span className="text-primary-foreground text-base font-bold">
               {getInitials()}
             </span>
           </div>
