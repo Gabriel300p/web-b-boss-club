@@ -40,6 +40,7 @@ export interface MfaVerificationResponse {
     displayName?: string;
     mfaVerified: boolean;
   };
+  isFirstLogin: boolean;
 }
 
 // Resposta de autenticação completa (após MFA)
@@ -55,6 +56,7 @@ export interface AuthResponse {
   };
   access_token: string;
   refresh_token?: string;
+  isFirstLogin?: boolean; // Flag para indicar se é primeiro login
 }
 
 export interface AuthError extends Error {

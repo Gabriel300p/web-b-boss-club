@@ -17,6 +17,7 @@ import { Route as AuthResetPasswordRouteImport } from './app/routes/auth/reset-p
 import { Route as AuthMfaVerificationRouteImport } from './app/routes/auth/mfa-verification'
 import { Route as AuthLoginRouteImport } from './app/routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './app/routes/auth/forgot-password'
+import { Route as AuthFirstLoginRouteImport } from './app/routes/auth/first-login'
 
 const RecordsRoute = RecordsRouteImport.update({
   id: '/records',
@@ -58,12 +59,18 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthFirstLoginRoute = AuthFirstLoginRouteImport.update({
+  id: '/auth/first-login',
+  path: '/auth/first-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/comunicacoes': typeof ComunicacoesRoute
   '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
+  '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/mfa-verification': typeof AuthMfaVerificationRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/comunicacoes': typeof ComunicacoesRoute
   '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
+  '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/mfa-verification': typeof AuthMfaVerificationRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/comunicacoes': typeof ComunicacoesRoute
   '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
+  '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/mfa-verification': typeof AuthMfaVerificationRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/comunicacoes'
     | '/home'
     | '/records'
+    | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/mfa-verification'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/comunicacoes'
     | '/home'
     | '/records'
+    | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/mfa-verification'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/comunicacoes'
     | '/home'
     | '/records'
+    | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/mfa-verification'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   ComunicacoesRoute: typeof ComunicacoesRoute
   HomeRoute: typeof HomeRoute
   RecordsRoute: typeof RecordsRoute
+  AuthFirstLoginRoute: typeof AuthFirstLoginRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthMfaVerificationRoute: typeof AuthMfaVerificationRoute
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/first-login': {
+      id: '/auth/first-login'
+      path: '/auth/first-login'
+      fullPath: '/auth/first-login'
+      preLoaderRoute: typeof AuthFirstLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   ComunicacoesRoute: ComunicacoesRoute,
   HomeRoute: HomeRoute,
   RecordsRoute: RecordsRoute,
+  AuthFirstLoginRoute: AuthFirstLoginRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthMfaVerificationRoute: AuthMfaVerificationRoute,

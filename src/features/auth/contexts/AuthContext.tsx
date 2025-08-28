@@ -40,18 +40,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
     state.error ? null : state.user?.email || null,
   );
 
-  // Auto-check authentication on mount
-  const { data: authData, isLoading: isCheckingAuth } = useQuery({
-    queryKey: ["auth", "check"],
-    queryFn: authService.checkAuth,
-    retry: false,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
-    refetchOnMount: false, // Não refaz query ao montar componente
-    refetchOnReconnect: false, // Não refaz query ao reconectar
-    enabled: !isAuthenticated, // Só executa se não estiver autenticado
-  });
-
   // Login mutation with enhanced error handling and MFA support
   const loginMutation = useMutation({
     mutationFn: (credentials: LoginCredentials) => {
@@ -176,25 +164,33 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // MFA verification mutation
   const mfaVerificationMutation = useMutation({
     mutationFn: (credentials: MfaVerificationCredentials) => {
-      console.log(
-        "🔐 AuthContext: MFA verification mutation started with:",
-        credentials,
-      );
       setError(null);
       return authService.verifyMfa(credentials);
     },
     onSuccess: (data: AuthResponse) => {
-      console.log("✅ AuthContext: MFA verification successful, data:", data);
-
       // Store user
       storeLogin(data.user);
 
-      // Se não tiver token de acesso, navega diretamente para home
-      // O useQuery já vai buscar o perfil automaticamente se necessário
-      if (!data.access_token) {
-        console.log("⚠️ No access token after MFA, navigating to home...");
+      // Verifica se é primeiro login para redirecionar para reset de senha
+      if (data.isFirstLogin) {
+        showToast({
+          type: "info",
+          title: "Primeiro Login",
+          message: "Por favor, defina uma nova senha para sua conta",
+          expandable: true,
+          duration: 5000,
+        });
 
-        // Navega diretamente para home - o useQuery vai cuidar do resto
+        // Navegação para rota específica de primeiro login
+        navigate({
+          to: "/auth/first-login",
+        });
+
+        return;
+      }
+
+      // Se não tiver token de acesso, navega diretamente para home
+      if (!data.access_token) {
         showToast({
           type: "success",
           title: t("toasts.success.mfaTitle"),
@@ -203,9 +199,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           duration: 3000,
         });
 
-        setTimeout(() => {
-          navigate({ to: "/home" });
-        }, 300);
+        navigate({ to: "/home" });
       } else {
         // Se tiver token, salva e navega normalmente
         localStorage.setItem("access_token", data.access_token);
@@ -218,9 +212,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           duration: 3000,
         });
 
-        setTimeout(() => {
-          navigate({ to: "/home" });
-        }, 300);
+        navigate({ to: "/home" });
       }
     },
     onError: (error: AuthError) => {
@@ -243,6 +235,18 @@ export function AuthProvider({ children }: PropsWithChildren) {
     onError: (error: AuthError) => {
       handleAuthError(error, "resend-mfa");
     },
+  });
+
+  // Auto-check authentication on mount
+  const { data: authData, isLoading: isCheckingAuth } = useQuery({
+    queryKey: ["auth", "check"],
+    queryFn: authService.checkAuth,
+    retry: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, // Não refaz query ao montar componente
+    refetchOnReconnect: false, // Não refaz query ao reconectar
+    enabled: !isAuthenticated && !mfaVerificationMutation.isPending, // Não executa durante MFA
   });
 
   // Enhanced error handling with 4 strategies
@@ -341,13 +345,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       action: getRetryAction(),
     });
 
-    // Additional console logging for development
-    console.error(`Auth Error [${context}]:`, {
-      code: error.code,
-      message: error.message,
-      email,
-      timestamp: new Date().toISOString(),
-    });
+    // Error handled by toast notification
   };
 
   // Auto-authentication check

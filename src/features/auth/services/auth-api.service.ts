@@ -34,6 +34,7 @@ export interface VerifyMfaResponse {
     displayName?: string;
     mfaVerified: boolean;
   };
+  isFirstLogin: boolean;
 }
 
 export interface UserProfile {
@@ -100,13 +101,9 @@ export class AuthApiService {
    * 🔐 Verifica código MFA
    */
   async verifyMfa(code: string): Promise<ApiResponse<VerifyMfaResponse>> {
-    console.log("🔐 authApiService: verifyMfa called with code:", code);
-
     const tempToken = apiService.getTempToken();
-    console.log("🔑 authApiService: tempToken found:", !!tempToken);
 
     if (!tempToken) {
-      console.error("❌ authApiService: No temp token found");
       throw new Error("Token temporário MFA não encontrado");
     }
 
@@ -119,11 +116,6 @@ export class AuthApiService {
         },
       },
     );
-
-    // NÃO remove o token temporário aqui - será removido após buscar o perfil com sucesso
-    // if (response.data.success) {
-    //   localStorage.removeItem("temp_token");
-    // }
 
     return response;
   }
@@ -236,6 +228,33 @@ export class AuthApiService {
   async refreshToken(): Promise<ApiResponse<{ token: string }>> {
     return await apiService.post<{ token: string }>(
       `${this.baseUrl}/refresh-token`,
+    );
+  }
+
+  /**
+   * 🔑 Altera senha do usuário autenticado
+   */
+  async changePassword(
+    newPassword: string,
+    confirmPassword: string,
+  ): Promise<ApiResponse<{ message: string; success: boolean }>> {
+    // Tentar usar access_token primeiro, depois temp_token
+    const authToken = this.getAuthToken();
+    const tempToken = this.getTempToken();
+    const token = authToken || tempToken;
+
+    if (!token) {
+      throw new Error("Token de autenticação não encontrado");
+    }
+
+    return await apiService.post<{ message: string; success: boolean }>(
+      `${this.baseUrl}/change-password`,
+      { newPassword, confirmPassword },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     );
   }
 }

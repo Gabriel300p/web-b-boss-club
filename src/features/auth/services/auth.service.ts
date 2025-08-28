@@ -115,7 +115,6 @@ export async function logoutRequest(): Promise<void> {
     await authApiService.logout();
   } catch (error) {
     // Silent fail for logout - we'll clear local storage anyway
-    console.warn("Logout request failed:", error);
   }
 }
 
@@ -151,30 +150,26 @@ export async function forgotPasswordRequest(values: {
 export async function mfaVerificationRequest(
   values: MfaVerificationCredentials,
 ): Promise<AuthResponse> {
-  console.log("🔐 authService: MFA verification started with:", values);
   try {
     const response = await authApiService.verifyMfa(values.code);
 
     if (response.data.success) {
-      console.log(
-        "✅ MFA verification successful, user data:",
-        response.data.user,
-      );
-
       // Usa os dados retornados pela verificação MFA diretamente
-      // NÃO tenta buscar perfil adicional - isso estava causando o erro 401
-      return {
+      const result = {
         user: {
           id: response.data.user.id,
           email: response.data.user.email,
           name: response.data.user.displayName || response.data.user.email,
-          role: response.data.user.role, // Agora é UserRole validado pelo Zod
-          avatar: undefined, // Não temos avatar na resposta MFA
+          role: response.data.user.role,
+          avatar: undefined,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        access_token: "", // O backend não retorna token final na verificação MFA
+        access_token: "",
+        isFirstLogin: response.data.isFirstLogin,
       };
+
+      return result;
     }
 
     throw createAuthError("mfa_invalid", "Código MFA inválido");
