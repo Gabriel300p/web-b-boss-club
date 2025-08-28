@@ -1,14 +1,19 @@
+import { useAuthActions } from "@features/auth/hooks/useAuth";
 import Logo from "@shared/assets/logo.svg";
 import { LanguageSwitcher } from "@shared/components/i18n/LanguageSwitcher";
 import { Button } from "@shared/components/ui/button";
 import { LogOut } from "lucide-react";
 
 export function TopBar() {
+  const { logout } = useAuthActions();
+
   const handleLogout = () => {
-    // Implementar lógica de logout aqui
-    // console.log("Logout realizado"); // Removed for production
-    // Redirecionar para a página de login ou limpar o estado de autenticação
-    window.location.href = "/auth/login";
+    console.log("🔐 TopBar: Logout iniciado");
+    console.log("🔑 Tokens antes do logout:", {
+      access_token: !!localStorage.getItem("access_token"),
+      temp_token: !!localStorage.getItem("temp_token"),
+    });
+    logout();
   };
 
   return (

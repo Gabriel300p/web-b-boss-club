@@ -85,7 +85,7 @@ export async function checkAuthRequest(): Promise<{
       id: response.data.id,
       email: response.data.email,
       name: response.data.displayName || response.data.email,
-      role: response.data.role as "admin" | "user" | "moderator",
+      role: response.data.role, // Agora é UserRole validado pelo Zod
       avatar: response.data.avatarUrl,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -151,25 +151,29 @@ export async function forgotPasswordRequest(values: {
 export async function mfaVerificationRequest(
   values: MfaVerificationCredentials,
 ): Promise<AuthResponse> {
+  console.log("🔐 authService: MFA verification started with:", values);
   try {
     const response = await authApiService.verifyMfa(values.code);
 
     if (response.data.success) {
-      // Busca o perfil completo do usuário após MFA verificado
-      const profileResponse = await authApiService.getProfile();
+      console.log(
+        "✅ MFA verification successful, user data:",
+        response.data.user,
+      );
 
-      // Constrói resposta compatível com AuthResponse
+      // Usa os dados retornados pela verificação MFA diretamente
+      // NÃO tenta buscar perfil adicional - isso estava causando o erro 401
       return {
         user: {
-          id: profileResponse.data.id,
-          email: profileResponse.data.email,
-          name: profileResponse.data.displayName || profileResponse.data.email,
-          role: profileResponse.data.role as "admin" | "user" | "moderator",
-          avatar: profileResponse.data.avatarUrl,
+          id: response.data.user.id,
+          email: response.data.user.email,
+          name: response.data.user.displayName || response.data.user.email,
+          role: response.data.user.role, // Agora é UserRole validado pelo Zod
+          avatar: undefined, // Não temos avatar na resposta MFA
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        access_token: authApiService.getAuthToken() || "",
+        access_token: "", // O backend não retorna token final na verificação MFA
       };
     }
 

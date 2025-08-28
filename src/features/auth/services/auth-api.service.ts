@@ -1,5 +1,6 @@
 import type { ApiResponse } from "../../../shared/services/api.service.js";
 import { apiService } from "../../../shared/services/api.service.js";
+import type { UserRole } from "../types/auth.js";
 
 // Tipos para as APIs de autenticação
 export interface LoginRequest {
@@ -14,7 +15,7 @@ export interface LoginResponse {
   user?: {
     id: string;
     email: string;
-    role: string;
+    role: UserRole;
     displayName?: string;
   };
 }
@@ -29,7 +30,7 @@ export interface VerifyMfaResponse {
   user: {
     id: string;
     email: string;
-    role: string;
+    role: UserRole;
     displayName?: string;
     mfaVerified: boolean;
   };
@@ -38,7 +39,7 @@ export interface VerifyMfaResponse {
 export interface UserProfile {
   id: string;
   email: string;
-  role: string;
+  role: UserRole;
   status: string;
   displayName?: string;
   avatarUrl?: string;
@@ -99,9 +100,13 @@ export class AuthApiService {
    * 🔐 Verifica código MFA
    */
   async verifyMfa(code: string): Promise<ApiResponse<VerifyMfaResponse>> {
+    console.log("🔐 authApiService: verifyMfa called with code:", code);
+
     const tempToken = apiService.getTempToken();
+    console.log("🔑 authApiService: tempToken found:", !!tempToken);
 
     if (!tempToken) {
+      console.error("❌ authApiService: No temp token found");
       throw new Error("Token temporário MFA não encontrado");
     }
 
@@ -115,10 +120,10 @@ export class AuthApiService {
       },
     );
 
-    // Remove token temporário após verificação bem-sucedida
-    if (response.data.success) {
-      localStorage.removeItem("temp_token");
-    }
+    // NÃO remove o token temporário aqui - será removido após buscar o perfil com sucesso
+    // if (response.data.success) {
+    //   localStorage.removeItem("temp_token");
+    // }
 
     return response;
   }
@@ -127,7 +132,35 @@ export class AuthApiService {
    * 👤 Obtém perfil do usuário autenticado
    */
   async getProfile(): Promise<ApiResponse<UserProfile>> {
-    return await apiService.get<UserProfile>(`${this.baseUrl}/profile`);
+    // Tenta primeiro com o token de autenticação normal
+    const authToken = this.getAuthToken();
+
+    if (authToken) {
+      return await apiService.get<UserProfile>(`${this.baseUrl}/profile`);
+    }
+
+    // Se não tiver token normal, tenta com o token temporário MFA
+    const tempToken = apiService.getTempToken();
+
+    if (tempToken) {
+      const response = await apiService.get<UserProfile>(
+        `${this.baseUrl}/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${tempToken}`,
+          },
+        },
+      );
+
+      // Se conseguir buscar o perfil com token temporário, remove ele
+      if (response.data) {
+        localStorage.removeItem("temp_token");
+      }
+
+      return response;
+    }
+
+    throw new Error("Nenhum token de autenticação encontrado");
   }
 
   /**
@@ -172,8 +205,8 @@ export class AuthApiService {
    */
   logout(): void {
     apiService.clearTokens();
-    // Redireciona para login
-    window.location.href = "/auth/login";
+    // NÃO redireciona aqui - o redirecionamento é feito pelo AuthContext
+    // window.location.href = "/auth/login";
   }
 
   /**

@@ -2,9 +2,11 @@
  * ⚙️ Configurações genéricas para APIs
  */
 
+import { CURRENT_API_URL } from "./environment.js";
+
 export const API_CONFIG = {
   // URL base da API
-  BASE_URL: import.meta.env.VITE_API_URL || "http://localhost:3002",
+  BASE_URL: CURRENT_API_URL,
 
   // Timeout das requisições (em ms)
   TIMEOUT: 10000,

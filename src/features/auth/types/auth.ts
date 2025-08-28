@@ -1,3 +1,10 @@
+import { z } from "zod";
+import { userRoleSchema, userStatusSchema } from "../schemas/auth.schema";
+
+// Tipos derivados dos schemas Zod
+export type UserRole = z.infer<typeof userRoleSchema>;
+export type UserStatus = z.infer<typeof userStatusSchema>;
+
 // Auth types para o novo fluxo backend
 export interface LoginCredentials {
   credential: string; // email ou CPF
@@ -17,7 +24,7 @@ export interface LoginResponse {
   user?: {
     id: string;
     email: string;
-    role: string;
+    role: UserRole;
     displayName?: string;
   };
 }
@@ -29,7 +36,7 @@ export interface MfaVerificationResponse {
   user: {
     id: string;
     email: string;
-    role: string;
+    role: UserRole;
     displayName?: string;
     mfaVerified: boolean;
   };
@@ -41,7 +48,7 @@ export interface AuthResponse {
     id: string;
     email: string;
     name: string;
-    role: "admin" | "user" | "moderator";
+    role: UserRole;
     avatar?: string;
     createdAt: Date;
     updatedAt: Date;

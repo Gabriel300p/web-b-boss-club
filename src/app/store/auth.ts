@@ -1,3 +1,4 @@
+import type { UserRole } from "@features/auth/types/auth";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
@@ -5,7 +6,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: "admin" | "user" | "moderator";
+  role: UserRole; // Agora usa os roles corretos do Prisma
   avatar?: string;
   createdAt: Date;
   updatedAt: Date;

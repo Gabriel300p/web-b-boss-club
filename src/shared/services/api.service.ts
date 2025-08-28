@@ -22,8 +22,10 @@ export interface ApiError {
   timestamp: string;
 }
 
-// Configuração base do axios
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3002";
+import { CURRENT_API_URL } from "../config/environment.js";
+
+// Configuração base do axios - URL direta do arquivo de configuração
+const API_BASE_URL = CURRENT_API_URL;
 
 /**
  * 🚀 Serviço HTTP base para comunicação com o backend
@@ -33,6 +35,9 @@ export class ApiService {
   private api: AxiosInstance;
 
   constructor() {
+    // Log da URL base sendo usada
+    console.log(`🚀 Inicializando API Service com URL: ${API_BASE_URL}`);
+
     this.api = axios.create({
       baseURL: API_BASE_URL,
       timeout: 10000,
@@ -51,13 +56,19 @@ export class ApiService {
     // Request interceptor - adiciona token de autenticação
     this.api.interceptors.request.use(
       (config) => {
+        console.log(
+          `📤 Request: ${config.method?.toUpperCase()} ${config.url}`,
+        );
+
         const token = this.getAuthToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
+          console.log("🔑 Token de autenticação adicionado");
         }
         return config;
       },
       (error) => {
+        console.error("❌ Erro no request interceptor:", error);
         return Promise.reject(error);
       },
     );
@@ -65,11 +76,18 @@ export class ApiService {
     // Response interceptor - trata erros e tokens expirados
     this.api.interceptors.response.use(
       (response: AxiosResponse) => {
+        console.log(`📥 Response: ${response.status} ${response.config.url}`);
         return response;
       },
       async (error: AxiosError<ApiError>) => {
+        console.error(
+          `❌ Response Error: ${error.response?.status} ${error.config?.url}`,
+          error.message,
+        );
+
         if (error.response?.status === 401) {
           // Token expirado ou inválido
+          console.log("🔒 Token expirado - redirecionando para login");
           this.handleUnauthorized();
         }
         return Promise.reject(this.formatError(error));

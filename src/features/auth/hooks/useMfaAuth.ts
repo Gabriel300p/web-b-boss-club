@@ -28,5 +28,3 @@ export function useMfaAuth() {
     hasError: !!(mfaVerificationError || resendMfaCodeError),
   };
 }
-
-

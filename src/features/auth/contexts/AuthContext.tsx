@@ -47,6 +47,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
     retry: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
+    refetchOnMount: false, // Não refaz query ao montar componente
+    refetchOnReconnect: false, // Não refaz query ao reconectar
+    enabled: !isAuthenticated, // Só executa se não estiver autenticado
   });
 
   // Login mutation with enhanced error handling and MFA support
@@ -86,7 +89,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           id: data.user.id,
           email: data.user.email,
           name: data.user.displayName || data.user.email,
-          role: data.user.role as "admin" | "user" | "moderator",
+          role: data.user.role, // Agora é UserRole validado pelo Zod
           avatar: undefined,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -173,25 +176,52 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // MFA verification mutation
   const mfaVerificationMutation = useMutation({
     mutationFn: (credentials: MfaVerificationCredentials) => {
+      console.log(
+        "🔐 AuthContext: MFA verification mutation started with:",
+        credentials,
+      );
       setError(null);
       return authService.verifyMfa(credentials);
     },
     onSuccess: (data: AuthResponse) => {
-      // Store user and token
+      console.log("✅ AuthContext: MFA verification successful, data:", data);
+
+      // Store user
       storeLogin(data.user);
-      localStorage.setItem("access_token", data.access_token);
 
-      showToast({
-        type: "success",
-        title: t("toasts.success.mfaTitle"),
-        message: t("toasts.success.mfaMessage", { name: data.user.name }),
-        expandable: true,
-        duration: 3000,
-      });
+      // Se não tiver token de acesso, navega diretamente para home
+      // O useQuery já vai buscar o perfil automaticamente se necessário
+      if (!data.access_token) {
+        console.log("⚠️ No access token after MFA, navigating to home...");
 
-      setTimeout(() => {
-        navigate({ to: "/home" });
-      }, 300);
+        // Navega diretamente para home - o useQuery vai cuidar do resto
+        showToast({
+          type: "success",
+          title: t("toasts.success.mfaTitle"),
+          message: t("toasts.success.mfaMessage", { name: data.user.name }),
+          expandable: true,
+          duration: 3000,
+        });
+
+        setTimeout(() => {
+          navigate({ to: "/home" });
+        }, 300);
+      } else {
+        // Se tiver token, salva e navega normalmente
+        localStorage.setItem("access_token", data.access_token);
+
+        showToast({
+          type: "success",
+          title: t("toasts.success.mfaTitle"),
+          message: t("toasts.success.mfaMessage", { name: data.user.name }),
+          expandable: true,
+          duration: 3000,
+        });
+
+        setTimeout(() => {
+          navigate({ to: "/home" });
+        }, 300);
+      }
     },
     onError: (error: AuthError) => {
       setError(error.message);
