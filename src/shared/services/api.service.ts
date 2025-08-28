@@ -68,7 +68,6 @@ export class ApiService {
     // Response interceptor - trata erros e tokens expirados
     this.api.interceptors.response.use(
       (response: AxiosResponse) => {
-        console.log(`📥 Response: ${response.status} ${response.config.url}`);
         return response;
       },
       async (error: AxiosError<ApiError>) => {
