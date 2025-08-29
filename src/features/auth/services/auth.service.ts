@@ -113,7 +113,7 @@ export async function checkAuthRequest(): Promise<{
 export async function logoutRequest(): Promise<void> {
   try {
     await authApiService.logout();
-  } catch (error) {
+  } catch {
     // Silent fail for logout - we'll clear local storage anyway
   }
 }
