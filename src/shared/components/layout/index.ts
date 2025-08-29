@@ -1,18 +1,18 @@
 export { Breadcrumb } from "./Breadcrumb";
 export { MainLayout } from "./MainLayout";
-export { TopBar } from "./TopBar";
+export { TopBar } from "./topbar";
 
 // Novo TopBar modular
-export { TopBar as TopBarNew } from "./TopBar";
-export { TopBarNotifications } from "./TopBar/TopBarNotifications";
-export { TopBarSearch } from "./TopBar/TopBarSearch";
-export { TopBarSidebarToggle } from "./TopBar/TopBarSidebarToggle";
-export { TopBarUserMenu } from "./TopBar/TopBarUserMenu";
+export { TopBar as TopBarNew } from "./topbar";
+export { TopBarNotifications } from "./topbar/TopBarNotifications";
+export { TopBarSearch } from "./topbar/TopBarSearch";
+export { TopBarSidebarToggle } from "./topbar/TopBarSidebarToggle";
+export { TopBarUserMenu } from "./topbar/TopBarUserMenu";
 
 // Sidebar
-export { Sidebar } from "./Sidebar";
-export { SidebarFooter } from "./Sidebar/SidebarFooter";
-export { SidebarHeader } from "./Sidebar/SidebarHeader";
-export { SidebarItem } from "./Sidebar/SidebarItem";
-export { SidebarNavigation } from "./Sidebar/SidebarNavigation";
-export { SidebarSection } from "./Sidebar/SidebarSection";
+export { Sidebar } from "./sidebar";
+export { SidebarFooter } from "./sidebar/SidebarFooter";
+export { SidebarHeader } from "./sidebar/SidebarHeader";
+export { SidebarItem } from "./sidebar/SidebarItem";
+export { SidebarNavigation } from "./sidebar/SidebarNavigation";
+export { SidebarSection } from "./sidebar/SidebarSection";
