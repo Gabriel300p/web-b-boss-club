@@ -1,4 +1,4 @@
-import { CaretLeftIcon } from "@phosphor-icons/react";
+import { CaretLeftIcon, ListIcon } from "@phosphor-icons/react";
 import { Button } from "@shared/components/ui/button";
 import { useSidebar } from "@shared/contexts/SidebarContext";
 import { cn } from "@shared/lib/utils";
@@ -57,6 +57,29 @@ export function TopBarSidebarToggle({ className }: TopBarSidebarToggleProps) {
     }
   };
 
+  const renderIcon = () => {
+    if (isMobile) {
+      // Em mobile, usa ícone de menu (lista)
+      return (
+        <ListIcon
+          weight="bold"
+          className="size-5 transition-transform duration-200"
+        />
+      );
+    } else {
+      // Em desktop, usa ícone de seta com rotação
+      return (
+        <CaretLeftIcon
+          weight="bold"
+          className={cn(
+            "size-5 transition-transform duration-200",
+            getIconRotation(),
+          )}
+        />
+      );
+    }
+  };
+
   return (
     <Button
       variant="ghost"
@@ -68,13 +91,7 @@ export function TopBarSidebarToggle({ className }: TopBarSidebarToggleProps) {
       aria-label={getAriaLabel()}
       aria-expanded={getAriaExpanded()}
     >
-      <CaretLeftIcon
-        weight="bold"
-        className={cn(
-          "size-5 transition-transform duration-200",
-          getIconRotation(),
-        )}
-      />
+      {renderIcon()}
     </Button>
   );
 }

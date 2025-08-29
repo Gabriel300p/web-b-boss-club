@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
   type PropsWithChildren,
 } from "react";
@@ -20,6 +21,18 @@ const SidebarContext = createContext<SidebarContextType | null>(null);
 export function SidebarProvider({ children }: PropsWithChildren) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Fechar sidebar automaticamente quando sair do mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024 && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isOpen]);
 
   const toggle = () => setIsOpen((prev) => !prev);
   const open = () => setIsOpen(true);
@@ -48,6 +61,8 @@ export function SidebarProvider({ children }: PropsWithChildren) {
   );
 }
 
+// Hook personalizado para usar o contexto
+// eslint-disable-next-line react-refresh/only-export-components
 export function useSidebar(): SidebarContextType {
   const context = useContext(SidebarContext);
 

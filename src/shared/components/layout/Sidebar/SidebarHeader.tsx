@@ -10,8 +10,8 @@ export function SidebarHeader({ isCollapsed }: SidebarHeaderProps) {
   return (
     <div
       className={cn(
-        "flex items-center px-6 pt-5 pb-6",
-        isCollapsed && "px-4 py-3.5",
+        "flex items-center",
+        isCollapsed ? "justify-center px-2 py-3.5" : "px-6 pt-5 pb-8",
       )}
     >
       {/* Logo placeholder */}

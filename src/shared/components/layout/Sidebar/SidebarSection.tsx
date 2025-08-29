@@ -41,7 +41,12 @@ export function SidebarSection({
           isCollapsed ? "h-0 opacity-0" : "h-auto opacity-100",
         )}
       >
-        <h3 className="px-3 text-xs font-semibold tracking-wider text-neutral-400 uppercase">
+        <h3
+          className={cn(
+            "text-xs font-semibold tracking-wider text-neutral-400 uppercase",
+            isCollapsed ? "px-0" : "px-3",
+          )}
+        >
           {title}
         </h3>
       </div>

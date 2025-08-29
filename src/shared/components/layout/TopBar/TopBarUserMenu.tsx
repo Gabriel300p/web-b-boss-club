@@ -78,8 +78,8 @@ export function TopBarUserMenu({ className }: TopBarUserMenuProps) {
         <Button
           variant="ghost"
           className={cn(
-            "h-auto p-0 text-neutral-100 transition-colors hover:bg-neutral-700",
-            "flex items-center gap-3 rounded-md",
+            "h-auto p-1 text-neutral-100 transition-colors hover:bg-neutral-700 sm:p-0",
+            "flex items-center gap-0 rounded-md sm:gap-3",
             className,
           )}
           aria-label="Menu do usuário"
@@ -92,11 +92,11 @@ export function TopBarUserMenu({ className }: TopBarUserMenuProps) {
           </div>
 
           {/* Informações do usuário */}
-          <div className="flex flex-col items-start gap-1 text-left">
-            <span className="text-sm leading-tight font-medium">
+          <div className="hidden flex-col items-start gap-1 text-left sm:flex">
+            <span className="max-w-32 truncate text-sm leading-tight font-medium lg:max-w-none">
               {displayInfo.primaryText}
             </span>
-            <span className="text-muted-foreground text-xs leading-tight">
+            <span className="text-muted-foreground max-w-32 truncate text-xs leading-tight lg:max-w-none">
               {displayInfo.secondaryText.length > 20
                 ? `${displayInfo.secondaryText.substring(0, 20)}...`
                 : displayInfo.secondaryText}
@@ -105,15 +105,19 @@ export function TopBarUserMenu({ className }: TopBarUserMenuProps) {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56 p-2" sideOffset={8}>
+      <DropdownMenuContent
+        align="end"
+        className="w-56 p-2 sm:w-64"
+        sideOffset={8}
+      >
         <DropdownMenuItem className="cursor-pointer p-3">
-          <UserIcon className="mr-2 h-4 w-4" />
-          Perfil
+          <UserIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+          <span className="truncate">Perfil</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className="cursor-pointer p-3">
-          <GearIcon className="mr-2 h-4 w-4" />
-          Configurações
+          <GearIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+          <span className="truncate">Configurações</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
@@ -122,8 +126,8 @@ export function TopBarUserMenu({ className }: TopBarUserMenuProps) {
           className="cursor-pointer p-3 text-red-400 transition-colors duration-200 hover:bg-red-900/10"
           onClick={handleLogout}
         >
-          <SignOutIcon className="mr-2 h-4 w-4 text-red-400" />
-          Sair
+          <SignOutIcon className="mr-2 h-4 w-4 flex-shrink-0 text-red-400" />
+          <span className="truncate">Sair</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

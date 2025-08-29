@@ -1,4 +1,4 @@
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { Button } from "@shared/components/ui/button";
 import { cn } from "@shared/lib/utils";
 import { useEffect, useState } from "react";
@@ -30,15 +30,17 @@ export function TopBarSearch({ className }: TopBarSearchProps) {
         variant="ghost"
         onClick={() => setIsModalOpen(true)}
         className={cn(
-          "border border-neutral-800 px-3 text-neutral-400 transition-colors hover:bg-neutral-700 hover:text-neutral-100",
-          "min-w-sm justify-start gap-2 rounded-md",
+          "border border-neutral-800 text-neutral-400 transition-colors hover:bg-neutral-700 hover:text-neutral-100",
+          "justify-start gap-2 rounded-md",
+          // Mobile: botão quadrado apenas com ícone
+          "flex size-11 items-center justify-center sm:min-w-64 sm:px-3",
           className,
         )}
         aria-label="Pesquisar no sistema"
       >
-        <MagnifyingGlass className="h-4 w-4" />
-        <span className="text-sm">Pesquisar...</span>
-        <kbd className="ml-auto rounded bg-neutral-800 px-1.5 py-0.5 text-xs text-neutral-300">
+        <MagnifyingGlassIcon className="size-5 flex-shrink-0" />
+        <span className="hidden truncate text-sm sm:inline">Pesquisar...</span>
+        <kbd className="ml-auto hidden rounded bg-neutral-800 px-1.5 py-0.5 text-xs text-neutral-300 md:inline">
           Ctrl + K
         </kbd>
       </Button>

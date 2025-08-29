@@ -37,9 +37,12 @@ export function Sidebar({ className }: SidebarProps) {
       {/* Sidebar com animação de entrada */}
       <aside
         className={cn(
-          "text-neutral-10 fixed top-0 left-0 z-50 h-screen w-64 bg-neutral-900 py-2 lg:relative lg:h-full",
-          // Estado colapsado
+          "text-neutral-10 fixed top-0 left-0 z-50 h-screen w-64 overflow-hidden bg-neutral-900 py-2 lg:relative lg:h-full",
+          // Estado colapsado em desktop
           isCollapsed && "lg:w-20",
+          // Controle de visibilidade em mobile
+          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+          "transition-transform duration-300 ease-in-out lg:transition-all",
           className,
         )}
       >

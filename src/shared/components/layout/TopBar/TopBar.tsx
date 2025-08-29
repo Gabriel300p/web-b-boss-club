@@ -13,23 +13,15 @@ export function TopBar({ className }: TopBarProps) {
     <header
       className={cn("bg-neutral-900 text-neutral-200 shadow-md", className)}
     >
-      <div className="flex items-center justify-between px-4 py-3 md:px-8 md:py-4 lg:pr-12 lg:pl-6">
-        {/* Lado esquerdo: Botão sidebar e busca */}
-        <div className="flex items-center gap-4">
+      <div className="xs:px-3 xs:py-3 flex items-center justify-between px-2 py-2 sm:px-4 md:px-8 md:py-4 lg:pr-12 lg:pl-6">
+        <div className="flex items-center gap-2 sm:gap-4">
           <TopBarSidebarToggle />
           <TopBarSearch />
         </div>
-
-        {/* Espaçador central */}
         <div className="flex-1" />
-
-        {/* Lado direito: Notificações e usuário */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3 sm:gap-5">
           <TopBarNotifications />
-
-          {/* Separador vertical */}
-          <div className="h-6 w-px bg-neutral-600" />
-
+          <div className="hidden h-6 w-px bg-neutral-600 sm:block" />
           <TopBarUserMenu />
         </div>
       </div>

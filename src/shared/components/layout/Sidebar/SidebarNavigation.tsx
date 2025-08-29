@@ -10,6 +10,7 @@ import {
   type IconProps,
 } from "@phosphor-icons/react";
 import { useSidebar } from "@shared/contexts/SidebarContext";
+import { cn } from "@shared/lib/utils";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { SidebarSection } from "./SidebarSection";
 
@@ -113,7 +114,12 @@ export function SidebarNavigation({ isCollapsed }: SidebarNavigationProps) {
   };
 
   return (
-    <nav className="flex-1 space-y-6 overflow-y-auto p-4">
+    <nav
+      className={cn(
+        "flex-1 space-y-6 overflow-y-auto",
+        isCollapsed ? "px-2" : "px-4",
+      )}
+    >
       {/* Seção Principal */}
       <SidebarSection
         title="Principal"

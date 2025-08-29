@@ -40,23 +40,36 @@ export function TopBarNotifications({ className }: TopBarNotificationsProps) {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-lg p-0" sideOffset={8}>
-        <div className="border-b p-4">
+      <DropdownMenuContent
+        align="end"
+        className="w-80 p-0 sm:w-96"
+        sideOffset={8}
+      >
+        <div className="border-b p-3 sm:p-4">
           <h3 className="text-sm font-semibold">Notificações</h3>
           <p className="text-muted-foreground text-xs">
             {unreadCount} não lida{unreadCount !== 1 ? "s" : ""}
           </p>
         </div>
 
-        <div className="max-h-64 overflow-y-auto">
+        <div className="max-h-64 overflow-y-auto sm:max-h-80">
           {/* Notificação 1 */}
-          <DropdownMenuItem className="hover:bg-accent cursor-pointer p-4">
+          <DropdownMenuItem className="hover:bg-accent cursor-pointer p-3 sm:p-4">
             <div className="flex-1">
               <div className="flex items-start gap-3">
                 <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Novo agendamento</p>
-                  <p className="text-muted-foreground text-xs">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">
+                    Novo agendamento
+                  </p>
+                  <p
+                    className="text-muted-foreground overflow-hidden text-xs text-ellipsis"
+                    style={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                    }}
+                  >
                     João Silva agendou um horário para hoje às 14:00
                   </p>
                   <p className="text-muted-foreground mt-1 text-xs">
@@ -68,13 +81,22 @@ export function TopBarNotifications({ className }: TopBarNotificationsProps) {
           </DropdownMenuItem>
 
           {/* Notificação 2 */}
-          <DropdownMenuItem className="hover:bg-accent cursor-pointer p-4">
+          <DropdownMenuItem className="hover:bg-accent cursor-pointer p-3 sm:p-4">
             <div className="flex-1">
               <div className="flex items-start gap-3">
                 <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-green-500"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Pagamento confirmado</p>
-                  <p className="text-muted-foreground text-xs">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">
+                    Pagamento confirmado
+                  </p>
+                  <p
+                    className="text-muted-foreground overflow-hidden text-xs text-ellipsis"
+                    style={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                    }}
+                  >
                     Pagamento do agendamento #1234 foi confirmado
                   </p>
                   <p className="text-muted-foreground mt-1 text-xs">
@@ -86,13 +108,22 @@ export function TopBarNotifications({ className }: TopBarNotificationsProps) {
           </DropdownMenuItem>
 
           {/* Notificação 3 */}
-          <DropdownMenuItem className="hover:bg-accent cursor-pointer p-4">
+          <DropdownMenuItem className="hover:bg-accent cursor-pointer p-3 sm:p-4">
             <div className="flex-1">
               <div className="flex items-start gap-3">
                 <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-yellow-500"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Lembrete de horário</p>
-                  <p className="text-muted-foreground text-xs">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">
+                    Lembrete de horário
+                  </p>
+                  <p
+                    className="text-muted-foreground overflow-hidden text-xs text-ellipsis"
+                    style={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                    }}
+                  >
                     Você tem um agendamento em 30 minutos
                   </p>
                   <p className="text-muted-foreground mt-1 text-xs">
