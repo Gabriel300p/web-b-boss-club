@@ -13,10 +13,12 @@ interface BreadcrumbProps {
 
 export function Breadcrumb({ items }: BreadcrumbProps) {
   return (
-    <nav className="mb-4 flex items-center space-x-1 text-sm text-gray-500">
+    <nav className="mb-4 flex items-center space-x-1 text-sm text-neutral-500">
       {items.map((item, index) => (
         <div key={index} className="flex items-center">
-          {index > 0 && <ChevronRight className="mx-1 h-4 w-4 text-gray-400" />}
+          {index > 0 && (
+            <ChevronRight className="mx-1 h-4 w-4 text-neutral-400" />
+          )}
           {item.href && !item.isActive ? (
             <Link
               to={item.href}
@@ -27,7 +29,9 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
           ) : (
             <span
               className={
-                item.isActive ? "font-medium text-gray-900" : "text-gray-500"
+                item.isActive
+                  ? "font-medium text-neutral-900"
+                  : "text-neutral-500"
               }
             >
               {item.label}

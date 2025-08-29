@@ -32,7 +32,7 @@ export function CommunicationTableSkeleton({ rows = 5 }: { rows?: number }) {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * 0.1 }}
-          className="grid grid-cols-5 gap-4 border-b border-gray-100 py-3"
+          className="grid grid-cols-5 gap-4 border-b border-neutral-100 py-3"
         >
           <SkeletonLine width="85%" />
           <SkeletonLine width="65%" />

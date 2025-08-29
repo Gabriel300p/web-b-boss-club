@@ -1,0 +1,64 @@
+{
+  "pages": {
+    "createBarbershop": {
+      "title": "Criar Nova Barbearia",
+      "subtitle": "Configure sua barbearia em duas etapas simples"
+    }
+  },
+  "forms": {
+    "barbershopInfo": {
+      "title": "Informações da Barbearia",
+      "subtitle": "Configure os dados básicos da sua barbearia",
+      "fields": {
+        "name": "Nome da Barbearia",
+        "namePlaceholder": "Ex: Barbearia do João",
+        "description": "Descrição",
+        "descriptionPlaceholder": "Conte um pouco sobre sua barbearia...",
+        "phone": "Telefone",
+        "phonePlaceholder": "(11) 99999-9999",
+        "website": "Website",
+        "websitePlaceholder": "https://minhabarbearia.com",
+        "logo_url": "URL do Logo",
+        "logo_urlPlaceholder": "https://exemplo.com/logo.png",
+        "cover_url": "URL da Capa",
+        "cover_urlPlaceholder": "https://exemplo.com/capa.png",
+        "appointment_link": "Link de Agendamento",
+        "appointment_linkPlaceholder": "https://agendamento.com"
+      }
+    },
+    "userInfo": {
+      "title": "Informações do Proprietário",
+      "subtitle": "Configure os dados da sua conta",
+      "fields": {
+        "email": "Email",
+        "emailPlaceholder": "seu@email.com",
+        "cpf": "CPF",
+        "cpfPlaceholder": "123.456.789-00",
+        "phone": "Telefone",
+        "phonePlaceholder": "(11) 99999-9999",
+        "isforeigner": "Sou estrangeiro",
+        "terms": "Aceito os termos e condições"
+      }
+    }
+  },
+  "actions": {
+    "next": "Próximo",
+    "previous": "Anterior",
+    "create": "Criar Barbearia",
+    "creating": "Criando...",
+    "skip": "Pular"
+  },
+  "steps": {
+    "barbershop": "Barbearia",
+    "owner": "Proprietário"
+  },
+  "messages": {
+    "success": "Barbearia criada com sucesso!",
+    "checkEmail": "Verifique seu email para receber as credenciais de acesso.",
+    "redirecting": "Redirecionando para o login..."
+  },
+  "errors": {
+    "createFailed": "Erro ao criar barbearia. Tente novamente.",
+    "validationFailed": "Por favor, corrija os erros no formulário."
+  }
+}

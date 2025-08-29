@@ -13,18 +13,18 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import type z from "zod";
-import { useCurrentUserEmail } from "../../hooks/useAuth";
+
 import { useMfaAuth } from "../../hooks/useMfaAuth";
 import { mfaVerificationSchema } from "../../schemas/auth.schema";
 
 export function MfaVerificationForm() {
   const { t } = useTranslation("auth");
-  const userEmail = useCurrentUserEmail();
   const form = useForm<z.infer<typeof mfaVerificationSchema>>({
     resolver: zodResolver(mfaVerificationSchema),
-    defaultValues: { email: userEmail || "" },
+    defaultValues: { code: "" },
   });
   const [value, setValue] = React.useState("");
+
   const [countdown, setCountdown] = useState(30);
   const [canResend, setCanResend] = useState(false);
 
@@ -62,21 +62,29 @@ export function MfaVerificationForm() {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((values) =>
-          verifyMfa({ ...values, code: value }),
-        )}
+        onSubmit={(e) => {
+          e.preventDefault();
+          console.log("🔐 MFA Form submitted with form data:", { code: value });
+          console.log(
+            "🔑 Current temp token:",
+            localStorage.getItem("temp_token"),
+          );
+          console.log("📝 Input value:", value);
+
+          verifyMfa({ code: value });
+        }}
         className="flex flex-col items-stretch justify-center gap-8"
       >
         <div className="space-y-4">
           <FormField
             control={form.control}
-            name="email"
+            name="code"
             render={() => (
               <FormItem>
                 <InputOTP
                   maxLength={6}
                   value={value}
-                  onChange={(value) => setValue(value)}
+                  onChange={(newValue) => setValue(newValue)}
                 >
                   <InputOTPGroup>
                     <InputOTPSlot index={0} />

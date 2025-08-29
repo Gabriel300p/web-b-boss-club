@@ -115,7 +115,7 @@ export default function ComunicacoesPage() {
           <span className="text-primary text-sm font-medium underline">
             {t("breadcrumb.section")}
           </span>
-          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+          <h1 className="text-2xl font-bold text-neutral-900">{t("title")}</h1>
         </div>
         <Button
           onClick={openAddModal}

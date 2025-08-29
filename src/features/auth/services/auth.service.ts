@@ -1,6 +1,12 @@
 // src/features/auth/services/auth.service.ts
-import axios from "axios";
-import type { AuthError, AuthResponse, LoginCredentials } from "../types/auth";
+import type {
+  AuthError,
+  AuthResponse,
+  LoginCredentials,
+  LoginResponse,
+  MfaVerificationCredentials,
+} from "../types/auth";
+import { authApiService } from "./auth-api.service.js";
 
 // Create custom auth error
 function createAuthError(code: AuthError["code"], message: string): AuthError {
@@ -11,51 +17,60 @@ function createAuthError(code: AuthError["code"], message: string): AuthError {
 
 export async function loginRequest(
   values: LoginCredentials,
-): Promise<AuthResponse> {
+): Promise<LoginResponse> {
   try {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/token?grant_type=password`,
-      values,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
-        },
-      },
-    );
+    const response = await authApiService.login(values);
 
-    return data;
+    // Se login for bem-sucedido e não precisar de MFA, retorna diretamente
+    if (!response.data.mfaRequired && response.data.token) {
+      return response.data;
+    }
+
+    // Se precisar de MFA, retorna com flag
+    if (response.data.mfaRequired) {
+      return response.data;
+    }
+
+    throw createAuthError("server_error", "Resposta inválida do servidor");
   } catch (error: unknown) {
-    interface AxiosError {
-      response?: { status: number };
-      code?: string;
-      message?: string;
-    }
-    const axiosError = error as AxiosError;
-    // Enhanced error handling
-    if (axiosError.response?.status === 400) {
-      throw createAuthError("invalid_credentials", "Email ou senha incorretos");
-    }
-    if (axiosError.response?.status === 401) {
-      throw createAuthError("invalid_credentials", "Email ou senha incorretos");
-    }
-    if (axiosError.response?.status === 404) {
-      throw createAuthError("user_not_found", "Usuário não encontrado");
-    }
-    if (axiosError.response?.status === 423) {
+    // Trata erros do authApiService
+    if (error instanceof Error) {
+      // Mapeia códigos de erro do backend para códigos locais
+      if (
+        error.message.includes("credenciais") ||
+        error.message.includes("senha")
+      ) {
+        throw createAuthError(
+          "invalid_credentials",
+          "Email/CPF ou senha incorretos",
+        );
+      }
+      if (error.message.includes("não encontrado")) {
+        throw createAuthError("user_not_found", "Usuário não encontrado");
+      }
+      if (
+        error.message.includes("bloqueada") ||
+        error.message.includes("suspensa")
+      ) {
+        throw createAuthError(
+          "account_locked",
+          "Conta temporariamente bloqueada",
+        );
+      }
+      if (error.message.includes("rede") || error.message.includes("conexão")) {
+        throw createAuthError(
+          "network_error",
+          "Erro de conexão com o servidor",
+        );
+      }
+
       throw createAuthError(
-        "account_locked",
-        "Conta temporariamente bloqueada",
+        "server_error",
+        error.message || "Erro interno do servidor",
       );
     }
-    if (!navigator.onLine || axiosError.code === "NETWORK_ERROR") {
-      throw createAuthError("network_error", "Erro de conexão com o servidor");
-    }
 
-    throw createAuthError(
-      "server_error",
-      axiosError.message || "Erro interno do servidor",
-    );
+    throw createAuthError("server_error", "Erro desconhecido durante o login");
   }
 }
 
@@ -63,55 +78,152 @@ export async function checkAuthRequest(): Promise<{
   user: AuthResponse["user"];
 }> {
   try {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      throw createAuthError("unauthorized", "Token não encontrado");
-    }
+    const response = await authApiService.getProfile();
 
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/user`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
-        },
-      },
-    );
+    // Mapeia UserProfile para o formato esperado
+    const user: AuthResponse["user"] = {
+      id: response.data.id,
+      email: response.data.email,
+      name: response.data.displayName || response.data.email,
+      role: response.data.role, // Agora é UserRole validado pelo Zod
+      avatar: response.data.avatarUrl,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-    return { user: data.user };
+    return { user };
   } catch (error: unknown) {
-    interface AxiosError {
-      response?: { status: number };
-      message?: string;
+    if (error instanceof Error) {
+      if (
+        error.message.includes("não autorizado") ||
+        error.message.includes("expirado")
+      ) {
+        localStorage.removeItem("access_token");
+        throw createAuthError("unauthorized", "Sessão expirada");
+      }
+      throw createAuthError("server_error", "Erro ao verificar autenticação");
     }
-    const axiosError = error as AxiosError;
-
-    if (axiosError.response?.status === 401) {
-      localStorage.removeItem("access_token");
-      throw createAuthError("unauthorized", "Sessão expirada");
-    }
-    throw createAuthError("server_error", "Erro ao verificar autenticação");
+    throw createAuthError(
+      "server_error",
+      "Erro desconhecido ao verificar autenticação",
+    );
   }
 }
 
 export async function logoutRequest(): Promise<void> {
   try {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      await axios.post(
-        `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
-          },
-        },
+    await authApiService.logout();
+  } catch {
+    // Silent fail for logout - we'll clear local storage anyway
+  }
+}
+
+export async function forgotPasswordRequest(values: {
+  email: string;
+}): Promise<{ message: string }> {
+  try {
+    const response = await authApiService.resetPassword(values.email);
+    return { message: response.data.message };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (error.message.includes("não encontrado")) {
+        throw createAuthError("user_not_found", "Email não encontrado");
+      }
+      if (error.message.includes("rede") || error.message.includes("conexão")) {
+        throw createAuthError(
+          "network_error",
+          "Erro de conexão com o servidor",
+        );
+      }
+      throw createAuthError(
+        "server_error",
+        error.message || "Erro ao solicitar reset de senha",
       );
     }
-  } catch (error) {
-    // Silent fail for logout - we'll clear local storage anyway
-    console.warn("Logout request failed:", error);
+    throw createAuthError(
+      "server_error",
+      "Erro desconhecido ao solicitar reset de senha",
+    );
+  }
+}
+
+export async function mfaVerificationRequest(
+  values: MfaVerificationCredentials,
+): Promise<AuthResponse> {
+  try {
+    const response = await authApiService.verifyMfa(values.code);
+
+    if (response.data.success) {
+      // Usa os dados retornados pela verificação MFA diretamente
+      const result = {
+        user: {
+          id: response.data.user.id,
+          email: response.data.user.email,
+          name: response.data.user.displayName || response.data.user.email,
+          role: response.data.user.role,
+          avatar: undefined,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        access_token: "",
+        isFirstLogin: response.data.isFirstLogin,
+      };
+
+      return result;
+    }
+
+    throw createAuthError("mfa_invalid", "Código MFA inválido");
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (
+        error.message.includes("inválido") ||
+        error.message.includes("expirado")
+      ) {
+        throw createAuthError("mfa_invalid", "Código MFA inválido ou expirado");
+      }
+      if (error.message.includes("não encontrado")) {
+        throw createAuthError("user_not_found", "Usuário não encontrado");
+      }
+      if (error.message.includes("rede") || error.message.includes("conexão")) {
+        throw createAuthError(
+          "network_error",
+          "Erro de conexão com o servidor",
+        );
+      }
+      throw createAuthError(
+        "server_error",
+        error.message || "Erro ao verificar código MFA",
+      );
+    }
+    throw createAuthError(
+      "server_error",
+      "Erro desconhecido ao verificar código MFA",
+    );
+  }
+}
+
+export async function resendMfaCodeRequest(): Promise<{ message: string }> {
+  try {
+    // Simulate API call for now - implementar quando backend suportar
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return { message: "Código reenviado com sucesso" };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (error.message.includes("rede") || error.message.includes("conexão")) {
+        throw createAuthError(
+          "network_error",
+          "Erro de conexão com o servidor",
+        );
+      }
+      throw createAuthError(
+        "server_error",
+        error.message || "Erro ao reenviar código MFA",
+      );
+    }
+    throw createAuthError(
+      "server_error",
+      "Erro desconhecido ao reenviar código MFA",
+    );
   }
 }
 
@@ -123,120 +235,3 @@ export const authService = {
   verifyMfa: mfaVerificationRequest,
   resendMfaCode: resendMfaCodeRequest,
 };
-
-export async function forgotPasswordRequest(values: {
-  email: string;
-}): Promise<{ message: string }> {
-  try {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_SUPABASE_URL}/auth/reset-password`,
-      values,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
-        },
-      },
-    );
-
-    return data;
-  } catch (error: unknown) {
-    interface AxiosError {
-      response?: { status: number };
-      code?: string;
-      message?: string;
-    }
-    const axiosError = error as AxiosError;
-
-    if (axiosError.response?.status === 404) {
-      throw createAuthError("user_not_found", "Email não encontrado");
-    }
-    if (!navigator.onLine || axiosError.code === "NETWORK_ERROR") {
-      throw createAuthError("network_error", "Erro de conexão com o servidor");
-    }
-
-    throw createAuthError(
-      "server_error",
-      axiosError.message || "Erro ao solicitar reset de senha",
-    );
-  }
-}
-
-export async function mfaVerificationRequest(values: {
-  email: string;
-  code: string;
-}): Promise<AuthResponse> {
-  try {
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_SUPABASE_URL}/auth/verify-mfa`,
-      values,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
-        },
-      },
-    );
-
-    return data;
-  } catch (error: unknown) {
-    interface AxiosError {
-      response?: { status: number };
-      code?: string;
-      message?: string;
-    }
-    const axiosError = error as AxiosError;
-
-    if (axiosError.response?.status === 401) {
-      throw createAuthError("invalid_credentials", "Código MFA inválido");
-    }
-    if (axiosError.response?.status === 404) {
-      throw createAuthError("user_not_found", "Usuário não encontrado");
-    }
-    if (!navigator.onLine || axiosError.code === "NETWORK_ERROR") {
-      throw createAuthError("network_error", "Erro de conexão com o servidor");
-    }
-
-    throw createAuthError(
-      "server_error",
-      axiosError.message || "Erro ao verificar código MFA",
-    );
-  }
-}
-
-export async function resendMfaCodeRequest(): Promise<{ message: string }> {
-  try {
-    // Simulate API call for now
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // In a real app, this would call your backend API
-    // const { data } = await axios.post(
-    //   `${import.meta.env.VITE_SUPABASE_URL}/auth/resend-mfa-code`,
-    //   {},
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
-    //     },
-    //   },
-    // );
-
-    return { message: "Código reenviado com sucesso" };
-  } catch (error: unknown) {
-    interface AxiosError {
-      response?: { status: number };
-      code?: string;
-      message?: string;
-    }
-    const axiosError = error as AxiosError;
-
-    if (!navigator.onLine || axiosError.code === "NETWORK_ERROR") {
-      throw createAuthError("network_error", "Erro de conexão com o servidor");
-    }
-
-    throw createAuthError(
-      "server_error",
-      axiosError.message || "Erro ao reenviar código MFA",
-    );
-  }
-}

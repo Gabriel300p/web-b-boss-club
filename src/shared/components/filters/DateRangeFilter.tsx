@@ -146,7 +146,7 @@ export function DateRangeFilter({
               showFooter={false}
               primaryColor="blue"
               inputClassName="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              toggleClassName="absolute bg-blue-300 rounded-r-lg text-white right-0 h-full px-3 text-gray-400 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+              toggleClassName="absolute bg-blue-300 rounded-r-lg text-white right-0 h-full px-3 text-neutral-400 focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
               displayFormat="DD/MM/YYYY"
               readOnly
             />

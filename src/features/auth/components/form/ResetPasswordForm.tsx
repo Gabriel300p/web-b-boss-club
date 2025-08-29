@@ -15,26 +15,56 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import type z from "zod";
-import { useLoginAuth } from "../../hooks/useLoginAuth.ts";
-import { resetPasswordSchema } from "../../schemas/auth.schema.ts";
+import { changePasswordSchema } from "../../schemas/auth.schema.ts";
+import { authApiService } from "../../services/auth-api.service.ts";
 import { AuthError } from "../AuthAnimations.tsx";
 
 export function ResetPasswordForm() {
   const { t } = useTranslation("auth");
+
+  // Detectar se é primeiro login baseado na URL
+  const isFirstLogin =
+    window.location.pathname === "/auth/first-login" ||
+    window.location.search.includes("firstLogin=true");
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { login, isLoading, error } = useLoginAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof resetPasswordSchema>>({
-    resolver: zodResolver(resetPasswordSchema),
-    defaultValues: { password: "", confirmPassword: "" },
+  const form = useForm<z.infer<typeof changePasswordSchema>>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: { newPassword: "", confirmPassword: "" },
   });
 
-  const handleSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
-    await login({
-      email: values.password,
-      password: values.confirmPassword,
-    });
+  const handleSubmit = async (values: z.infer<typeof changePasswordSchema>) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      await authApiService.changePassword(
+        values.newPassword,
+        values.confirmPassword,
+      );
+
+      // Limpar temp_token após sucesso
+      localStorage.removeItem("temp_token");
+
+      // Se for primeiro login, redireciona para home após 2 segundos
+      if (isFirstLogin) {
+        setTimeout(() => {
+          window.location.href = "/home";
+        }, 2000);
+      }
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : t("forms.resetPassword.errors.changePasswordError");
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,16 +73,20 @@ export function ResetPasswordForm() {
         <div className="space-y-4">
           <FormField
             control={form.control}
-            name="password"
+            name="newPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("forms.login.fields.password")}</FormLabel>
+                <FormLabel>
+                  {t("forms.resetPassword.fields.newPassword")}
+                </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
                       {...field}
                       type={showPassword ? "text" : "password"}
-                      placeholder={t("forms.login.fields.passwordPlaceholder")}
+                      placeholder={t(
+                        "forms.resetPassword.fields.newPasswordPlaceholder",
+                      )}
                       className="pr-10"
                     />
                     <button
@@ -77,13 +111,17 @@ export function ResetPasswordForm() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("forms.login.fields.confirmPassword")}</FormLabel>
+                <FormLabel>
+                  {t("forms.resetPassword.fields.confirmPassword")}
+                </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
                       {...field}
-                      type={showConfirmPassword ? "text" : "confirmPassword"}
-                      placeholder={t("forms.login.fields.passwordPlaceholder")}
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder={t(
+                        "forms.resetPassword.fields.confirmPasswordPlaceholder",
+                      )}
                       className="pr-10"
                     />
                     <button
@@ -104,11 +142,7 @@ export function ResetPasswordForm() {
           />
           {/* Error message display */}
           {error && (
-            <AuthError
-              message={
-                error.message || t("forms.login.errors.invalidCredentials")
-              }
-            >
+            <AuthError message={error}>
               <span className="text-sm text-neutral-200 dark:text-neutral-400">
                 {t("forms.login.actions.forgotPasswordQuestion")}{" "}
                 <Link
@@ -122,24 +156,39 @@ export function ResetPasswordForm() {
           )}
         </div>
 
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="w-full font-medium"
-          size="lg"
-        >
-          {isLoading ? (
-            <>
-              {t("forms.login.actions.loading")}{" "}
-              <LoadingSpinner className="ml-2 size-5" />
-            </>
-          ) : (
-            <>
-              {t("forms.login.actions.submit")}{" "}
-              <ArrowRightIcon className="size-5" weight="fill" />
-            </>
+        <div className="space-y-4">
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full font-medium"
+            size="lg"
+          >
+            {isLoading ? (
+              <>
+                {t("forms.resetPassword.actions.loading")}{" "}
+                <LoadingSpinner className="ml-2 size-5" />
+              </>
+            ) : (
+              <>
+                {t("forms.resetPassword.actions.submit")}{" "}
+                <ArrowRightIcon className="size-5" weight="fill" />
+              </>
+            )}
+          </Button>
+
+          {/* Botão Pular apenas para primeiro login */}
+          {isFirstLogin && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => (window.location.href = "/home")}
+              className="w-full"
+              size="lg"
+            >
+              {t("forms.resetPassword.actions.skip")}
+            </Button>
           )}
-        </Button>
+        </div>
       </form>
     </Form>
   );

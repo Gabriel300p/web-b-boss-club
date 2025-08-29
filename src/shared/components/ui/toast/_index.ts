@@ -14,7 +14,6 @@ export { ErrorBoundary } from "../../errors/ErrorBoundary";
 
 // Layout Components (frequently used)
 export { MainLayout } from "../../layout/MainLayout";
-export { TopBar } from "../../layout/TopBar";
 
 // 🎯 Skeletons (for loading states) - Updated to use centralized index
 export * from "../../skeletons/_index";

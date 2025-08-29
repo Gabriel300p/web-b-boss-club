@@ -37,7 +37,7 @@ const TableSort = <TData,>({
       className={`flex items-center gap-2 ${alignmentClasses[align]} w-full ${className}`}
     >
       <span className="select-none">{children}</span>
-      <div className="flex flex-col items-center rounded-sm border border-gray-200 bg-white">
+      <div className="flex flex-col items-center rounded-sm border border-neutral-200 bg-white">
         {/* Seta para cima (ASC) */}
         <button
           onClick={(e) => {
@@ -48,7 +48,7 @@ const TableSort = <TData,>({
           className={`flex cursor-pointer items-center justify-center rounded-sm transition-all duration-200 hover:scale-110 ${
             sortDirection === "asc"
               ? "bg-blue-50 text-blue-600 shadow-sm"
-              : "text-gray-400 hover:bg-gray-50 hover:text-gray-600"
+              : "text-neutral-400 hover:bg-neutral-50 hover:text-neutral-600"
           }`}
           aria-label="Ordenar crescente"
           title="Ordenar crescente"
@@ -66,7 +66,7 @@ const TableSort = <TData,>({
           className={`flex h-3 w-4 cursor-pointer items-center justify-center rounded-sm transition-all duration-200 hover:scale-110 ${
             sortDirection === "desc"
               ? "bg-blue-50 text-blue-600 shadow-sm"
-              : "text-gray-400 hover:bg-gray-50 hover:text-gray-600"
+              : "text-neutral-400 hover:bg-neutral-50 hover:text-neutral-600"
           }`}
           aria-label="Ordenar decrescente"
           title="Ordenar decrescente"

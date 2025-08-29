@@ -128,7 +128,7 @@ export const RecordModal = memo(function RecordModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-gray-900">
+          <DialogTitle className="flex items-center gap-2 text-neutral-900">
             {modalIcon}
             {modalTitle}
           </DialogTitle>
@@ -139,7 +139,7 @@ export const RecordModal = memo(function RecordModal({
           <div className="space-y-2">
             <label
               htmlFor="titulo"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-neutral-700"
             >
               {t("fields.title")} <span className="text-red-500">*</span>
             </label>
@@ -166,7 +166,7 @@ export const RecordModal = memo(function RecordModal({
           <div className="space-y-2">
             <label
               htmlFor="autor"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-neutral-700"
             >
               {t("fields.author")} <span className="text-red-500">*</span>
             </label>
@@ -193,7 +193,7 @@ export const RecordModal = memo(function RecordModal({
           <div className="space-y-2">
             <label
               htmlFor="tipo"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-neutral-700"
             >
               {t("fields.type")} <span className="text-red-500">*</span>
             </label>
@@ -238,7 +238,7 @@ export const RecordModal = memo(function RecordModal({
           <div className="space-y-2">
             <label
               htmlFor="descricao"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-neutral-700"
             >
               {t("fields.description")} <span className="text-red-500">*</span>
             </label>

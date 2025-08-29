@@ -1,33 +1,65 @@
-# 🚀 CI/CD Pipeline Configuration
+# � GitHub Actions Workflows
 
-Este diretório contém a configuração completa do pipeline de CI/CD para o projeto Centro Educacional Alfa.
+Este diretório contém os workflows do GitHub Actions para o projeto B-Boss Club.
 
-## 📋 Overview
+## 📋 Workflows Ativos
 
-### 🔍 Workflows Disponíveis
+### 🔍 CI - Quality Assurance (`ci.yml`)
 
-1. **`ci.yml`** - Continuous Integration
-2. **`deploy.yml`** - Continuous Deployment
-3. **`cleanup.yml`** - Manutenção e limpeza
+Executa verificações de qualidade a cada push e pull request:
 
----
+- **🧪 Quality Checks**: Lint, formatação, type check e testes
+- **🏗️ Build Verification**: Verificação de build da aplicação
+- **🔒 Security Audit**: Auditoria de dependências
+- **🚦 Lighthouse Audit**: Análise de performance (apenas em PRs)
 
-## 🔍 **CI - Quality Assurance**
+### ✅ O que está funcionando:
+- ✅ Testes automatizados
+- ✅ Verificação de lint e formatação
+- ✅ Type checking
+- ✅ Build verification
+- ✅ Security audit
+- ✅ Coverage reports
 
-### ✅ **Verificações Automáticas**
+## 🚀 Deploy
 
-- **Lint**: ESLint + regras de código
-- **Format**: Prettier para formatação
-- **Type Check**: TypeScript verification
-- **Tests**: Vitest com coverage
-- **Build**: Verificação de build
-- **Security**: Audit de dependências
-- **Performance**: Lighthouse CI (em PRs)
+### Vercel (Ativo)
+O deploy é feito automaticamente pela Vercel quando há push para:
+- `main` → Produção
+- `develop` → Preview
 
-### 🎯 **Quando Executa**
+### AWS (Preparado mas Desabilitado)
+Há uma estrutura preparada no `ci.yml` para deploy em AWS S3 + CloudFront.
 
-- Push para `main` ou `develop`
-- Pull Requests para `main` ou `develop`
+#### Para ativar o deploy AWS:
+
+1. **Descomente** a seção `deploy-aws` no arquivo `ci.yml`
+2. **Configure os secrets** no GitHub:
+   ```
+   AWS_ACCESS_KEY_ID
+   AWS_SECRET_ACCESS_KEY
+   AWS_REGION (opcional, padrão: us-east-1)
+   AWS_S3_BUCKET
+   AWS_CLOUDFRONT_DISTRIBUTION_ID (opcional)
+   ```
+3. **Certifique-se** que o bucket S3 e CloudFront estão configurados
+
+## 🗑️ Arquivos Removidos
+
+- `deploy.yml` - Removido por conflitos com deploy automático da Vercel
+- `cleanup.yml` - Removido por dependências do Vercel CLI
+
+## 🔧 Scripts Ajustados
+
+- `pnpm format --check` → `pnpm format:check`
+- Removido `pnpm build:analyze` (não disponível)
+- Simplificado audit de vulnerabilidades
+
+## 📊 Monitoring
+
+- **Coverage**: Upload para Codecov
+- **Artifacts**: Build artifacts mantidos por 7 dias
+- **Cache**: Dependencies e build cache otimizado
 
 ### 📊 **Métricas**
 

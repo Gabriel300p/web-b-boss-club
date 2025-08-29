@@ -102,7 +102,7 @@ export function ToastDemo() {
         <h2 className="mb-2 text-2xl font-bold">
           🍞 Sistema de Notificações Toast
         </h2>
-        <p className="text-gray-600">
+        <p className="text-neutral-600">
           Demonstração dos diferentes tipos de notificações toast disponíveis
         </p>
       </div>
@@ -191,7 +191,7 @@ export function ToastDemo() {
           </div>
         </div>
 
-        <div className="border-t pt-4 text-sm text-gray-600">
+        <div className="border-t pt-4 text-sm text-neutral-600">
           <p className="mb-2">
             💡 <strong>Novas Funcionalidades:</strong>
           </p>

@@ -1,7 +1,7 @@
 import {
-  ModernCalendar,
   Filter,
   FilterToolbar,
+  ModernCalendar,
   TextFilter,
   type FilterOption,
 } from "@shared/components/filters";
@@ -55,7 +55,7 @@ export function RecordsToolbar({ autores, totalCount }: RecordsToolbarProps) {
       autores.map((autor) => ({
         label: autor,
         value: autor,
-        icon: <UserIcon className="h-4 w-4 text-gray-500" />,
+        icon: <UserIcon className="h-4 w-4 text-neutral-500" />,
       })),
     [autores],
   );

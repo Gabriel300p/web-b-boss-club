@@ -9,15 +9,37 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/routes/__root'
+import { Route as UnitsRouteImport } from './app/routes/units'
+import { Route as SettingsRouteImport } from './app/routes/settings'
+import { Route as ServicesRouteImport } from './app/routes/services'
 import { Route as RecordsRouteImport } from './app/routes/records'
 import { Route as HomeRouteImport } from './app/routes/home'
+import { Route as HelpRouteImport } from './app/routes/help'
 import { Route as ComunicacoesRouteImport } from './app/routes/comunicacoes'
+import { Route as BarbersRouteImport } from './app/routes/barbers'
 import { Route as IndexRouteImport } from './app/routes/index'
 import { Route as AuthResetPasswordRouteImport } from './app/routes/auth/reset-password'
 import { Route as AuthMfaVerificationRouteImport } from './app/routes/auth/mfa-verification'
 import { Route as AuthLoginRouteImport } from './app/routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './app/routes/auth/forgot-password'
+import { Route as AuthFirstLoginRouteImport } from './app/routes/auth/first-login'
+import { Route as AuthCreateBarbershopRouteImport } from './app/routes/auth/create-barbershop'
 
+const UnitsRoute = UnitsRouteImport.update({
+  id: '/units',
+  path: '/units',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecordsRoute = RecordsRouteImport.update({
   id: '/records',
   path: '/records',
@@ -28,9 +50,19 @@ const HomeRoute = HomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ComunicacoesRoute = ComunicacoesRouteImport.update({
   id: '/comunicacoes',
   path: '/comunicacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BarbersRoute = BarbersRouteImport.update({
+  id: '/barbers',
+  path: '/barbers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -58,12 +90,29 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthFirstLoginRoute = AuthFirstLoginRouteImport.update({
+  id: '/auth/first-login',
+  path: '/auth/first-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthCreateBarbershopRoute = AuthCreateBarbershopRouteImport.update({
+  id: '/auth/create-barbershop',
+  path: '/auth/create-barbershop',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/barbers': typeof BarbersRoute
   '/comunicacoes': typeof ComunicacoesRoute
+  '/help': typeof HelpRoute
   '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
+  '/services': typeof ServicesRoute
+  '/settings': typeof SettingsRoute
+  '/units': typeof UnitsRoute
+  '/auth/create-barbershop': typeof AuthCreateBarbershopRoute
+  '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/mfa-verification': typeof AuthMfaVerificationRoute
@@ -71,9 +120,16 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/barbers': typeof BarbersRoute
   '/comunicacoes': typeof ComunicacoesRoute
+  '/help': typeof HelpRoute
   '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
+  '/services': typeof ServicesRoute
+  '/settings': typeof SettingsRoute
+  '/units': typeof UnitsRoute
+  '/auth/create-barbershop': typeof AuthCreateBarbershopRoute
+  '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/mfa-verification': typeof AuthMfaVerificationRoute
@@ -82,9 +138,16 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/barbers': typeof BarbersRoute
   '/comunicacoes': typeof ComunicacoesRoute
+  '/help': typeof HelpRoute
   '/home': typeof HomeRoute
   '/records': typeof RecordsRoute
+  '/services': typeof ServicesRoute
+  '/settings': typeof SettingsRoute
+  '/units': typeof UnitsRoute
+  '/auth/create-barbershop': typeof AuthCreateBarbershopRoute
+  '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/mfa-verification': typeof AuthMfaVerificationRoute
@@ -94,9 +157,16 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/barbers'
     | '/comunicacoes'
+    | '/help'
     | '/home'
     | '/records'
+    | '/services'
+    | '/settings'
+    | '/units'
+    | '/auth/create-barbershop'
+    | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/mfa-verification'
@@ -104,9 +174,16 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/barbers'
     | '/comunicacoes'
+    | '/help'
     | '/home'
     | '/records'
+    | '/services'
+    | '/settings'
+    | '/units'
+    | '/auth/create-barbershop'
+    | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/mfa-verification'
@@ -114,9 +191,16 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/barbers'
     | '/comunicacoes'
+    | '/help'
     | '/home'
     | '/records'
+    | '/services'
+    | '/settings'
+    | '/units'
+    | '/auth/create-barbershop'
+    | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/mfa-verification'
@@ -125,9 +209,16 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BarbersRoute: typeof BarbersRoute
   ComunicacoesRoute: typeof ComunicacoesRoute
+  HelpRoute: typeof HelpRoute
   HomeRoute: typeof HomeRoute
   RecordsRoute: typeof RecordsRoute
+  ServicesRoute: typeof ServicesRoute
+  SettingsRoute: typeof SettingsRoute
+  UnitsRoute: typeof UnitsRoute
+  AuthCreateBarbershopRoute: typeof AuthCreateBarbershopRoute
+  AuthFirstLoginRoute: typeof AuthFirstLoginRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthMfaVerificationRoute: typeof AuthMfaVerificationRoute
@@ -136,6 +227,27 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/units': {
+      id: '/units'
+      path: '/units'
+      fullPath: '/units'
+      preLoaderRoute: typeof UnitsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/records': {
       id: '/records'
       path: '/records'
@@ -150,11 +262,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/comunicacoes': {
       id: '/comunicacoes'
       path: '/comunicacoes'
       fullPath: '/comunicacoes'
       preLoaderRoute: typeof ComunicacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/barbers': {
+      id: '/barbers'
+      path: '/barbers'
+      fullPath: '/barbers'
+      preLoaderRoute: typeof BarbersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -192,14 +318,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/first-login': {
+      id: '/auth/first-login'
+      path: '/auth/first-login'
+      fullPath: '/auth/first-login'
+      preLoaderRoute: typeof AuthFirstLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/create-barbershop': {
+      id: '/auth/create-barbershop'
+      path: '/auth/create-barbershop'
+      fullPath: '/auth/create-barbershop'
+      preLoaderRoute: typeof AuthCreateBarbershopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BarbersRoute: BarbersRoute,
   ComunicacoesRoute: ComunicacoesRoute,
+  HelpRoute: HelpRoute,
   HomeRoute: HomeRoute,
   RecordsRoute: RecordsRoute,
+  ServicesRoute: ServicesRoute,
+  SettingsRoute: SettingsRoute,
+  UnitsRoute: UnitsRoute,
+  AuthCreateBarbershopRoute: AuthCreateBarbershopRoute,
+  AuthFirstLoginRoute: AuthFirstLoginRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthMfaVerificationRoute: AuthMfaVerificationRoute,

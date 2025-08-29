@@ -269,8 +269,10 @@ export function EmptyState({
         transition={{ delay: 0.3, duration: 0.4 }}
         className="max-w-md space-y-2"
       >
-        <h3 className="text-lg font-semibold text-gray-900">{content.title}</h3>
-        <p className="text-sm text-gray-500">{content.description}</p>
+        <h3 className="text-lg font-semibold text-neutral-900">
+          {content.title}
+        </h3>
+        <p className="text-sm text-neutral-500">{content.description}</p>
       </motion.div>
 
       {/* Action button */}

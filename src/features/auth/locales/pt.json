@@ -14,7 +14,9 @@
     },
     "resetPassword": {
       "title": "Redefinir a senha",
-      "subtitle": "Altere sua senha como desejar"
+      "subtitle": "Altere sua senha como desejar",
+      "firstLoginTitle": "Definir Nova Senha",
+      "firstLoginSubtitle": "Como é seu primeiro acesso, defina uma nova senha para sua conta"
     }
   },
   "forms": {
@@ -67,6 +69,22 @@
         "title": "Erro de Verificação:",
         "invalidCode": "Código MFA inválido. Verifique o código ou solicite um novo."
       }
+    },
+    "resetPassword": {
+      "fields": {
+        "newPassword": "Nova senha",
+        "confirmPassword": "Confirmar senha",
+        "newPasswordPlaceholder": "Digite sua nova senha",
+        "confirmPasswordPlaceholder": "Confirme sua nova senha"
+      },
+      "actions": {
+        "submit": "Alterar Senha",
+        "skip": "Pular e Continuar",
+        "loading": "Alterando..."
+      },
+      "errors": {
+        "changePasswordError": "Erro ao alterar senha"
+      }
     }
   },
   "toasts": {
@@ -105,7 +123,25 @@
     },
     "info": {
       "forgotPasswordTitle": "Esqueceu sua senha?",
-      "forgotPasswordMessage": "Clique aqui para redefinir sua senha"
+      "forgotPasswordMessage": "Clique aqui para redefinir sua senha",
+      "mfaRequiredTitle": "Verificação de segurança necessária",
+      "firstLoginTitle": "Primeiro Login",
+      "firstLoginMessage": "Por favor, defina uma nova senha para sua conta"
+    },
+    "mfa": {
+      "titles": {
+        "required": "Verificação MFA Necessária",
+        "invalid": "Código MFA Inválido",
+        "expired": "Código MFA Expirado"
+      },
+      "messages": {
+        "required": "Verificação MFA é necessária para continuar",
+        "invalid": "Código MFA inválido ou expirado",
+        "expired": "Código MFA expirado. Solicite um novo código"
+      },
+      "actions": {
+        "resendCode": "Reenviar Código"
+      }
     }
   }
 }

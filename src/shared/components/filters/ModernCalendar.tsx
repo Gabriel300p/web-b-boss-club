@@ -12,15 +12,15 @@ import {
   endOfMonth,
   endOfWeek,
   format,
+  isSameDay,
   startOfDay,
   startOfMonth,
   startOfWeek,
   subDays,
-  isSameDay,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
-import { CalendarIcon, XIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarIcon, ChevronLeft, ChevronRight, XIcon } from "lucide-react";
 import * as React from "react";
 import type { DateRange as DayPickerRange } from "react-day-picker";
 import { DayPicker } from "react-day-picker";
@@ -48,10 +48,10 @@ interface ModernCalendarProps {
   variant?: "default" | "compact" | "floating";
 }
 
-// 🎯 Presets modernos e inteligentes  
-const getModernPresets = (): Array<{ 
-  label: string; 
-  value: DateRange; 
+// 🎯 Presets modernos e inteligentes
+const getModernPresets = (): Array<{
+  label: string;
+  value: DateRange;
 }> => {
   const today = new Date();
 
@@ -115,7 +115,9 @@ export function ModernCalendar({
   variant = "default",
 }: ModernCalendarProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [tempRange, setTempRange] = React.useState<DayPickerRange | undefined>(undefined);
+  const [tempRange, setTempRange] = React.useState<DayPickerRange | undefined>(
+    undefined,
+  );
 
   const allPresets = [...getModernPresets(), ...presets];
   const hasValue = value?.startDate || value?.endDate;
@@ -133,12 +135,13 @@ export function ModernCalendar({
 
   // Format display text
   const displayText = React.useMemo(() => {
-    if (!hasValue) return `Selecione ${mode === "single" ? "uma data" : "um período"}`;
-    
+    if (!hasValue)
+      return `Selecione ${mode === "single" ? "uma data" : "um período"}`;
+
     if (mode === "single" && value?.startDate) {
       return format(value.startDate, "dd/MM/yyyy", { locale: ptBR });
     }
-    
+
     if (mode === "range") {
       if (value?.startDate && value?.endDate) {
         if (isSameDay(value.startDate, value.endDate)) {
@@ -150,7 +153,7 @@ export function ModernCalendar({
         return `${format(value.startDate, "dd/MM/yyyy", { locale: ptBR })} - ...`;
       }
     }
-    
+
     return "Selecione uma data";
   }, [value, hasValue, mode]);
 
@@ -164,7 +167,7 @@ export function ModernCalendar({
         endDate: range.to || range.from || null,
       };
       onChange(newValue);
-      
+
       if (mode === "single" || (range.from && range.to)) {
         setIsOpen(false);
       }
@@ -224,8 +227,8 @@ export function ModernCalendar({
             !hasValue && "text-muted-foreground",
             hasValue && "border-primary/30 bg-primary/5",
             "hover:border-primary/50 hover:bg-primary/10",
-            "focus:ring-2 focus:ring-primary/20",
-            className
+            "focus:ring-primary/20 focus:ring-2",
+            className,
           )}
         >
           <motion.div
@@ -234,8 +237,8 @@ export function ModernCalendar({
             whileTap={{ scale: 0.98 }}
           >
             <motion.div
-              animate={{ 
-                color: hasValue ? "rgb(59 130 246)" : "rgb(107 114 128)" 
+              animate={{
+                color: hasValue ? "rgb(59 130 246)" : "rgb(107 114 128)",
               }}
               transition={{ duration: 0.2 }}
             >
@@ -257,9 +260,9 @@ export function ModernCalendar({
           </motion.div>
         </Button>
       </PopoverTrigger>
-      
-      <PopoverContent 
-        className="w-auto p-0 border-2 shadow-2xl" 
+
+      <PopoverContent
+        className="w-auto border-2 p-0 shadow-2xl"
         align="start"
         sideOffset={4}
       >
@@ -270,13 +273,15 @@ export function ModernCalendar({
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              "p-4 space-y-4",
-              variant === "floating" && "rounded-2xl"
+              "space-y-4 p-4",
+              variant === "floating" && "rounded-2xl",
             )}
           >
             {/* Header with title */}
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold text-gray-900">{title}</h4>
+              <h4 className="text-sm font-semibold text-neutral-900">
+                {title}
+              </h4>
               {hasValue && (
                 <Badge variant="outline" className="text-xs">
                   {mode === "range" ? "Período" : "Data única"}
@@ -286,7 +291,7 @@ export function ModernCalendar({
 
             {/* Presets */}
             {showPresets && allPresets.length > 0 && (
-              <motion.div 
+              <motion.div
                 className="grid grid-cols-2 gap-2 pb-2"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -305,7 +310,7 @@ export function ModernCalendar({
                       size="sm"
                       className={cn(
                         "h-8 w-full text-xs font-medium transition-all duration-200",
-                        "hover:bg-primary/10 rounded-lg border hover:border-primary/30"
+                        "hover:bg-primary/10 hover:border-primary/30 rounded-lg border",
                       )}
                       onClick={() => handlePresetClick(preset)}
                     >
@@ -336,49 +341,53 @@ export function ModernCalendar({
                   classNames={{
                     months: cn(
                       "flex space-y-4 sm:space-y-0",
-                      variant === "compact" ? "flex-col" : "flex-col sm:flex-row sm:space-x-6"
+                      variant === "compact"
+                        ? "flex-col"
+                        : "flex-col sm:flex-row sm:space-x-6",
                     ),
                     month: "space-y-4",
-                    caption: "flex justify-center pt-1 relative items-center mb-4",
-                    caption_label: "text-base font-semibold text-gray-900",
+                    caption:
+                      "flex justify-center pt-1 relative items-center mb-4",
+                    caption_label: "text-base font-semibold text-neutral-900",
                     nav: "space-x-1 flex items-center",
                     nav_button: cn(
-                      "h-8 w-8 bg-white border-2 border-gray-200 p-0 rounded-full",
+                      "h-8 w-8 bg-white border-2 border-neutral-200 p-0 rounded-full",
                       "hover:border-primary hover:bg-primary/10 transition-all duration-200",
-                      "focus:ring-2 focus:ring-primary/20"
+                      "focus:ring-2 focus:ring-primary/20",
                     ),
                     nav_button_previous: "absolute left-1",
                     nav_button_next: "absolute right-1",
                     table: "w-full border-collapse",
                     head_row: "flex mb-2",
                     head_cell: cn(
-                      "text-gray-500 rounded-md w-10 h-8 font-semibold text-xs",
-                      "flex items-center justify-center"
+                      "text-neutral-500 rounded-md w-10 h-8 font-semibold text-xs",
+                      "flex items-center justify-center",
                     ),
                     row: "flex w-full mt-1",
                     cell: cn(
                       "h-10 w-10 text-center text-sm p-0 relative m-0.5",
-                      "rounded-lg hover:bg-gray-100 transition-colors duration-150"
+                      "rounded-lg hover:bg-neutral-100 transition-colors duration-150",
                     ),
                     day: cn(
                       "h-9 w-9 p-0 font-medium rounded-lg border-2 border-transparent",
                       "hover:border-primary/30 hover:bg-primary/10 transition-all duration-200",
-                      "focus:ring-2 focus:ring-primary/20"
+                      "focus:ring-2 focus:ring-primary/20",
                     ),
                     day_selected: cn(
                       "bg-primary text-white border-primary shadow-md",
                       "hover:bg-primary hover:text-white hover:border-primary",
-                      "focus:bg-primary focus:text-white"
+                      "focus:bg-primary focus:text-white",
                     ),
                     day_today: cn(
                       "bg-blue-50 text-blue-700 border-blue-200 font-bold",
-                      "hover:bg-blue-100 hover:border-blue-300"
+                      "hover:bg-blue-100 hover:border-blue-300",
                     ),
-                    day_outside: "text-gray-300 hover:text-gray-400",
-                    day_disabled: "text-gray-300 opacity-50 cursor-not-allowed",
+                    day_outside: "text-neutral-300 hover:text-neutral-400",
+                    day_disabled:
+                      "text-neutral-300 opacity-50 cursor-not-allowed",
                     day_range_middle: cn(
                       "bg-primary/20 text-primary-foreground border-primary/20",
-                      "hover:bg-primary/30"
+                      "hover:bg-primary/30",
                     ),
                     day_hidden: "invisible",
                   }}
@@ -402,47 +411,50 @@ export function ModernCalendar({
                   mode="single"
                   selected={(tempRange || selectedRange)?.from}
                   onSelect={(date) =>
-                    handleCalendarSelect(date ? { from: date, to: date } : undefined)
+                    handleCalendarSelect(
+                      date ? { from: date, to: date } : undefined,
+                    )
                   }
                   locale={ptBR}
                   className="rounded-xl border-0"
                   classNames={{
                     months: "flex flex-col space-y-4",
                     month: "space-y-4",
-                    caption: "flex justify-center pt-1 relative items-center mb-4",
-                    caption_label: "text-base font-semibold text-gray-900",
+                    caption:
+                      "flex justify-center pt-1 relative items-center mb-4",
+                    caption_label: "text-base font-semibold text-neutral-900",
                     nav: "space-x-1 flex items-center",
                     nav_button: cn(
-                      "h-8 w-8 bg-white border-2 border-gray-200 p-0 rounded-full",
-                      "hover:border-primary hover:bg-primary/10 transition-all duration-200"
+                      "h-8 w-8 bg-white border-2 border-neutral-200 p-0 rounded-full",
+                      "hover:border-primary hover:bg-primary/10 transition-all duration-200",
                     ),
                     nav_button_previous: "absolute left-1",
                     nav_button_next: "absolute right-1",
                     table: "w-full border-collapse",
                     head_row: "flex mb-2",
                     head_cell: cn(
-                      "text-gray-500 rounded-md w-10 h-8 font-semibold text-xs",
-                      "flex items-center justify-center"
+                      "text-neutral-500 rounded-md w-10 h-8 font-semibold text-xs",
+                      "flex items-center justify-center",
                     ),
                     row: "flex w-full mt-1",
                     cell: cn(
                       "h-10 w-10 text-center text-sm p-0 relative m-0.5",
-                      "rounded-lg hover:bg-gray-100 transition-colors duration-150"
+                      "rounded-lg hover:bg-neutral-100 transition-colors duration-150",
                     ),
                     day: cn(
                       "h-9 w-9 p-0 font-medium rounded-lg border-2 border-transparent",
-                      "hover:border-primary/30 hover:bg-primary/10 transition-all duration-200"
+                      "hover:border-primary/30 hover:bg-primary/10 transition-all duration-200",
                     ),
                     day_selected: cn(
                       "bg-primary text-white border-primary shadow-md",
-                      "hover:bg-primary hover:text-white"
+                      "hover:bg-primary hover:text-white",
                     ),
                     day_today: cn(
                       "bg-blue-50 text-blue-700 border-blue-200 font-bold",
-                      "hover:bg-blue-100"
+                      "hover:bg-blue-100",
                     ),
-                    day_outside: "text-gray-300",
-                    day_disabled: "text-gray-300 opacity-50",
+                    day_outside: "text-neutral-300",
+                    day_disabled: "text-neutral-300 opacity-50",
                     day_hidden: "invisible",
                   }}
                 />
@@ -454,7 +466,7 @@ export function ModernCalendar({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="flex items-center justify-between pt-2 border-t"
+              className="flex items-center justify-between border-t pt-2"
             >
               {/* Clear button with animation */}
               {showClearButton && (hasValue || tempRange) && (
@@ -470,7 +482,7 @@ export function ModernCalendar({
                     className={cn(
                       "text-red-600 hover:bg-red-50 hover:text-red-700",
                       "border border-transparent hover:border-red-200",
-                      "rounded-lg transition-all duration-200"
+                      "rounded-lg transition-all duration-200",
                     )}
                   >
                     <XIcon className="mr-2 h-4 w-4" />
@@ -487,12 +499,12 @@ export function ModernCalendar({
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                 >
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     onClick={handleApply}
                     className={cn(
                       "bg-primary hover:bg-primary/90 shadow-md",
-                      "rounded-lg transition-all duration-200 hover:shadow-lg"
+                      "rounded-lg transition-all duration-200 hover:shadow-lg",
                     )}
                   >
                     Aplicar

@@ -47,14 +47,14 @@ const FILTER_CONFIG = {
 export const ComunicacoesToolbar = memo(function ComunicacoesToolbar({
   autores = [],
 }: ComunicacoesToolbarProps) {
-  const { 
-    filters, 
-    hasActiveFilters, 
+  const {
+    filters,
+    hasActiveFilters,
     resetFilters,
     setSearch,
-    setTipo, 
+    setTipo,
     setAutor,
-    setDateRange 
+    setDateRange,
   } = useFilters();
   const { t } = useTranslation("records");
 
@@ -70,7 +70,7 @@ export const ComunicacoesToolbar = memo(function ComunicacoesToolbar({
       autor: autores.map((autor) => ({
         label: autor,
         value: autor,
-        icon: <UserIcon className="h-4 w-4 text-gray-500" />,
+        icon: <UserIcon className="h-4 w-4 text-neutral-500" />,
       })) as FilterOption[],
     }),
     [t, autores],
@@ -122,7 +122,9 @@ export const ComunicacoesToolbar = memo(function ComunicacoesToolbar({
               options={filterOptions.autor}
               icon={<UserIcon className="h-4 w-4" />}
               value={Array.isArray(filters.autor) ? filters.autor : []}
-              onChange={(values) => handleFilterChange.autor(values as string[])}
+              onChange={(values) =>
+                handleFilterChange.autor(values as string[])
+              }
               placeholder={t("filters.authorPlaceholder")}
             />
           )}

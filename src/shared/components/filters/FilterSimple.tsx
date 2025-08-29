@@ -209,14 +209,14 @@ export function FilterSimple<TData, TValue>({
                   }
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="mb-2 w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="mb-2 w-full rounded-md border border-neutral-200 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               )}
 
               {/* Options List */}
               <div className="max-h-60 overflow-y-auto">
                 {filteredOptions.length === 0 ? (
-                  <div className="py-6 text-center text-sm text-gray-500">
+                  <div className="py-6 text-center text-sm text-neutral-500">
                     Nenhum resultado encontrado.
                   </div>
                 ) : (
@@ -231,7 +231,7 @@ export function FilterSimple<TData, TValue>({
                         {...getItemProps(index)}
                       >
                         <div
-                          className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-gray-100"
+                          className="flex cursor-pointer items-center gap-2 rounded p-2 transition-colors hover:bg-neutral-100"
                           onClick={() => handleOptionClick(option)}
                         >
                           {animated ? (
@@ -250,7 +250,7 @@ export function FilterSimple<TData, TValue>({
                             <span className="text-sm">{option.label}</span>
                           </div>
                           {count > 0 && (
-                            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-500">
+                            <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-xs text-neutral-500">
                               {count}
                             </span>
                           )}

@@ -74,9 +74,9 @@ export const getToastClasses = (): string => {
     "dark:border-neutral-700",
     "dark:bg-neutral-800",
     "bg-white",
-    "dark:text-gray-200",
-    "text-gray-700",
-    "shadow-gray-800/50",
+    "dark:text-neutral-200",
+    "text-neutral-700",
+    "shadow-neutral-800/50",
   ].join(" ");
 
   return `${baseClasses} `;

@@ -14,7 +14,9 @@
     },
     "resetPassword": {
       "title": "Reset Password",
-      "subtitle": "Change your password as you wish"
+      "subtitle": "Change your password as you wish",
+      "firstLoginTitle": "Set New Password",
+      "firstLoginSubtitle": "As this is your first access, please set a new password for your account"
     }
   },
   "forms": {
@@ -67,6 +69,22 @@
         "title": "Verification Error:",
         "invalidCode": "Invalid MFA code. Check the code or request a new one."
       }
+    },
+    "resetPassword": {
+      "fields": {
+        "newPassword": "New password",
+        "confirmPassword": "Confirm password",
+        "newPasswordPlaceholder": "Enter your new password",
+        "confirmPasswordPlaceholder": "Confirm your new password"
+      },
+      "actions": {
+        "submit": "Change Password",
+        "skip": "Skip and Continue",
+        "loading": "Changing..."
+      },
+      "errors": {
+        "changePasswordError": "Error changing password"
+      }
     }
   },
   "toasts": {
@@ -105,7 +123,25 @@
     },
     "info": {
       "forgotPasswordTitle": "Forgot your password?",
-      "forgotPasswordMessage": "Click here to reset your password"
+      "forgotPasswordMessage": "Click here to reset your password",
+      "mfaRequiredTitle": "Security verification required",
+      "firstLoginTitle": "First Login",
+      "firstLoginMessage": "Please set a new password for your account"
+    },
+    "mfa": {
+      "titles": {
+        "required": "MFA Verification Required",
+        "invalid": "Invalid MFA Code",
+        "expired": "MFA Code Expired"
+      },
+      "messages": {
+        "required": "MFA verification is required to continue",
+        "invalid": "Invalid or expired MFA code",
+        "expired": "MFA code expired. Request a new code"
+      },
+      "actions": {
+        "resendCode": "Resend Code"
+      }
     }
   }
 }
