@@ -1,5 +1,5 @@
+import { FilterToolbarSkeleton } from "@/shared/components/skeletons/FilterSkeletons";
 import { EmptyState } from "@shared/components/common/EmptyState";
-import { FilterToolbarSkeleton } from "@shared/components/filters/FilterSkeletons";
 import { PlusCircleIcon } from "@shared/components/icons";
 import { Button } from "@shared/components/ui/button";
 import Divider from "@shared/components/ui/divider";

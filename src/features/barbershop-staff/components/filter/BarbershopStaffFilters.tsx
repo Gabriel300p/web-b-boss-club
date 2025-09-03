@@ -1,21 +1,20 @@
+import { useRecordFilters } from "@/features/records/hooks/useRecordFilters";
 import {
   Filter,
   FilterToolbar,
-  ModernCalendar,
   TextFilter,
   type FilterOption,
 } from "@shared/components/filters";
-import { CalendarIcon, FilterIcon, TagIcon, UserIcon } from "lucide-react";
+import { FilterIcon, TagIcon, UserIcon } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecordFilters } from "../../hooks/useRecordFilters";
 
 interface RecordsToolbarProps {
   autores: string[];
   totalCount?: number;
 }
 
-export function RecordsToolbar({ autores, totalCount }: RecordsToolbarProps) {
+export function BarbershopStaffFilters({ autores }: RecordsToolbarProps) {
   const {
     filters,
     hasActiveFilters,
@@ -23,7 +22,6 @@ export function RecordsToolbar({ autores, totalCount }: RecordsToolbarProps) {
     setSearch,
     setTipo,
     setAutor,
-    setDateRange,
   } = useRecordFilters();
   const { t } = useTranslation("records");
 
@@ -61,24 +59,17 @@ export function RecordsToolbar({ autores, totalCount }: RecordsToolbarProps) {
   );
 
   return (
-    <div className="flex">
+    <div className="flex gap-2">
       {/* Search bar */}
-      <div className="flex items-center justify-between">
-        <TextFilter
-          value={filters.search}
-          onChange={setSearch}
-          placeholder={t("filters.searchPlaceholder")}
-          className="max-w-sm"
-        />
 
-        {totalCount && (
-          <div className="text-muted-foreground text-sm">
-            {t("filters.count", { count: totalCount })}
-          </div>
-        )}
-      </div>
+      <TextFilter
+        value={filters.search}
+        onChange={setSearch}
+        placeholder="Pesquisar..."
+        className="max-w-md"
+        size="lg"
+      />
 
-      {/* Filter toolbar */}
       <FilterToolbar hasActiveFilters={hasActiveFilters} onReset={resetFilters}>
         {/* Tipo filter */}
         <Filter
@@ -104,17 +95,6 @@ export function RecordsToolbar({ autores, totalCount }: RecordsToolbarProps) {
             placeholder={t("filters.authorPlaceholder")}
           />
         )}
-
-        {/* Modern Date range filter */}
-        <ModernCalendar
-          title={t("filters.createdAt")}
-          value={filters.dateRange}
-          onChange={setDateRange}
-          icon={<CalendarIcon className="h-4 w-4" />}
-          variant="default"
-          showPresets={true}
-          showClearButton={true}
-        />
       </FilterToolbar>
     </div>
   );

@@ -6,6 +6,8 @@ import { cn } from "@shared/lib/utils";
 import { SearchIcon, XIcon } from "lucide-react";
 import * as React from "react";
 
+type TextFilterSize = "sm" | "md" | "lg";
+
 interface TextFilterProps {
   value?: string;
   onChange: (value: string) => void;
@@ -14,7 +16,22 @@ interface TextFilterProps {
   icon?: React.ReactNode;
   debounceMs?: number;
   className?: string;
+  disabled?: boolean;
+  "aria-label"?: string;
+  size?: TextFilterSize;
 }
+
+const ICON_SIZES = {
+  sm: "h-3 w-3",
+  md: "h-4 w-4",
+  lg: "h-4 w-4",
+} as const;
+
+const CLEAR_BUTTON_SIZES = {
+  sm: "h-5 w-5",
+  md: "h-6 w-6",
+  lg: "h-6 w-6",
+} as const;
 
 export function TextFilter({
   value = "",
@@ -24,6 +41,9 @@ export function TextFilter({
   icon = <SearchIcon className="h-4 w-4" />,
   debounceMs = 300,
   className,
+  disabled = false,
+  "aria-label": ariaLabel,
+  size = "md",
 }: TextFilterProps) {
   const [internalValue, setInternalValue] = React.useState(value);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -62,7 +82,7 @@ export function TextFilter({
         <Button
           variant="outline"
           size="sm"
-          className="h-10 gap-1.5 border-dashed text-sm"
+          className="hover:bg-accent/50 gap-1.5 border-dashed transition-colors"
           onClick={() => {
             // Focus on input when button is clicked
             const input = document.querySelector(
@@ -70,6 +90,8 @@ export function TextFilter({
             ) as HTMLInputElement;
             input?.focus();
           }}
+          disabled={disabled}
+          aria-label={ariaLabel || `Filtrar por ${title}`}
         >
           {icon}
           {title}
@@ -91,17 +113,30 @@ export function TextFilter({
             value={internalValue}
             onChange={(e) => setInternalValue(e.target.value)}
             placeholder={placeholder}
-            className={cn("h-10 w-64 pl-8", value && "pr-8")}
+            variant="search"
+            size={size}
+            className={cn("pr-9 pl-9", className)}
+            disabled={disabled}
+            aria-label={ariaLabel || `Campo de pesquisa para ${title}`}
           />
-          <SearchIcon className="text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2" />
+          <SearchIcon
+            className={cn(
+              "text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2",
+              ICON_SIZES[size],
+            )}
+          />
           {value && (
             <Button
               variant="ghost"
               size="sm"
-              className="absolute top-1/2 right-1 h-6 w-6 -translate-y-1/2 p-0"
+              className={cn(
+                "hover:bg-accent/50 absolute top-1/2 right-1 -translate-y-1/2 p-0",
+                CLEAR_BUTTON_SIZES[size],
+              )}
               onClick={clearFilter}
+              aria-label="Limpar filtro"
             >
-              <XIcon className="h-3 w-3" />
+              <XIcon className={ICON_SIZES[size]} />
             </Button>
           )}
         </div>
@@ -116,17 +151,30 @@ export function TextFilter({
         value={internalValue}
         onChange={(e) => setInternalValue(e.target.value)}
         placeholder={placeholder}
-        className={cn("h-10 pl-8", value && "pr-8")}
+        variant="search"
+        size={size}
+        className={cn("pl-8", value && "pr-8")}
+        disabled={disabled}
+        aria-label={ariaLabel || "Campo de pesquisa"}
       />
-      <SearchIcon className="text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2" />
+      <SearchIcon
+        className={cn(
+          "text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2",
+          ICON_SIZES[size],
+        )}
+      />
       {value && (
         <Button
           variant="ghost"
           size="sm"
-          className="absolute top-1/2 right-1 h-6 w-6 -translate-y-1/2 p-0"
+          className={cn(
+            "hover:bg-accent/50 absolute top-1/2 right-1 -translate-y-1/2 p-0",
+            CLEAR_BUTTON_SIZES[size],
+          )}
           onClick={clearFilter}
+          aria-label="Limpar filtro"
         >
-          <XIcon className="h-3 w-3" />
+          <XIcon className={ICON_SIZES[size]} />
         </Button>
       )}
     </div>

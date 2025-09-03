@@ -67,13 +67,15 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
       {/* Informações e seletor de items por página */}
       <div className="flex w-full flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <p className="text-xs font-medium text-neutral-700 sm:text-sm">
+          <p className="text-xs font-medium text-neutral-700 sm:text-sm dark:text-neutral-200">
             {totalItems}{" "}
-            <span className="font-normal text-neutral-400">itens</span>
+            <span className="font-normal text-neutral-400 dark:text-neutral-500">
+              itens
+            </span>
           </p>
-          <hr className="hidden h-4 border border-neutral-200 sm:block md:h-6" />
+          <hr className="hidden h-4 border border-neutral-200 sm:block md:h-6 dark:border-neutral-700" />
           <div className="flex items-center space-x-2">
-            <p className="hidden text-xs whitespace-nowrap text-neutral-600 sm:block sm:text-sm">
+            <p className="hidden text-xs whitespace-nowrap text-neutral-600 sm:block sm:text-sm dark:text-neutral-300">
               Linhas por página
             </p>
             <Select
@@ -82,12 +84,19 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger className="text-xs sm:text-sm">
+              <SelectTrigger className="text-xs sm:text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
                 <SelectValue placeholder={pageSize} />
               </SelectTrigger>
-              <SelectContent side="top">
+              <SelectContent
+                side="top"
+                className="dark:border-neutral-700 dark:bg-neutral-900"
+              >
                 {[10, 20, 30, 50].map((size) => (
-                  <SelectItem key={size} value={`${size}`}>
+                  <SelectItem
+                    key={size}
+                    value={`${size}`}
+                    className="dark:data-[state=checked]:bg-primary dark:text-neutral-200 dark:data-[state=checked]:text-white"
+                  >
                     {size}
                   </SelectItem>
                 ))}
@@ -97,7 +106,7 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
         </div>
         {/* Navegação de páginas */}
         <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
-          <span className="hidden text-center text-xs font-medium text-neutral-600 sm:block sm:text-left sm:text-sm">
+          <span className="hidden text-center text-xs font-medium text-neutral-600 sm:block sm:text-left sm:text-sm dark:text-neutral-300">
             Página {currentPage} de {totalPages}
           </span>
           <div className="flex items-center justify-center space-x-1 sm:space-x-2">
@@ -107,7 +116,7 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
               size="sm"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="h-7 w-7 p-0 disabled:opacity-30 sm:h-8 sm:w-8"
+              className="h-7 w-7 p-0 disabled:opacity-30 sm:h-8 sm:w-8 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
             >
               <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="sr-only">Página anterior</span>
@@ -120,7 +129,7 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
                   return (
                     <span
                       key={index}
-                      className="hidden px-1 text-xs text-neutral-400 sm:inline sm:px-2 sm:text-sm"
+                      className="hidden px-1 text-xs text-neutral-400 sm:inline sm:px-2 sm:text-sm dark:text-neutral-500"
                     >
                       ...
                     </span>
@@ -138,8 +147,8 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
                     onClick={() => table.setPageIndex(pageNum - 1)}
                     className={`h-7 w-7 p-0 text-xs sm:h-8 sm:w-8 sm:text-sm ${
                       isActive
-                        ? "bg-primary text-white transition-opacity duration-300 hover:opacity-80"
-                        : "text-neutral-600 hover:text-neutral-900"
+                        ? "bg-primary dark:bg-primary text-white transition-opacity duration-300 hover:opacity-80 dark:text-white"
+                        : "text-neutral-600 hover:text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:text-white"
                     }`}
                   >
                     {pageNum}
@@ -154,7 +163,7 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
               size="sm"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="h-7 w-7 p-0 disabled:opacity-30 sm:h-8 sm:w-8"
+              className="h-7 w-7 p-0 disabled:opacity-30 sm:h-8 sm:w-8 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
             >
               <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
               <span className="sr-only">Próxima página</span>
