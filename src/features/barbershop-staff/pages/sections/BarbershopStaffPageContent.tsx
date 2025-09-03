@@ -1,4 +1,3 @@
-import { useRecords } from "@/features/records";
 import { EmptyState } from "@/shared/components/common/EmptyState";
 import { FilterToolbarSkeleton } from "@/shared/components/skeletons/FilterSkeletons";
 import { TableSkeleton } from "@/shared/components/skeletons/TableSkeleton";
@@ -6,13 +5,38 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { BarbershopStaffFilters } from "../../components/filter/BarbershopStaffFilters";
 import { BarbershopStaffDataTable } from "../../components/table/BarbershopStaffDataTable";
+import { createColumns } from "../../components/table/columns";
+import { useBarbershopStaff } from "../../hooks/useBarbershopStaff";
+import { useStaffFilters } from "../../hooks/useStaffFilters";
 
 export function BarbershopStaffPageContent() {
-  const { t } = useTranslation("records");
-  const { isLoading } = useRecords();
+  const { t } = useTranslation("barbershop-staff");
 
-  const shouldShowEmptyState = false;
-  const shouldShowFilteredEmptyState = false;
+  // 🔍 Filters management
+  const { filters, updateFilter, clearAllFilters, hasActiveFilters } =
+    useStaffFilters();
+
+  // 📊 Data fetching
+  const { staff, pagination, statistics, isLoading } =
+    useBarbershopStaff(filters);
+
+  // 📋 Table columns
+  const columns = createColumns({
+    onEdit: (staff) => {
+      // TODO: Implementar edição
+      console.log("Edit staff:", staff);
+    },
+    onDelete: (staff) => {
+      // TODO: Implementar exclusão
+      console.log("Delete staff:", staff);
+    },
+  });
+
+  // 🎯 Empty state logic
+  const shouldShowEmptyState =
+    !isLoading && staff.length === 0 && !hasActiveFilters;
+  const shouldShowFilteredEmptyState =
+    !isLoading && staff.length === 0 && hasActiveFilters;
 
   return (
     <div>
@@ -27,7 +51,13 @@ export function BarbershopStaffPageContent() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
             >
-              <BarbershopStaffFilters autores={[]} totalCount={0} />
+              <BarbershopStaffFilters
+                filters={filters}
+                onFilterChange={updateFilter}
+                onClearFilters={clearAllFilters}
+                totalCount={pagination?.total || 0}
+                statistics={statistics}
+              />
             </motion.div>
           )}
         </AnimatePresence>
@@ -49,7 +79,7 @@ export function BarbershopStaffPageContent() {
               type="filtered"
               action={{
                 label: t("empty.filtered.action"),
-                onClick: () => {},
+                onClick: clearAllFilters,
               }}
             />
           ) : (
@@ -59,7 +89,12 @@ export function BarbershopStaffPageContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
-              <BarbershopStaffDataTable columns={[]} data={[]} />
+              <BarbershopStaffDataTable
+                columns={columns}
+                data={staff}
+                pagination={pagination}
+                onPaginationChange={(page) => updateFilter("page", page)}
+              />
             </motion.div>
           )}
         </AnimatePresence>

@@ -13,7 +13,7 @@ interface StaffColumnsProps {
 }
 
 // 🚀 Optimized column creation for barbershop staff
-export const createStaffColumns = ({
+export const createColumns = ({
   onEdit,
   onDelete,
 }: StaffColumnsProps): ColumnDef<BarbershopStaff>[] => {
@@ -44,8 +44,15 @@ export const createStaffColumns = ({
       ),
       cell: ({ row }) => {
         const staff = row.original;
-        const fullName = `${staff.first_name} ${staff.last_name || ""}`.trim();
-        const displayName = staff.display_name || fullName;
+        const lastName =
+          staff.last_name && typeof staff.last_name === "string"
+            ? staff.last_name
+            : "";
+        const fullName = `${staff.first_name} ${lastName}`.trim();
+        const displayName =
+          staff.display_name && typeof staff.display_name === "string"
+            ? staff.display_name
+            : fullName;
 
         return (
           <div className="text-primary hover:text-primary/80 ml-5 cursor-pointer font-medium">
@@ -183,15 +190,35 @@ export const createStaffColumns = ({
         </TableSort>
       ),
       cell: ({ row }) => {
-        const hireDate = row.getValue("hire_date") as string;
-        if (!hireDate) {
+        const hireDate = row.getValue("hire_date");
+
+        // Verificar se é uma string válida e não é objeto vazio
+        if (
+          !hireDate ||
+          typeof hireDate !== "string" ||
+          hireDate.trim() === ""
+        ) {
           return <div className="text-center text-sm text-neutral-400">-</div>;
         }
-        return (
-          <div className="text-center text-sm text-neutral-500">
-            {format(new Date(hireDate), "dd/MM/yyyy", { locale: ptBR })}
-          </div>
-        );
+
+        try {
+          const date = new Date(hireDate);
+          // Verificar se a data é válida
+          if (isNaN(date.getTime())) {
+            return (
+              <div className="text-center text-sm text-neutral-400">-</div>
+            );
+          }
+
+          return (
+            <div className="text-center text-sm text-neutral-500">
+              {format(date, "dd/MM/yyyy", { locale: ptBR })}
+            </div>
+          );
+        } catch (error) {
+          console.error(error);
+          return <div className="text-center text-sm text-neutral-400">-</div>;
+        }
       },
     },
     {

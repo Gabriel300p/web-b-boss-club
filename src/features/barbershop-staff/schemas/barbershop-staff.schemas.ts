@@ -27,16 +27,58 @@ export const barbershopStaffSchema = z.object({
   user_id: z.string(),
   barbershop_id: z.string(),
   first_name: z.string(),
-  last_name: z.string().nullable(),
-  display_name: z.string().nullable(),
-  phone: z.string().nullable(),
+  last_name: z
+    .union([z.string(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  display_name: z
+    .union([z.string(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  phone: z
+    .union([z.string(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
   role_in_shop: userRoleEnum,
   status: staffStatusEnum,
-  salary: z.number().nullable(),
-  commission_rate: z.number().nullable(),
-  hire_date: z.string().nullable(),
+  salary: z
+    .union([z.number(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  commission_rate: z
+    .union([z.number(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  hire_date: z
+    .union([z.string(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
   is_available: z.boolean(),
-  internal_notes: z.string().nullable(),
+  internal_notes: z
+    .union([z.string(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
   created_at: z.string(),
   updated_at: z.string(),
 
@@ -111,12 +153,10 @@ export const staffFiltersSchema = z.object({
   available_for_booking: z.boolean().optional(),
 
   // Pagination and sorting
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(10),
-  sort_by: z
-    .enum(["name", "hire_date", "status", "created_at"])
-    .default("created_at"),
-  sort_order: z.enum(["asc", "desc"]).default("desc"),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+  sort_by: z.enum(["name", "hire_date", "status", "created_at"]).optional(),
+  sort_order: z.enum(["asc", "desc"]).optional(),
 });
 
 // 📄 Response schemas
