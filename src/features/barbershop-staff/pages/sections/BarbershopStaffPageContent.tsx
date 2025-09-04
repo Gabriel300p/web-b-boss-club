@@ -21,7 +21,7 @@ interface BarbershopStaffPageContentProps {
   isLoading: boolean;
   filters: StaffFilters;
   updateFilter: <K extends keyof StaffFilters>(key: K, value: StaffFilters[K]) => void;
-  clearAllFilters: () => void;
+  resetFilters: () => void;
   hasActiveFilters: boolean;
   refetch: (options?: RefetchOptions) => Promise<QueryObserverResult>;
 }
@@ -32,7 +32,7 @@ export function BarbershopStaffPageContent({
   isLoading,
   filters,
   updateFilter,
-  clearAllFilters,
+  resetFilters,
   hasActiveFilters,
 }: BarbershopStaffPageContentProps) {
   const { t } = useTranslation("barbershop-staff");
@@ -76,7 +76,7 @@ export function BarbershopStaffPageContent({
             <BarbershopStaffFilters
               filters={filters}
               onFilterChange={updateFilter}
-              onClearFilters={clearAllFilters}
+              onClearFilters={resetFilters}
             />
           </motion.div>
         )}
@@ -99,7 +99,7 @@ export function BarbershopStaffPageContent({
             type="filtered"
             action={{
               label: t("empty.filtered.action"),
-              onClick: clearAllFilters,
+              onClick: resetFilters,
             }}
           />
         ) : (

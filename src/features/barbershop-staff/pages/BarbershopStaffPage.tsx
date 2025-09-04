@@ -10,7 +10,7 @@ export function BarbershopStaffPage() {
   const {
     filters,
     updateFilter,
-    clearAllFilters,
+    resetFilters,
     hasActiveFilters,
     staff,
     pagination,
@@ -52,7 +52,7 @@ export function BarbershopStaffPage() {
         isLoading={isLoading}
         filters={filters}
         updateFilter={updateFilter}
-        clearAllFilters={clearAllFilters}
+        resetFilters={resetFilters}
         hasActiveFilters={hasActiveFilters}
         refetch={refetch}
       />
