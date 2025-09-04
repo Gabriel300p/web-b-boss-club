@@ -52,10 +52,10 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
 
     setTimeLeft(Math.ceil(duration / 1000));
 
-    // 🔥 OPTIMIZATION: Reduce interval frequency from 100ms to 250ms
+    // 🔥 OPTIMIZATION: Use 150ms for smooth animation with good performance
     const interval = setInterval(() => {
       setProgress((prev) => {
-        const decrement = 100 / (duration / 250); // Adjusted for 250ms
+        const decrement = 100 / (duration / 150); // Adjusted for 150ms
         const newProgress = prev - decrement;
 
         if (newProgress <= 0) {
@@ -65,7 +65,7 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
 
         return newProgress;
       });
-    }, 250); // 🔥 Changed from 100ms to 250ms - 60% less renders
+    }, 150); // 🔥 150ms - balance between smooth animation and performance
 
     // Update time left every second (keep 1000ms for accuracy)
     const timeInterval = setInterval(() => {
@@ -263,7 +263,7 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
           className={`absolute bottom-0 left-0 h-1 rounded-b-xl ${getProgressBarClasses(toast.type)}`}
           initial={{ width: "100%" }}
           animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.1, ease: "linear" }}
+          transition={{ duration: 0.15, ease: "linear" }}
           aria-hidden="true"
         />
       )}

@@ -1,4 +1,3 @@
-// 🚀 BarbershopStaffDataTable - Optimized data table component for Barbershop Staff feature
 import { Pagination } from "@/shared/components/ui";
 import { OptimizedTable } from "@shared/components/ui/OptimizedTable";
 
@@ -29,7 +28,6 @@ interface BarbershopStaffDataTableProps<TData, TValue> {
   onPaginationChange?: (page: number) => void;
 }
 
-// 🚀 Internal BarbershopStaffDataTable component for optimization
 function BarbershopStaffDataTableComponent<TData, TValue>({
   columns,
   data,
@@ -39,7 +37,6 @@ function BarbershopStaffDataTableComponent<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
 
-  // 🚀 Memoize table configuration to prevent unnecessary re-creations
   const tableConfig = useMemo(
     () => ({
       data,
@@ -66,16 +63,12 @@ function BarbershopStaffDataTableComponent<TData, TValue>({
 
   return (
     <div className="w-full space-y-4">
-      <OptimizedTable
-        table={table}
-        enableAnimations={data.length <= 50} // Disable animations for large datasets
-      />
+      <OptimizedTable table={table} enableAnimations={data.length <= 50} />
 
       <Pagination table={table} />
     </div>
   );
 }
 
-// 🚀 Memoized export for performance optimization with proper typing
 export const BarbershopStaffDataTable =
   BarbershopStaffDataTableComponent as typeof BarbershopStaffDataTableComponent;

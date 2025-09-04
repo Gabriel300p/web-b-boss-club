@@ -1,12 +1,11 @@
 import { EmptyState } from "@/shared/components/common/EmptyState";
-import { FilterToolbarSkeleton } from "@/shared/components/skeletons/FilterSkeletons";
+import { FilterSkeleton } from "@/shared/components/skeletons/FilterSkeletons";
 import { TableSkeleton } from "@/shared/components/skeletons/TableSkeleton";
 import { useStableLoading } from "@/shared/hooks/useStableLoading";
 import type {
   QueryObserverResult,
   RefetchOptions,
 } from "@tanstack/react-query";
-import { AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { BarbershopStaffFilters } from "../../components/filter/BarbershopStaffFilters";
 import { BarbershopStaffDataTable } from "../../components/table/BarbershopStaffDataTable";
@@ -61,6 +60,9 @@ export function BarbershopStaffPageContent({
     },
   });
 
+  // 🎯 Separate loading states: filters should NEVER show skeleton during filtering
+  const isFiltering = stableLoading && staff.length > 0;
+
   // 🎯 Empty state logic
   const shouldShowEmptyState =
     !stableLoading && staff.length === 0 && !hasActiveFilters;
@@ -69,21 +71,16 @@ export function BarbershopStaffPageContent({
 
   return (
     <div className="space-y-6">
-      {/* Filters Toolbar */}
-      <AnimatePresence mode="wait">
-        {stableLoading ? (
-          <FilterToolbarSkeleton />
-        ) : (
-          <BarbershopStaffFilters
-            filters={filters}
-            onFilterChange={updateFilter}
-            onClearFilters={resetFilters}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Content - Table or Empty States */}
-
+      {/* Filters Toolbar - NEVER show skeleton during filtering */}
+      <div className="relative">
+        <BarbershopStaffFilters
+          filters={filters}
+          onFilterChange={updateFilter}
+          onClearFilters={resetFilters}
+        />
+        {/* 🎯 Subtle loading indicator during filtering */}
+        {isFiltering && <FilterSkeleton />}
+      </div>
       {stableLoading ? (
         <TableSkeleton />
       ) : shouldShowEmptyState ? (

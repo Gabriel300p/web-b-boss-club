@@ -62,10 +62,7 @@ export function OptimizedTable<TData>({
   const { rows } = table.getRowModel();
 
   return (
-    <AnimatedBox
-      variant="fadeIn"
-      className="rounded-md border border-neutral-700"
-    >
+    <AnimatedBox variant="fadeIn" className="rounded-lg">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

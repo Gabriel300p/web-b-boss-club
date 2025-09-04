@@ -67,7 +67,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         type: "success",
         title,
         message,
-        expandable: true,
+        expandable: false,
         duration,
       });
     };
@@ -81,7 +81,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         type: "info",
         title,
         message,
-        expandable: true,
+        expandable: false,
         duration,
       });
     };
@@ -190,14 +190,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     mutationFn: authService.logout,
     onSuccess: async () => {
       // 🚀 SEQUÊNCIA OTIMIZADA: Evitar race conditions
-      
+
       // 1️⃣ Limpar auth state primeiro
       storeLogout();
       clearAllTokens();
 
       // 2️⃣ Limpar cache React Query e aguardar completar
       await queryClient.clear();
-      
+
       // 3️⃣ Garantir que todas as queries pendentes sejam canceladas
       queryClient.cancelQueries();
 

@@ -12,7 +12,7 @@ import {
   UserIcon,
   XCircleIcon,
 } from "lucide-react";
-import { useMemo, useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import type { StaffFilters } from "../../schemas/barbershop-staff.schemas";
 
@@ -33,31 +33,30 @@ export function BarbershopStaffFilters({
   // 🔥 OPTIMIZATION: Memoize filter change handlers to prevent re-renders
   const handleSearchChange = useCallback(
     (value: string) => onFilterChange("search", value),
-    [onFilterChange]
+    [onFilterChange],
   );
 
   const handleStatusChange = useCallback(
     (values: unknown[]) =>
       onFilterChange(
         "status",
-        values[0] as "ACTIVE" | "INACTIVE" | "SUSPENDED" | "TERMINATED"
+        values[0] as "ACTIVE" | "INACTIVE" | "SUSPENDED" | "TERMINATED",
       ),
-    [onFilterChange]
+    [onFilterChange],
   );
 
   const handleRoleChange = useCallback(
     (values: unknown[]) =>
       onFilterChange(
         "role_in_shop",
-        values[0] as "BARBER" | "BARBERSHOP_OWNER"
+        values[0] as "BARBER" | "BARBERSHOP_OWNER",
       ),
-    [onFilterChange]
+    [onFilterChange],
   );
 
   const handleAvailabilityChange = useCallback(
-    (values: unknown[]) =>
-      onFilterChange("is_available", values[0] as boolean),
-    [onFilterChange]
+    (values: unknown[]) => onFilterChange("is_available", values[0] as boolean),
+    [onFilterChange],
   );
   // 🎯 Status options with icons and colors
   const statusOptions: FilterOption[] = useMemo(
@@ -138,9 +137,9 @@ export function BarbershopStaffFilters({
         <TextFilter
           value={filters.search || ""}
           onChange={handleSearchChange}
-          placeholder="Pesquisar funcionários..."
-          className="max-w-md"
-          size="md"
+          placeholder="Pesquisar..."
+          className="max-w-lg"
+          size="lg"
         />
 
         <FilterToolbar
