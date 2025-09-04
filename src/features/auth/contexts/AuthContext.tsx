@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
@@ -29,6 +29,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { t } = useTranslation("auth");
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const queryClient = useQueryClient();
 
   // 🔐 Hook para gerenciamento centralizado de tokens
   const useTokenManager = () => {
@@ -190,6 +191,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
     onSuccess: () => {
       storeLogout();
       clearAllTokens();
+
+      // 🚀 CORREÇÃO CRÍTICA: Limpar todo o cache do React Query
+      // Isso resolve o bug de dados stale aparecerem após logout->login
+      queryClient.clear();
 
       showInfoToast(
         t("toasts.success.logoutTitle"),

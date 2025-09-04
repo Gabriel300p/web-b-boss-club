@@ -5,6 +5,7 @@
 import { useToast } from "@shared/hooks";
 import { createAppError, ErrorHandler, ErrorTypes } from "@shared/lib/errors";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuthStore } from "../../../app/store/auth";
 
 import type {
   CreateStaffFormData,
@@ -20,17 +21,24 @@ import {
   updateStaff,
 } from "../services/barbershop-staff.service";
 
-// 🔑 Query keys for optimized caching
+// 🔑 Query keys for optimized caching with user isolation
 export const STAFF_QUERY_KEYS = {
   staff: {
-    all: ["barbershop-staff"] as const,
-    lists: () => [...STAFF_QUERY_KEYS.staff.all, "list"] as const,
-    list: (filters: StaffFilters) =>
-      [...STAFF_QUERY_KEYS.staff.lists(), { filters }] as const,
-    details: () => [...STAFF_QUERY_KEYS.staff.all, "detail"] as const,
-    detail: (id: string) => [...STAFF_QUERY_KEYS.staff.details(), id] as const,
-    stats: (barbershopId?: string) =>
-      [...STAFF_QUERY_KEYS.staff.all, "stats", { barbershopId }] as const,
+    all: (userId?: string) => ["barbershop-staff", userId] as const,
+    lists: (userId?: string) =>
+      [...STAFF_QUERY_KEYS.staff.all(userId), "list"] as const,
+    list: (filters: StaffFilters, userId?: string) =>
+      [...STAFF_QUERY_KEYS.staff.lists(userId), { filters }] as const,
+    details: (userId?: string) =>
+      [...STAFF_QUERY_KEYS.staff.all(userId), "detail"] as const,
+    detail: (id: string, userId?: string) =>
+      [...STAFF_QUERY_KEYS.staff.details(userId), id] as const,
+    stats: (barbershopId?: string, userId?: string) =>
+      [
+        ...STAFF_QUERY_KEYS.staff.all(userId),
+        "stats",
+        { barbershopId },
+      ] as const,
   },
 } as const;
 
@@ -46,6 +54,7 @@ export function useBarbershopStaff(filters: StaffFilters = {}) {
   const { success } = useToast();
   const queryClient = useQueryClient();
   const errorHandler = ErrorHandler.getInstance();
+  const { user } = useAuthStore(); // 🔑 Obter usuário atual para isolamento de cache
 
   // 🔄 Query for fetching staff list
   const {
@@ -54,7 +63,7 @@ export function useBarbershopStaff(filters: StaffFilters = {}) {
     error,
     refetch,
   } = useQuery({
-    queryKey: STAFF_QUERY_KEYS.staff.list(mergedFilters),
+    queryKey: STAFF_QUERY_KEYS.staff.list(mergedFilters, user?.id), // 🔒 Cache isolado por usuário
     queryFn: () => fetchStaffList(mergedFilters),
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes
@@ -66,10 +75,10 @@ export function useBarbershopStaff(filters: StaffFilters = {}) {
     onSuccess: (data) => {
       // Invalidate and refetch staff list
       queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.lists(),
+        queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
       });
       queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.stats(),
+        queryKey: STAFF_QUERY_KEYS.staff.stats(undefined, user?.id),
       });
 
       success(
@@ -99,13 +108,13 @@ export function useBarbershopStaff(filters: StaffFilters = {}) {
     onSuccess: (data) => {
       // Invalidate and refetch staff list
       queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.lists(),
+        queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
       });
       queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.detail(data.id),
+        queryKey: STAFF_QUERY_KEYS.staff.detail(data.id, user?.id),
       });
       queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.stats(),
+        queryKey: STAFF_QUERY_KEYS.staff.stats(undefined, user?.id),
       });
 
       success(
@@ -134,13 +143,13 @@ export function useBarbershopStaff(filters: StaffFilters = {}) {
     onSuccess: (_, id) => {
       // Invalidate and refetch staff list
       queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.lists(),
+        queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
       });
       queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.detail(id),
+        queryKey: STAFF_QUERY_KEYS.staff.detail(id, user?.id),
       });
       queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.stats(),
+        queryKey: STAFF_QUERY_KEYS.staff.stats(undefined, user?.id),
       });
 
       success(
@@ -205,12 +214,14 @@ export function useBarbershopStaff(filters: StaffFilters = {}) {
 
 // 📊 Hook for staff statistics
 export function useStaffStats(barbershopId?: string) {
+  const { user } = useAuthStore(); // 🔑 Obter usuário atual
+
   const {
     data: stats,
     isLoading,
     error,
   } = useQuery({
-    queryKey: STAFF_QUERY_KEYS.staff.stats(barbershopId),
+    queryKey: STAFF_QUERY_KEYS.staff.stats(barbershopId, user?.id), // 🔒 Cache isolado por usuário
     queryFn: () => fetchStaffStats(barbershopId),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -225,12 +236,14 @@ export function useStaffStats(barbershopId?: string) {
 
 // 🔍 Hook for single staff member
 export function useStaffDetail(id: string) {
+  const { user } = useAuthStore(); // 🔑 Obter usuário atual
+
   const {
     data: staff,
     isLoading,
     error,
   } = useQuery({
-    queryKey: STAFF_QUERY_KEYS.staff.detail(id),
+    queryKey: STAFF_QUERY_KEYS.staff.detail(id, user?.id), // 🔒 Cache isolado por usuário
     queryFn: () => fetchStaffById(id),
     enabled: !!id,
     staleTime: 5 * 60 * 1000, // 5 minutes
