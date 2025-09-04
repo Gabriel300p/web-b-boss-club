@@ -1,8 +1,13 @@
 /**
- * 🔍 Staff Filters Hook
- * Simple and maintainable filter management
+ * 🔍 Staff Filters H     const [filters, setFilters] = useState<StaffFilters>(initialState);
+
+  // 🔄 Update single filters, setFilters] = useState<StaffFilters>(initialState);
+
+  // 🔄 Update single filterrs, setFilters] = useState<StaffFilters>(initialState);
+
+  // 🔄 Update single filtere and maintainable filter management
  */
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import type { StaffFilters } from "../schemas/barbershop-staff.schemas";
 
 // 🎯 Default filter values
@@ -13,12 +18,28 @@ const DEFAULT_FILTERS: StaffFilters = {
   sort_order: "desc",
 };
 
+// 🎯 Empty initial filters constant to prevent recreating objects
+const EMPTY_INITIAL_FILTERS: Partial<StaffFilters> = {};
+
 // 🚀 Main filters hook
-export function useStaffFilters(initialFilters: Partial<StaffFilters> = {}) {
-  const [filters, setFilters] = useState<StaffFilters>({
+export function useStaffFilters(initialFilters: Partial<StaffFilters> = EMPTY_INITIAL_FILTERS) {
+  // 🎯 Memoize the initial state to prevent recreating objects
+  const initialState = useMemo(() => ({
     ...DEFAULT_FILTERS,
     ...initialFilters,
-  });
+  }), [initialFilters]);
+
+  const [filters, setFilters] = useState<StaffFilters>(initialState);
+
+  // � DEBUG: Log para investigar mudanças nos filtros (remover em produção)
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎯 [useStaffFilters] State changed:', {
+        filters,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }, [filters]);
 
   // 🔄 Update single filter
   const updateFilter = useCallback(
@@ -72,6 +93,7 @@ export function useStaffFilters(initialFilters: Partial<StaffFilters> = {}) {
 
   // 📊 Check if any filters are active (excluding pagination)
   const hasActiveFilters = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { page, limit, sort_by, sort_order, ...activeFilters } = filters;
     return Object.values(activeFilters).some(
       (value) => value !== undefined && value !== null && value !== "",
@@ -80,6 +102,7 @@ export function useStaffFilters(initialFilters: Partial<StaffFilters> = {}) {
 
   // 📊 Get active filter count
   const activeFilterCount = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { page, limit, sort_by, sort_order, ...activeFilters } = filters;
     return Object.values(activeFilters).filter(
       (value) => value !== undefined && value !== null && value !== "",

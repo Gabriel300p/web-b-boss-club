@@ -1,25 +1,49 @@
 import { EmptyState } from "@/shared/components/common/EmptyState";
 import { FilterToolbarSkeleton } from "@/shared/components/skeletons/FilterSkeletons";
 import { TableSkeleton } from "@/shared/components/skeletons/TableSkeleton";
+import { useStableLoading } from "@/shared/hooks/useStableLoading";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import type { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { BarbershopStaffFilters } from "../../components/filter/BarbershopStaffFilters";
 import { BarbershopStaffDataTable } from "../../components/table/BarbershopStaffDataTable";
 import { createColumns } from "../../components/table/columns";
-import { useBarbershopStaff } from "../../hooks/useBarbershopStaff";
-import { useStaffFilters } from "../../hooks/useStaffFilters";
+import type { 
+  BarbershopStaff, 
+  StaffFilters, 
+  StaffListResponse 
+} from "../../schemas/barbershop-staff.schemas";
 
-export function BarbershopStaffPageContent() {
+// 🎯 Props interface for better type safety
+interface BarbershopStaffPageContentProps {
+  staff: BarbershopStaff[];
+  pagination: StaffListResponse['pagination'] | undefined;
+  isLoading: boolean;
+  filters: StaffFilters;
+  updateFilter: <K extends keyof StaffFilters>(key: K, value: StaffFilters[K]) => void;
+  clearAllFilters: () => void;
+  hasActiveFilters: boolean;
+  refetch: (options?: RefetchOptions) => Promise<QueryObserverResult>;
+}
+
+export function BarbershopStaffPageContent({
+  staff,
+  pagination,
+  isLoading,
+  filters,
+  updateFilter,
+  clearAllFilters,
+  hasActiveFilters,
+}: BarbershopStaffPageContentProps) {
   const { t } = useTranslation("barbershop-staff");
 
-  // 🔍 Filters management
-  const { filters, updateFilter, clearAllFilters, hasActiveFilters } =
-    useStaffFilters();
+  // �️ Stabilize loading state to prevent skeleton duplication in StrictMode
+  const { isLoading: stableLoading } = useStableLoading({ 
+    isLoading,
+    minLoadingTime: 200, // Minimum loading time for better UX
+  });
 
-  // 📊 Data fetching
-  const { staff, pagination, isLoading } = useBarbershopStaff(filters);
-
-  // 📋 Table columns
+  // �📋 Table columns
   const columns = createColumns({
     onEdit: (staff) => {
       // TODO: Implementar edição
@@ -33,15 +57,15 @@ export function BarbershopStaffPageContent() {
 
   // 🎯 Empty state logic
   const shouldShowEmptyState =
-    !isLoading && staff.length === 0 && !hasActiveFilters;
+    !stableLoading && staff.length === 0 && !hasActiveFilters;
   const shouldShowFilteredEmptyState =
-    !isLoading && staff.length === 0 && hasActiveFilters;
+    !stableLoading && staff.length === 0 && hasActiveFilters;
 
   return (
     <div className="space-y-6">
       {/* Filters Toolbar */}
       <AnimatePresence mode="wait">
-        {isLoading ? (
+        {stableLoading ? (
           <FilterToolbarSkeleton />
         ) : (
           <motion.div
@@ -60,7 +84,7 @@ export function BarbershopStaffPageContent() {
 
       {/* Content - Table or Empty States */}
       <AnimatePresence mode="wait">
-        {isLoading ? (
+        {stableLoading ? (
           <TableSkeleton />
         ) : shouldShowEmptyState ? (
           <EmptyState

@@ -6,6 +6,7 @@ import { useToast } from "@shared/hooks";
 import { createAppError, ErrorHandler, ErrorTypes } from "@shared/lib/errors";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../../../app/store/auth";
+import { useMemo } from "react";
 
 import type {
   CreateStaffFormData,
@@ -42,19 +43,35 @@ export const STAFF_QUERY_KEYS = {
   },
 } as const;
 
+// 🎯 Default filter values (moved outside component for optimization)
+const DEFAULT_FILTERS: StaffFilters = {
+  page: 1,
+  limit: 10,
+  sort_by: "created_at",
+  sort_order: "desc",
+};
+
+// 🎯 Empty initial filters constant to prevent recreating objects
+const EMPTY_INITIAL_FILTERS: StaffFilters = DEFAULT_FILTERS;
+
 // 🚀 Main hook for staff list with filters
-export function useBarbershopStaff(filters: StaffFilters = {}) {
-  const defaultFilters: StaffFilters = {
-    page: 1,
-    limit: 10,
-    sort_by: "created_at",
-    sort_order: "desc",
-  };
-  const mergedFilters = { ...defaultFilters, ...filters };
+export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS) {
+  // 🎯 Memoize merged filters to prevent unnecessary re-renders
+  const mergedFilters = useMemo(() => ({ 
+    ...DEFAULT_FILTERS, 
+    ...filters 
+  }), [filters]);
+  
   const { success } = useToast();
   const queryClient = useQueryClient();
   const errorHandler = ErrorHandler.getInstance();
   const { user } = useAuthStore(); // 🔑 Obter usuário atual para isolamento de cache
+
+  // 🎯 Memoize query key to prevent unnecessary re-fetches
+  const queryKey = useMemo(() => 
+    STAFF_QUERY_KEYS.staff.list(mergedFilters, user?.id), 
+    [mergedFilters, user?.id]
+  );
 
   // 🔄 Query for fetching staff list
   const {
@@ -63,7 +80,7 @@ export function useBarbershopStaff(filters: StaffFilters = {}) {
     error,
     refetch,
   } = useQuery({
-    queryKey: STAFF_QUERY_KEYS.staff.list(mergedFilters, user?.id), // 🔒 Cache isolado por usuário
+    queryKey, // 🔒 Cache isolado por usuário com query key memoizada
     queryFn: () => fetchStaffList(mergedFilters),
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 5 * 60 * 1000, // 5 minutes

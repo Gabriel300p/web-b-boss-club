@@ -8,6 +8,11 @@ export {
   useStaffStats,
 } from "./hooks/useBarbershopStaff";
 export { useStaffFilters } from "./hooks/useStaffFilters";
+export { 
+  useStableStaffManagement,
+  useStableStaffFilters,
+  useStableBarbershopStaff 
+} from "./hooks/useStableStaffManagement";
 
 // Services
 export * from "./services/barbershop-staff.service";
