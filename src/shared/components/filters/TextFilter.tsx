@@ -47,6 +47,7 @@ export function TextFilter({
 }: TextFilterProps) {
   const [internalValue, setInternalValue] = React.useState(value);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   // 🔥 OPTIMIZATION: Memoize onChange to prevent infinite loops
   const memoizedOnChange = React.useCallback(onChange, [onChange]);
@@ -79,6 +80,40 @@ export function TextFilter({
     memoizedOnChange("");
   }, [memoizedOnChange]); // 🔥 Memoize clearFilter too
 
+  // 🎯 Função para focar no input
+  const focusInput = React.useCallback(() => {
+    if (inputRef.current && !disabled) {
+      inputRef.current.focus();
+      inputRef.current.select(); // Seleciona o texto existente
+    }
+  }, [disabled]);
+
+  // 🎯 Atalho global Ctrl+K para focar na busca (usando ref para evitar conflitos)
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ctrl+F ou Cmd+F (Mac) - atalho universal para busca
+      if ((event.ctrlKey || event.metaKey) && event.key === "e") {
+        // Verificar se não está em um input/textarea ativo
+        const activeElement = document.activeElement;
+        const isInputActive =
+          activeElement?.tagName === "INPUT" ||
+          activeElement?.tagName === "TEXTAREA" ||
+          (activeElement as HTMLElement)?.contentEditable === "true";
+
+        if (!isInputActive && inputRef.current && !disabled) {
+          event.preventDefault();
+          event.stopPropagation();
+          inputRef.current.focus();
+          inputRef.current.select();
+        }
+      }
+    };
+
+    // Usar capture para garantir que seja executado primeiro
+    document.addEventListener("keydown", handleKeyDown, true);
+    return () => document.removeEventListener("keydown", handleKeyDown, true);
+  }, [disabled]); // Apenas disabled como dependência
+
   if (title) {
     // Render as filter button
     return (
@@ -87,13 +122,7 @@ export function TextFilter({
           variant="outline"
           size="sm"
           className="hover:bg-accent/50 gap-1.5 border-dashed transition-colors"
-          onClick={() => {
-            // Focus on input when button is clicked
-            const input = document.querySelector(
-              `[data-filter-title="${title}"]`,
-            ) as HTMLInputElement;
-            input?.focus();
-          }}
+          onClick={focusInput}
           disabled={disabled}
           aria-label={ariaLabel || `Filtrar por ${title}`}
         >
@@ -113,13 +142,13 @@ export function TextFilter({
         </Button>
         <div className="relative">
           <Input
-            data-filter-title={title}
+            ref={inputRef}
             value={internalValue}
             onChange={(e) => setInternalValue(e.target.value)}
             placeholder={placeholder}
             variant="search"
             size={size}
-            className={cn("pr-9 pl-9", className)}
+            className={cn("pr-20 pl-9", className)}
             disabled={disabled}
             aria-label={ariaLabel || `Campo de pesquisa para ${title}`}
           />
@@ -129,6 +158,10 @@ export function TextFilter({
               ICON_SIZES[size],
             )}
           />
+          <kbd className="absolute top-1/2 right-8 hidden -translate-y-1/2 rounded bg-neutral-800 px-1.5 py-0.5 text-xs text-neutral-300 md:inline">
+            {navigator.platform.toLowerCase().includes("mac") ? "⌘" : "Ctrl"} +
+            E
+          </kbd>
           {value && (
             <Button
               variant="ghost"
@@ -152,12 +185,13 @@ export function TextFilter({
   return (
     <div className={cn("relative", className)}>
       <Input
+        ref={inputRef}
         value={internalValue}
         onChange={(e) => setInternalValue(e.target.value)}
         placeholder={placeholder}
         variant="search"
         size={size}
-        className={cn("pl-8", value && "pr-8")}
+        className={cn("pr-20 pl-8")}
         disabled={disabled}
         aria-label={ariaLabel || "Campo de pesquisa"}
       />
@@ -167,7 +201,8 @@ export function TextFilter({
           ICON_SIZES[size],
         )}
       />
-      {value && (
+
+      {value ? (
         <Button
           variant="ghost"
           size="sm"
@@ -180,6 +215,10 @@ export function TextFilter({
         >
           <XIcon className={ICON_SIZES[size]} />
         </Button>
+      ) : (
+        <kbd className="absolute top-1/2 right-3 hidden -translate-y-1/2 rounded bg-neutral-800 px-1.5 py-0.5 text-xs text-neutral-300 md:inline">
+          {navigator.platform.toLowerCase().includes("mac") ? "⌘" : "Ctrl"} + E
+        </kbd>
       )}
     </div>
   );

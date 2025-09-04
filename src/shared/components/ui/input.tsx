@@ -14,7 +14,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         "border-neutral-800 bg-transparent focus:border-amber-400 focus:ring-amber-400/20",
       form: "border-neutral-600 bg-neutral-800 focus:border-primary focus:ring-primary/20",
       search:
-        "border-neutral-700 bg-neutral-900/50 focus:border-amber-400 focus:ring-amber-400/20",
+        "border-neutral-700/70 bg-neutral-900/50 focus:border-amber-400 focus:ring-amber-400/20",
       login:
         "border-neutral-800 bg-transparent focus:border-amber-400 focus:ring-amber-400/20",
     };
