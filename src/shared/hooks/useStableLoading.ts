@@ -60,6 +60,7 @@ export function useStableLoading({
       } else {
         setStableLoading(true);
       }
+      return; // 🔥 CRITICAL: Return early to prevent double execution
     }
 
     // 🎯 Quando loading termina
@@ -80,6 +81,7 @@ export function useStableLoading({
         setStableLoading(false);
         loadingStartTime.current = null;
       }
+      return; // 🔥 CRITICAL: Return early to prevent double execution
     }
 
     // Cleanup timeout

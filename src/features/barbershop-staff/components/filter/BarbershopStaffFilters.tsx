@@ -12,7 +12,7 @@ import {
   UserIcon,
   XCircleIcon,
 } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 
 import type { StaffFilters } from "../../schemas/barbershop-staff.schemas";
 
@@ -30,6 +30,35 @@ export function BarbershopStaffFilters({
   onFilterChange,
   onClearFilters,
 }: BarbershopStaffFiltersProps) {
+  // 🔥 OPTIMIZATION: Memoize filter change handlers to prevent re-renders
+  const handleSearchChange = useCallback(
+    (value: string) => onFilterChange("search", value),
+    [onFilterChange]
+  );
+
+  const handleStatusChange = useCallback(
+    (values: unknown[]) =>
+      onFilterChange(
+        "status",
+        values[0] as "ACTIVE" | "INACTIVE" | "SUSPENDED" | "TERMINATED"
+      ),
+    [onFilterChange]
+  );
+
+  const handleRoleChange = useCallback(
+    (values: unknown[]) =>
+      onFilterChange(
+        "role_in_shop",
+        values[0] as "BARBER" | "BARBERSHOP_OWNER"
+      ),
+    [onFilterChange]
+  );
+
+  const handleAvailabilityChange = useCallback(
+    (values: unknown[]) =>
+      onFilterChange("is_available", values[0] as boolean),
+    [onFilterChange]
+  );
   // 🎯 Status options with icons and colors
   const statusOptions: FilterOption[] = useMemo(
     () => [
@@ -108,7 +137,7 @@ export function BarbershopStaffFilters({
         {/* Search bar */}
         <TextFilter
           value={filters.search || ""}
-          onChange={(value) => onFilterChange("search", value)}
+          onChange={handleSearchChange}
           placeholder="Pesquisar funcionários..."
           className="max-w-md"
           size="md"
@@ -124,12 +153,7 @@ export function BarbershopStaffFilters({
             options={statusOptions}
             icon={<CheckCircleIcon className="h-4 w-4" />}
             value={filters.status ? [filters.status] : []}
-            onChange={(values) =>
-              onFilterChange(
-                "status",
-                values[0] as "ACTIVE" | "INACTIVE" | "SUSPENDED" | "TERMINATED",
-              )
-            }
+            onChange={handleStatusChange}
           />
 
           {/* Role filter */}
@@ -138,12 +162,7 @@ export function BarbershopStaffFilters({
             options={roleOptions}
             icon={<UserIcon className="h-4 w-4" />}
             value={filters.role_in_shop ? [filters.role_in_shop] : []}
-            onChange={(values) =>
-              onFilterChange(
-                "role_in_shop",
-                values[0] as "BARBER" | "BARBERSHOP_OWNER",
-              )
-            }
+            onChange={handleRoleChange}
           />
 
           {/* Availability filter */}
@@ -154,9 +173,7 @@ export function BarbershopStaffFilters({
             value={
               filters.is_available !== undefined ? [filters.is_available] : []
             }
-            onChange={(values) =>
-              onFilterChange("is_available", values[0] as boolean)
-            }
+            onChange={handleAvailabilityChange}
           />
         </FilterToolbar>
       </div>

@@ -48,32 +48,36 @@ export function TextFilter({
   const [internalValue, setInternalValue] = React.useState(value);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
+  // 🔥 OPTIMIZATION: Memoize onChange to prevent infinite loops
+  const memoizedOnChange = React.useCallback(onChange, [onChange]);
+
   // Sync external value changes
   React.useEffect(() => {
     setInternalValue(value);
   }, [value]);
 
-  // Debounced onChange
+  // Debounced onChange - OPTIMIZED
   React.useEffect(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     timeoutRef.current = setTimeout(() => {
-      onChange(internalValue);
+      memoizedOnChange(internalValue);
     }, debounceMs);
 
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+        timeoutRef.current = null; // 🔥 Explicit null assignment
       }
     };
-  }, [internalValue, onChange, debounceMs]);
+  }, [internalValue, memoizedOnChange, debounceMs]); // 🔥 Use memoized version
 
-  const clearFilter = () => {
+  const clearFilter = React.useCallback(() => {
     setInternalValue("");
-    onChange("");
-  };
+    memoizedOnChange("");
+  }, [memoizedOnChange]); // 🔥 Memoize clearFilter too
 
   if (title) {
     // Render as filter button

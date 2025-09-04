@@ -47,13 +47,15 @@ export const createQueryOptions = {
   }),
 
   /**
-   * Real-time data configuration (frequent updates)
+   * Real-time data configuration (frequent updates) - OPTIMIZED
+   * 🔥 REMOVED automatic refetchInterval to prevent unwanted background fetches
    */
   realtime: <T>(queryFn: () => Promise<T>) => ({
     queryFn,
     staleTime: 30 * 1000, // 30 seconds
     gcTime: 2 * 60 * 1000, // 2 minutes
-    refetchInterval: 60 * 1000, // 1 minute
+    // 🔥 REMOVED: refetchInterval: 60 * 1000, // This was causing continuous fetches
+    refetchOnWindowFocus: true, // Only refetch when user focuses window
     retry: 1,
   }),
 } as const;

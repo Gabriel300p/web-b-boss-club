@@ -46,15 +46,16 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
   const isMessageExpandable = Boolean(toast.expandable && hasMessage);
   const showStopMessage = Boolean(toast.showStopMessage);
 
-  // ⏱️ Progress timer with time tracking
+  // ⏱️ Progress timer with time tracking - OPTIMIZED
   useEffect(() => {
     if (toast.persistent || isPaused || isPermanentlyPaused) return;
 
     setTimeLeft(Math.ceil(duration / 1000));
 
+    // 🔥 OPTIMIZATION: Reduce interval frequency from 100ms to 250ms
     const interval = setInterval(() => {
       setProgress((prev) => {
-        const decrement = 100 / (duration / 100);
+        const decrement = 100 / (duration / 250); // Adjusted for 250ms
         const newProgress = prev - decrement;
 
         if (newProgress <= 0) {
@@ -64,9 +65,9 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
 
         return newProgress;
       });
-    }, 100);
+    }, 250); // 🔥 Changed from 100ms to 250ms - 60% less renders
 
-    // Update time left every second
+    // Update time left every second (keep 1000ms for accuracy)
     const timeInterval = setInterval(() => {
       setTimeLeft((prev) => {
         const newTime = prev - 1;
