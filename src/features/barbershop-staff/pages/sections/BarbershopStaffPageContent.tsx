@@ -17,8 +17,7 @@ export function BarbershopStaffPageContent() {
     useStaffFilters();
 
   // 📊 Data fetching
-  const { staff, pagination, statistics, isLoading } =
-    useBarbershopStaff(filters);
+  const { staff, pagination, isLoading } = useBarbershopStaff(filters);
 
   // 📋 Table columns
   const columns = createColumns({
@@ -39,66 +38,62 @@ export function BarbershopStaffPageContent() {
     !isLoading && staff.length === 0 && hasActiveFilters;
 
   return (
-    <div>
-      <div className="space-y-4">
-        {/* Filters Toolbar */}
-        <AnimatePresence mode="wait">
-          {isLoading ? (
-            <FilterToolbarSkeleton />
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
-              <BarbershopStaffFilters
-                filters={filters}
-                onFilterChange={updateFilter}
-                onClearFilters={clearAllFilters}
-                totalCount={pagination?.total || 0}
-                statistics={statistics}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+    <div className="space-y-6">
+      {/* Filters Toolbar */}
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          <FilterToolbarSkeleton />
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            <BarbershopStaffFilters
+              filters={filters}
+              onFilterChange={updateFilter}
+              onClearFilters={clearAllFilters}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Content - Table or Empty States */}
-        <AnimatePresence mode="wait">
-          {isLoading ? (
-            <TableSkeleton />
-          ) : shouldShowEmptyState ? (
-            <EmptyState
-              type="noData"
-              action={{
-                label: t("empty.noData.action"),
-                onClick: () => {},
-              }}
+      {/* Content - Table or Empty States */}
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          <TableSkeleton />
+        ) : shouldShowEmptyState ? (
+          <EmptyState
+            type="noData"
+            action={{
+              label: t("empty.noData.action"),
+              onClick: () => {},
+            }}
+          />
+        ) : shouldShowFilteredEmptyState ? (
+          <EmptyState
+            type="filtered"
+            action={{
+              label: t("empty.filtered.action"),
+              onClick: clearAllFilters,
+            }}
+          />
+        ) : (
+          <motion.div
+            key="table"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <BarbershopStaffDataTable
+              columns={columns}
+              data={staff}
+              pagination={pagination}
+              onPaginationChange={(page) => updateFilter("page", page)}
             />
-          ) : shouldShowFilteredEmptyState ? (
-            <EmptyState
-              type="filtered"
-              action={{
-                label: t("empty.filtered.action"),
-                onClick: clearAllFilters,
-              }}
-            />
-          ) : (
-            <motion.div
-              key="table"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              <BarbershopStaffDataTable
-                columns={columns}
-                data={staff}
-                pagination={pagination}
-                onPaginationChange={(page) => updateFilter("page", page)}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

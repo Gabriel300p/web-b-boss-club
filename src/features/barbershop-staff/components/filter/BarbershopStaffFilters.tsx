@@ -14,10 +14,7 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 
-import type {
-  StaffFilters,
-  StaffListResponse,
-} from "../../schemas/barbershop-staff.schemas";
+import type { StaffFilters } from "../../schemas/barbershop-staff.schemas";
 
 interface BarbershopStaffFiltersProps {
   filters: StaffFilters;
@@ -26,16 +23,12 @@ interface BarbershopStaffFiltersProps {
     value: StaffFilters[K],
   ) => void;
   onClearFilters: () => void;
-  totalCount?: number;
-  statistics?: StaffListResponse["statistics"];
 }
 
 export function BarbershopStaffFilters({
   filters,
   onFilterChange,
   onClearFilters,
-  totalCount = 0,
-  statistics,
 }: BarbershopStaffFiltersProps) {
   // 🎯 Status options with icons and colors
   const statusOptions: FilterOption[] = useMemo(
@@ -110,55 +103,6 @@ export function BarbershopStaffFilters({
 
   return (
     <div className="space-y-4">
-      {/* Stats Cards */}
-      {statistics && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div className="rounded-lg bg-green-900/20 p-4">
-            <div className="flex items-center gap-2">
-              <CheckCircleIcon className="h-5 w-5 text-green-500" />
-              <span className="text-sm font-medium text-green-400">Ativos</span>
-            </div>
-            <p className="text-2xl font-bold text-green-500">
-              {statistics.total_active ?? 0}
-            </p>
-          </div>
-
-          <div className="rounded-lg bg-yellow-900/20 p-4">
-            <div className="flex items-center gap-2">
-              <ClockIcon className="h-5 w-5 text-yellow-500" />
-              <span className="text-sm font-medium text-yellow-400">
-                Inativos
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-yellow-500">
-              {statistics.total_inactive ?? 0}
-            </p>
-          </div>
-
-          <div className="rounded-lg bg-blue-900/20 p-4">
-            <div className="flex items-center gap-2">
-              <CheckCircleIcon className="h-5 w-5 text-blue-500" />
-              <span className="text-sm font-medium text-blue-400">
-                Disponíveis
-              </span>
-            </div>
-            <p className="text-2xl font-bold text-blue-500">
-              {statistics.available_now ?? 0}
-            </p>
-          </div>
-
-          <div className="rounded-lg bg-purple-900/20 p-4">
-            <div className="flex items-center gap-2">
-              <UserIcon className="h-5 w-5 text-purple-500" />
-              <span className="text-sm font-medium text-purple-400">Total</span>
-            </div>
-            <p className="text-2xl font-bold text-purple-500">
-              {totalCount ?? 0}
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Filters */}
       <div className="flex flex-wrap gap-2">
         {/* Search bar */}

@@ -1,4 +1,5 @@
 // 🚀 BarbershopStaffDataTable - Optimized data table component for Barbershop Staff feature
+import { Pagination } from "@/shared/components/ui";
 import { OptimizedTable } from "@shared/components/ui/OptimizedTable";
 
 import type {
@@ -32,8 +33,6 @@ interface BarbershopStaffDataTableProps<TData, TValue> {
 function BarbershopStaffDataTableComponent<TData, TValue>({
   columns,
   data,
-  pagination,
-  onPaginationChange,
 }: BarbershopStaffDataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -72,38 +71,7 @@ function BarbershopStaffDataTableComponent<TData, TValue>({
         enableAnimations={data.length <= 50} // Disable animations for large datasets
       />
 
-      {/* External pagination */}
-      {pagination && onPaginationChange && (
-        <div className="flex items-center justify-between">
-          <div className="text-muted-foreground text-sm">
-            Mostrando {(pagination.page - 1) * pagination.limit + 1} a{" "}
-            {Math.min(pagination.page * pagination.limit, pagination.total)} de{" "}
-            {pagination.total} funcionários
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => onPaginationChange(pagination.page - 1)}
-              disabled={pagination.page <= 1}
-              className="hover:bg-accent rounded-md border px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Anterior
-            </button>
-
-            <span className="text-sm">
-              Página {pagination.page} de {pagination.total_pages}
-            </span>
-
-            <button
-              onClick={() => onPaginationChange(pagination.page + 1)}
-              disabled={pagination.page >= pagination.total_pages}
-              className="hover:bg-accent rounded-md border px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              Próxima
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination table={table} />
     </div>
   );
 }

@@ -84,7 +84,7 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger className="text-xs sm:text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
+              <SelectTrigger className="py-1 text-xs sm:text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
                 <SelectValue placeholder={pageSize} />
               </SelectTrigger>
               <SelectContent
@@ -147,7 +147,7 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
                     onClick={() => table.setPageIndex(pageNum - 1)}
                     className={`h-7 w-7 p-0 text-xs sm:h-8 sm:w-8 sm:text-sm ${
                       isActive
-                        ? "bg-primary dark:bg-primary text-white transition-opacity duration-300 hover:opacity-80 dark:text-white"
+                        ? "bg-primary dark:bg-primary text-white transition-opacity duration-300 hover:opacity-80 dark:text-black"
                         : "text-neutral-600 hover:text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:text-white"
                     }`}
                   >

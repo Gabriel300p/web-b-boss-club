@@ -33,7 +33,7 @@ const TableRowMemo = memo(function TableRowMemo<TData>({
     return (
       <AnimatedTableRow
         index={index}
-        className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors"
+        className="border-b border-neutral-700/50 transition-colors hover:bg-neutral-800/30 data-[state=selected]:bg-neutral-800/50"
       >
         {row.getVisibleCells().map((cell: Cell<TData, unknown>) => (
           <TableCell key={cell.id}>
@@ -45,7 +45,7 @@ const TableRowMemo = memo(function TableRowMemo<TData>({
   }
 
   return (
-    <TableRow className="hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors">
+    <TableRow className="border-b border-neutral-700/50 transition-colors hover:bg-neutral-800/30 data-[state=selected]:bg-neutral-800/50">
       {row.getVisibleCells().map((cell: Cell<TData, unknown>) => (
         <TableCell key={cell.id}>
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -62,7 +62,10 @@ export function OptimizedTable<TData>({
   const { rows } = table.getRowModel();
 
   return (
-    <AnimatedBox variant="fadeIn" className="rounded-md border">
+    <AnimatedBox
+      variant="fadeIn"
+      className="rounded-md border border-neutral-700"
+    >
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

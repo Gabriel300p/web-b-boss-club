@@ -55,7 +55,7 @@ export const createColumns = ({
             : fullName;
 
         return (
-          <div className="text-primary hover:text-primary/80 ml-5 cursor-pointer font-medium">
+          <div className="ml-5 cursor-pointer font-medium text-neutral-100 hover:text-neutral-200">
             {displayName}
           </div>
         );
@@ -72,7 +72,7 @@ export const createColumns = ({
       cell: ({ row }) => {
         const staff = row.original;
         return (
-          <div className="text-center font-medium text-neutral-600">
+          <div className="text-center font-medium text-neutral-400">
             {staff.user.email}
           </div>
         );
@@ -88,21 +88,21 @@ export const createColumns = ({
       cell: ({ row }) => {
         const role = row.getValue("role_in_shop") as string;
 
-        // Definir cores baseadas no role
+        // Definir cores baseadas no role (modo escuro)
         const getRoleStyles = (role: string) => {
           switch (role) {
             case "BARBER":
-              return "bg-blue-100 text-blue-700";
+              return "bg-blue-900/30 text-blue-400 border border-blue-700/50";
             case "BARBERSHOP_OWNER":
-              return "bg-purple-100 text-purple-700";
+              return "bg-purple-900/30 text-purple-400 border border-purple-700/50";
             case "SUPER_ADMIN":
-              return "bg-red-100 text-red-700";
+              return "bg-red-900/30 text-red-400 border border-red-700/50";
             case "CLIENT":
-              return "bg-green-100 text-green-700";
+              return "bg-green-900/30 text-green-400 border border-green-700/50";
             case "PENDING":
-              return "bg-yellow-100 text-yellow-700";
+              return "bg-yellow-900/30 text-yellow-400 border border-yellow-700/50";
             default:
-              return "bg-neutral-100 text-neutral-700";
+              return "bg-neutral-800/50 text-neutral-300 border border-neutral-600/50";
           }
         };
 
@@ -129,19 +129,19 @@ export const createColumns = ({
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
 
-        // Definir cores baseadas no status
+        // Definir cores baseadas no status (modo escuro)
         const getStatusStyles = (status: string) => {
           switch (status) {
             case "ACTIVE":
-              return "bg-green-100 text-green-700";
+              return "bg-green-900/30 text-green-400 border border-green-700/50";
             case "INACTIVE":
-              return "bg-gray-100 text-gray-700";
+              return "bg-gray-900/30 text-gray-400 border border-gray-700/50";
             case "SUSPENDED":
-              return "bg-yellow-100 text-yellow-700";
+              return "bg-yellow-900/30 text-yellow-400 border border-yellow-700/50";
             case "TERMINATED":
-              return "bg-red-100 text-red-700";
+              return "bg-red-900/30 text-red-400 border border-red-700/50";
             default:
-              return "bg-neutral-100 text-neutral-700";
+              return "bg-neutral-800/50 text-neutral-300 border border-neutral-600/50";
           }
         };
 
@@ -170,10 +170,10 @@ export const createColumns = ({
         return (
           <div className="flex justify-center">
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+              className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
                 isAvailable
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
+                  ? "border-green-700/50 bg-green-900/30 text-green-400"
+                  : "border-red-700/50 bg-red-900/30 text-red-400"
               }`}
             >
               {isAvailable ? "Disponível" : "Indisponível"}
@@ -233,7 +233,7 @@ export const createColumns = ({
               variant="ghost"
               size="sm"
               onClick={() => onEdit(staff)}
-              className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+              className="h-8 w-8 p-0 text-blue-400 hover:bg-blue-900/30 hover:text-blue-300"
               aria-label={t("actions.edit")}
               title={t("actions.edit")}
             >
@@ -243,7 +243,7 @@ export const createColumns = ({
               variant="ghost"
               size="sm"
               onClick={() => onDelete(staff)}
-              className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-700"
+              className="h-8 w-8 p-0 text-red-400 hover:bg-red-900/30 hover:text-red-300"
               aria-label={t("actions.delete")}
               title={t("actions.delete")}
             >
