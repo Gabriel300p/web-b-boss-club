@@ -8,7 +8,7 @@ interface TopBarProps {
   className?: string;
 }
 
-export function TopBar({ className }: TopBarProps) {
+export default function TopBar({ className }: TopBarProps) {
   return (
     <header
       className={cn("bg-neutral-900 text-neutral-200 shadow-md", className)}
