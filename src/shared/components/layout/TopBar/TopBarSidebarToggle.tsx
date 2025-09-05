@@ -4,11 +4,11 @@ import { useSidebar } from "@shared/contexts/SidebarContext";
 import { cn } from "@shared/lib/utils";
 import { useEffect, useState } from "react";
 
-interface TopBarSidebarToggleProps {
+interface TopbarSidebarToggleProps {
   className?: string;
 }
 
-export function TopBarSidebarToggle({ className }: TopBarSidebarToggleProps) {
+export function TopbarSidebarToggle({ className }: TopbarSidebarToggleProps) {
   const { isOpen, toggle, isCollapsed, toggleCollapsed } = useSidebar();
   const [isMobile, setIsMobile] = useState(false);
 

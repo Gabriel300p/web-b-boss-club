@@ -12,11 +12,11 @@ import { cn } from "@shared/lib/utils";
 import { useState } from "react";
 import UserAvatar from "../user/UserAvatar";
 
-interface TopBarUserMenuProps {
+interface TopbarUserMenuProps {
   className?: string;
 }
 
-export function TopBarUserMenu({ className }: TopBarUserMenuProps) {
+export function TopbarUserMenu({ className }: TopbarUserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
 

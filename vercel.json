@@ -4,13 +4,6 @@
   "framework": "vite",
   "installCommand": "pnpm install --frozen-lockfile",
   "devCommand": "pnpm dev",
-  "git": {
-    "deploymentEnabled": {
-      "main": true,
-      "stage": true,
-      "develop": false
-    }
-  },
   "rewrites": [
     {
       "source": "/(.*)",

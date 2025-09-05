@@ -10,11 +10,11 @@ import {
 import { cn } from "@shared/lib/utils";
 import { useState } from "react";
 
-interface TopBarNotificationsProps {
+interface TopbarNotificationsProps {
   className?: string;
 }
 
-export function TopBarNotifications({ className }: TopBarNotificationsProps) {
+export function TopbarNotifications({ className }: TopbarNotificationsProps) {
   const [unreadCount] = useState(3); // Mock: 3 notificações não lidas
 
   return (

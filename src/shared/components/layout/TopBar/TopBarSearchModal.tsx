@@ -18,7 +18,7 @@ import {
 } from "@shared/components/ui/command";
 import { useState } from "react";
 
-interface TopBarSearchModalProps {
+interface TopbarSearchModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -69,10 +69,10 @@ const systemPages = [
   },
 ];
 
-export function TopBarSearchModal({
+export function TopbarSearchModal({
   open,
   onOpenChange,
-}: TopBarSearchModalProps) {
+}: TopbarSearchModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredPages = systemPages.filter(

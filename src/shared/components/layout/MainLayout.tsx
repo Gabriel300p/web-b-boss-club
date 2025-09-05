@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Sidebar from "./sidebar/Sidebar";
-import TopBar from "./topBar/TopBar";
+import Topbar from "./topbar/Topbar";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -13,7 +13,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         <Sidebar />
       </div>
       <div className="flex flex-1 flex-col">
-        <TopBar />
+        <Topbar />
         <main>{children}</main>
       </div>
     </div>

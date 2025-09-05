@@ -2,13 +2,13 @@ import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { Button } from "@shared/components/ui/button";
 import { cn } from "@shared/lib/utils";
 import { useEffect, useState } from "react";
-import { TopBarSearchModal } from "./TopBarSearchModal";
+import { TopbarSearchModal } from "./TopbarSearchModal";
 
-interface TopBarSearchProps {
+interface TopbarSearchProps {
   className?: string;
 }
 
-export function TopBarSearch({ className }: TopBarSearchProps) {
+export function TopbarSearch({ className }: TopbarSearchProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Atalho Ctrl+K para abrir busca
@@ -45,7 +45,7 @@ export function TopBarSearch({ className }: TopBarSearchProps) {
         </kbd>
       </Button>
 
-      <TopBarSearchModal open={isModalOpen} onOpenChange={setIsModalOpen} />
+      <TopbarSearchModal open={isModalOpen} onOpenChange={setIsModalOpen} />
     </>
   );
 }
