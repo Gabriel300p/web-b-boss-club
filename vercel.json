@@ -4,6 +4,11 @@
   "framework": "vite",
   "installCommand": "pnpm install --frozen-lockfile",
   "devCommand": "pnpm dev",
+  "functions": {
+    "app/**": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
