@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
@@ -29,6 +29,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { t } = useTranslation("auth");
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const queryClient = useQueryClient();
 
   // 🔐 Hook para gerenciamento centralizado de tokens
   const useTokenManager = () => {
@@ -66,7 +67,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         type: "success",
         title,
         message,
-        expandable: true,
+        expandable: false,
         duration,
       });
     };
@@ -80,7 +81,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         type: "info",
         title,
         message,
-        expandable: true,
+        expandable: false,
         duration,
       });
     };
@@ -187,15 +188,26 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // Logout mutation
   const logoutMutation = useMutation({
     mutationFn: authService.logout,
-    onSuccess: () => {
+    onSuccess: async () => {
+      // 🚀 SEQUÊNCIA OTIMIZADA: Evitar race conditions
+
+      // 1️⃣ Limpar auth state primeiro
       storeLogout();
       clearAllTokens();
 
+      // 2️⃣ Limpar cache React Query e aguardar completar
+      await queryClient.clear();
+
+      // 3️⃣ Garantir que todas as queries pendentes sejam canceladas
+      queryClient.cancelQueries();
+
+      // 4️⃣ Mostrar toast
       showInfoToast(
         t("toasts.success.logoutTitle"),
         t("toasts.success.logoutMessage"),
       );
 
+      // 5️⃣ Navegar sem delay para evitar race conditions
       navigate({ to: "/auth/login" });
     },
     onError: (error: AuthError) => {

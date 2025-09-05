@@ -20,17 +20,16 @@ export function FilterToolbar({
   return (
     <div className={cn("flex flex-wrap items-center gap-2", className)}>
       {children}
-
       {hasActiveFilters && onReset && (
         <>
-          <Separator orientation="vertical" className="h-6" />
+          <Separator orientation="vertical" className="ml-3 h-6" />
           <Button
             variant="ghost"
             size="sm"
             onClick={onReset}
-            className="h-10 px-2 text-xs lg:px-3"
+            className="px-2 py-4 text-sm lg:px-3"
           >
-            <RotateCcwIcon className="mr-1 h-3 w-3" />
+            <RotateCcwIcon className="text-primary mr-1 h-3 w-3" />
             Limpar filtros
           </Button>
         </>

@@ -37,7 +37,7 @@ const TableSort = <TData,>({
       className={`flex items-center gap-2 ${alignmentClasses[align]} w-full ${className}`}
     >
       <span className="select-none">{children}</span>
-      <div className="flex flex-col items-center rounded-sm border border-neutral-200 bg-white">
+      <div className="flex flex-col items-center rounded-sm border border-neutral-600/50 bg-neutral-800/50">
         {/* Seta para cima (ASC) */}
         <button
           onClick={(e) => {
@@ -45,10 +45,10 @@ const TableSort = <TData,>({
             e.stopPropagation();
             handleSort("asc");
           }}
-          className={`flex cursor-pointer items-center justify-center rounded-sm transition-all duration-200 hover:scale-110 ${
+          className={`-mb-0.5 flex cursor-pointer items-center justify-center rounded-sm transition-all duration-200 hover:scale-110 ${
             sortDirection === "asc"
-              ? "bg-blue-50 text-blue-600 shadow-sm"
-              : "text-neutral-400 hover:bg-neutral-50 hover:text-neutral-600"
+              ? "bg-blue-900/30 text-blue-400 shadow-sm"
+              : "text-neutral-400 hover:bg-neutral-700/50 hover:text-neutral-300"
           }`}
           aria-label="Ordenar crescente"
           title="Ordenar crescente"
@@ -65,8 +65,8 @@ const TableSort = <TData,>({
           }}
           className={`flex h-3 w-4 cursor-pointer items-center justify-center rounded-sm transition-all duration-200 hover:scale-110 ${
             sortDirection === "desc"
-              ? "bg-blue-50 text-blue-600 shadow-sm"
-              : "text-neutral-400 hover:bg-neutral-50 hover:text-neutral-600"
+              ? "bg-blue-900/30 text-blue-400 shadow-sm"
+              : "text-neutral-400 hover:bg-neutral-700/50 hover:text-neutral-300"
           }`}
           aria-label="Ordenar decrescente"
           title="Ordenar decrescente"

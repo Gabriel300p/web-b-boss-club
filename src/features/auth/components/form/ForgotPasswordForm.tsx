@@ -45,6 +45,7 @@ export function ForgotPasswordForm() {
                     placeholder={t(
                       "forms.forgotPassword.fields.emailPlaceholder",
                     )}
+                    size="login"
                   />
                 </FormControl>
               </FormItem>
