@@ -1,12 +1,12 @@
 import { useAuth } from "@features/auth/hooks/useAuth";
 import {
-  Buildings,
-  FileText,
-  Gear,
-  House,
-  Question,
-  Scissors,
-  Users,
+  BuildingsIcon,
+  FileTextIcon,
+  GearIcon,
+  HouseIcon,
+  QuestionIcon,
+  ScissorsIcon,
+  UsersIcon,
   type IconProps,
 } from "@phosphor-icons/react";
 import { useSidebar } from "@shared/contexts/SidebarContext";
@@ -31,7 +31,7 @@ const menuItems: MenuItem[] = [
   {
     id: "home",
     label: "Início",
-    icon: House,
+    icon: HouseIcon,
     href: "/home",
     section: "principal",
     roles: ["SUPER_ADMIN", "BARBERSHOP_OWNER", "BARBER", "CLIENT"],
@@ -39,7 +39,7 @@ const menuItems: MenuItem[] = [
   {
     id: "units",
     label: "Unidades",
-    icon: Buildings,
+    icon: BuildingsIcon,
     href: "/units",
     section: "principal",
     roles: ["SUPER_ADMIN", "BARBERSHOP_OWNER"],
@@ -47,15 +47,15 @@ const menuItems: MenuItem[] = [
   {
     id: "barbers",
     label: "Barbeiros",
-    icon: Users,
-    href: "/barbers",
+    icon: UsersIcon,
+    href: "/barbershop-staff",
     section: "principal",
     roles: ["SUPER_ADMIN", "BARBERSHOP_OWNER"],
   },
   {
     id: "services",
     label: "Serviços",
-    icon: Scissors,
+    icon: ScissorsIcon,
     href: "/services",
     section: "principal",
     roles: ["SUPER_ADMIN", "BARBERSHOP_OWNER", "BARBER"],
@@ -63,7 +63,7 @@ const menuItems: MenuItem[] = [
   {
     id: "records",
     label: "Atendimentos",
-    icon: FileText,
+    icon: FileTextIcon,
     href: "/records",
     section: "principal",
     roles: ["SUPER_ADMIN", "BARBERSHOP_OWNER", "BARBER", "CLIENT"],
@@ -71,7 +71,7 @@ const menuItems: MenuItem[] = [
   {
     id: "settings",
     label: "Configurações",
-    icon: Gear,
+    icon: GearIcon,
     href: "/settings",
     section: "outros",
     roles: ["SUPER_ADMIN", "BARBERSHOP_OWNER", "BARBER", "CLIENT"],
@@ -79,7 +79,7 @@ const menuItems: MenuItem[] = [
   {
     id: "help",
     label: "Ajuda",
-    icon: Question,
+    icon: QuestionIcon,
     href: "/help",
     section: "outros",
     roles: ["SUPER_ADMIN", "BARBERSHOP_OWNER", "BARBER", "CLIENT"],

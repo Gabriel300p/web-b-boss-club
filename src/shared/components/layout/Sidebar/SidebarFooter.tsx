@@ -1,5 +1,6 @@
 import { useAuth } from "@features/auth/hooks/useAuth";
 import { cn } from "@shared/lib/utils";
+import UserAvatar from "../user/UserAvatar";
 
 interface SidebarFooterProps {
   isCollapsed: boolean;
@@ -27,11 +28,7 @@ export function SidebarFooter({ isCollapsed }: SidebarFooterProps) {
       >
         <div className="flex items-center gap-3.5">
           {/* Avatar/Logo da barbearia */}
-          <div className="bg-primary flex size-10 flex-shrink-0 items-center justify-center rounded-full">
-            <span className="text-primary-foreground text-base font-bold">
-              {barbershopData.name.charAt(0).toUpperCase()}
-            </span>
-          </div>
+          <UserAvatar user={user} />
 
           {/* Informações da barbearia */}
           <div

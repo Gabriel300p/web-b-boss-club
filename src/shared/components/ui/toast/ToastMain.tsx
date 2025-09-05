@@ -46,15 +46,16 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
   const isMessageExpandable = Boolean(toast.expandable && hasMessage);
   const showStopMessage = Boolean(toast.showStopMessage);
 
-  // ⏱️ Progress timer with time tracking
+  // ⏱️ Progress timer with time tracking - OPTIMIZED
   useEffect(() => {
     if (toast.persistent || isPaused || isPermanentlyPaused) return;
 
     setTimeLeft(Math.ceil(duration / 1000));
 
+    // 🔥 OPTIMIZATION: Use 150ms for smooth animation with good performance
     const interval = setInterval(() => {
       setProgress((prev) => {
-        const decrement = 100 / (duration / 100);
+        const decrement = 100 / (duration / 150); // Adjusted for 150ms
         const newProgress = prev - decrement;
 
         if (newProgress <= 0) {
@@ -64,9 +65,9 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
 
         return newProgress;
       });
-    }, 100);
+    }, 150); // 🔥 150ms - balance between smooth animation and performance
 
-    // Update time left every second
+    // Update time left every second (keep 1000ms for accuracy)
     const timeInterval = setInterval(() => {
       setTimeLeft((prev) => {
         const newTime = prev - 1;
@@ -262,7 +263,7 @@ export function ToastMain({ toast, onClose }: Omit<ToastProps, "index">) {
           className={`absolute bottom-0 left-0 h-1 rounded-b-xl ${getProgressBarClasses(toast.type)}`}
           initial={{ width: "100%" }}
           animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.1, ease: "linear" }}
+          transition={{ duration: 0.15, ease: "linear" }}
           aria-hidden="true"
         />
       )}

@@ -88,6 +88,7 @@ export function ResetPasswordForm() {
                         "forms.resetPassword.fields.newPasswordPlaceholder",
                       )}
                       className="pr-10"
+                      size="login"
                     />
                     <button
                       type="button"
@@ -123,6 +124,7 @@ export function ResetPasswordForm() {
                         "forms.resetPassword.fields.confirmPasswordPlaceholder",
                       )}
                       className="pr-10"
+                      size="login"
                     />
                     <button
                       type="button"

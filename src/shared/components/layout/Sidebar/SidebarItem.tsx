@@ -70,11 +70,6 @@ export function SidebarItem({
             {item.label}
           </motion.span>
         )}
-
-        {/* Indicador de estado ativo */}
-        {isActive && !isCollapsed && (
-          <div className="bg-primary/80 ml-auto h-2 w-2 rounded-full" />
-        )}
       </button>
     </motion.div>
   );

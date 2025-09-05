@@ -9,7 +9,7 @@ import {
 } from "@/shared/components/ui/form";
 import { Input } from "@/shared/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRightIcon, Eye, EyeSlash } from "@phosphor-icons/react";
+import { ArrowRightIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -49,6 +49,7 @@ export function LoginForm() {
                 <FormControl>
                   <Input
                     {...field}
+                    size="login"
                     placeholder={t("forms.login.fields.emailPlaceholder")}
                   />
                 </FormControl>
@@ -69,6 +70,7 @@ export function LoginForm() {
                       type={showPassword ? "text" : "password"}
                       placeholder={t("forms.login.fields.passwordPlaceholder")}
                       className="pr-10"
+                      size="login"
                     />
                     <button
                       type="button"
@@ -76,9 +78,9 @@ export function LoginForm() {
                       className="absolute inset-y-0 right-3 flex items-center text-neutral-400 transition hover:text-neutral-200"
                     >
                       {showPassword ? (
-                        <EyeSlash className="size-5" />
+                        <EyeIcon className="size-5" />
                       ) : (
-                        <Eye className="size-5" />
+                        <EyeSlashIcon className="size-5" />
                       )}
                     </button>
                   </div>

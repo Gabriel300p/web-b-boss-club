@@ -10,6 +10,7 @@ import {
 } from "@shared/components/ui/dropdown-menu";
 import { cn } from "@shared/lib/utils";
 import { useState } from "react";
+import UserAvatar from "../user/UserAvatar";
 
 interface TopBarUserMenuProps {
   className?: string;
@@ -43,30 +44,6 @@ export function TopBarUserMenu({ className }: TopBarUserMenuProps) {
 
   const displayInfo = getDisplayInfo();
 
-  // Gerar iniciais para o avatar
-  const getInitials = () => {
-    if (
-      displayInfo.isBarbershopOwner &&
-      displayInfo.primaryText !== "Barbearia"
-    ) {
-      // Para barbearia, usar as primeiras letras do nome
-      return displayInfo.primaryText
-        .split(" ")
-        .map((word: string) => word[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    } else {
-      // Para usuários, usar as primeiras letras do nome ou email
-      return displayInfo.primaryText
-        .split(" ")
-        .map((word: string) => word[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    }
-  };
-
   const handleLogout = () => {
     logout();
     setIsOpen(false);
@@ -85,11 +62,7 @@ export function TopBarUserMenu({ className }: TopBarUserMenuProps) {
           aria-label="Menu do usuário"
         >
           {/* Avatar */}
-          <div className="bg-primary flex size-9 flex-shrink-0 items-center justify-center rounded-full">
-            <span className="text-primary-foreground text-base font-bold">
-              {getInitials()}
-            </span>
-          </div>
+          <UserAvatar user={user} />
 
           {/* Informações do usuário */}
           <div className="hidden flex-col items-start gap-1 text-left sm:flex">
