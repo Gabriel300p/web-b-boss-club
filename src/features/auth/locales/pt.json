@@ -82,6 +82,15 @@
         "skip": "Pular e Continuar",
         "loading": "Alterando..."
       },
+      "validation": {
+        "title": "Força da senha",
+        "minLength": "Pelo menos 8 caracteres",
+        "uppercase": "Uma letra maiúscula",
+        "lowercase": "Uma letra minúscula",
+        "number": "Um número",
+        "special": "Um caractere especial",
+        "strongPassword": "Senha forte! Todos os requisitos foram atendidos."
+      },
       "errors": {
         "changePasswordError": "Erro ao alterar senha"
       }
@@ -90,15 +99,17 @@
   "toasts": {
     "success": {
       "loginTitle": "Login realizado com sucesso!",
-      "loginMessage": "Bem-vindo de volta, {{name}}!",
+      "loginMessage": "Bem-vindo(a), {{name}}!",
       "logoutTitle": "Logout realizado",
-      "logoutMessage": "Você foi desconectado com sucesso.",
-      "forgotPasswordTitle": "Email de recuperação enviado!",
-      "forgotPasswordMessage": "Verifique sua caixa de entrada para instruções de reset de senha.",
-      "mfaTitle": "Verificação MFA concluída!",
-      "mfaMessage": "Código validado com sucesso. Bem-vindo, {{name}}!",
+      "logoutMessage": "Você foi desconectado com sucesso",
+      "forgotPasswordTitle": "Email enviado!",
+      "forgotPasswordMessage": "Verifique sua caixa de entrada para recuperar a senha",
+      "mfaTitle": "MFA verificado com sucesso!",
+      "mfaMessage": "Bem-vindo(a), {{name}}!",
       "mfaCodeResentTitle": "Código reenviado!",
-      "mfaCodeResentMessage": "Um novo código de verificação foi enviado para seu email."
+      "mfaCodeResentMessage": "Um novo código foi enviado para o seu email",
+      "passwordChangedTitle": "Senha alterada com sucesso!",
+      "passwordChangedMessage": "Sua senha foi redefinida com sucesso"
     },
     "errors": {
       "titles": {
@@ -126,7 +137,8 @@
       "forgotPasswordMessage": "Clique aqui para redefinir sua senha",
       "mfaRequiredTitle": "Verificação de segurança necessária",
       "firstLoginTitle": "Primeiro Login",
-      "firstLoginMessage": "Por favor, defina uma nova senha para sua conta"
+      "firstLoginMessage": "Por favor, defina uma nova senha para sua conta",
+      "resetPasswordRedirect": "MFA verificado! Agora defina sua nova senha."
     },
     "mfa": {
       "titles": {

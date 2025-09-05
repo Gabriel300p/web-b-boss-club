@@ -227,6 +227,39 @@ export async function resendMfaCodeRequest(): Promise<{ message: string }> {
   }
 }
 
+export async function resetPasswordRequest(values: {
+  newPassword: string;
+  confirmPassword: string;
+}): Promise<{ message: string }> {
+  try {
+    const response = await authApiService.changePassword(
+      values.newPassword,
+      values.confirmPassword,
+    );
+    return { message: response.data.message };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (
+        error.message.includes("não autorizado") ||
+        error.message.includes("expirado")
+      ) {
+        throw createAuthError("unauthorized", "Sessão expirada");
+      }
+      if (error.message.includes("rede") || error.message.includes("conexão")) {
+        throw createAuthError(
+          "network_error",
+          "Erro de conexão com o servidor",
+        );
+      }
+      throw createAuthError(
+        "server_error",
+        error.message || "Erro ao alterar senha",
+      );
+    }
+    throw createAuthError("server_error", "Erro desconhecido ao alterar senha");
+  }
+}
+
 export const authService = {
   login: loginRequest,
   checkAuth: checkAuthRequest,
@@ -234,4 +267,5 @@ export const authService = {
   forgotPassword: forgotPasswordRequest,
   verifyMfa: mfaVerificationRequest,
   resendMfaCode: resendMfaCodeRequest,
+  resetPassword: resetPasswordRequest,
 };

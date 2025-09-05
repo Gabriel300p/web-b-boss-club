@@ -84,6 +84,12 @@ export interface MfaVerificationCredentials {
   code: string; // código de 6 dígitos
 }
 
+// Change password credentials
+export interface ChangePasswordCredentials {
+  newPassword: string;
+  confirmPassword: string;
+}
+
 export interface AuthContextType {
   // State
   user: AuthResponse["user"] | null;
@@ -99,6 +105,7 @@ export interface AuthContextType {
   logout: () => void;
   forgotPassword: (credentials: ForgotPasswordCredentials) => void;
   verifyMfa: (credentials: MfaVerificationCredentials) => void;
+  resetPassword: (credentials: ChangePasswordCredentials) => void;
   resendMfaCode: () => void;
   clearError: () => void;
   checkAuth: () => Promise<{ user: AuthResponse["user"] }>;
@@ -121,4 +128,8 @@ export interface AuthContextType {
   mfaVerificationError: AuthError | null;
   isResendMfaCodePending: boolean;
   resendMfaCodeError: AuthError | null;
+
+  // Mutation states - Reset Password
+  isResetPasswordPending: boolean;
+  resetPasswordError: AuthError | null;
 }

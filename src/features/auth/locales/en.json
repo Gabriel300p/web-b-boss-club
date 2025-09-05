@@ -82,6 +82,15 @@
         "skip": "Skip and Continue",
         "loading": "Changing..."
       },
+      "validation": {
+        "title": "Password strength",
+        "minLength": "At least 8 characters",
+        "uppercase": "One uppercase letter",
+        "lowercase": "One lowercase letter",
+        "number": "One number",
+        "special": "One special character",
+        "strongPassword": "Strong password! All requirements met."
+      },
       "errors": {
         "changePasswordError": "Error changing password"
       }
@@ -126,7 +135,8 @@
       "forgotPasswordMessage": "Click here to reset your password",
       "mfaRequiredTitle": "Security verification required",
       "firstLoginTitle": "First Login",
-      "firstLoginMessage": "Please set a new password for your account"
+      "firstLoginMessage": "Please set a new password for your account",
+      "resetPasswordRedirect": "MFA verified! Now set your new password."
     },
     "mfa": {
       "titles": {

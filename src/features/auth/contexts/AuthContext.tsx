@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
@@ -10,6 +10,7 @@ import type {
   AuthContextType,
   AuthError,
   AuthResponse,
+  ChangePasswordCredentials,
   ForgotPasswordCredentials,
   LoginCredentials,
   LoginResponse,
@@ -17,7 +18,7 @@ import type {
 } from "../types/auth";
 import { AuthContext } from "./authContextDefinition";
 
-// 🎯 Constantes centralizadas
+// ðŸŽ¯ Constantes centralizadas
 const NAVIGATION_DELAY = 300;
 const TOAST_DURATIONS = {
   SUCCESS: 3000,
@@ -31,7 +32,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { showToast } = useToast();
   const queryClient = useQueryClient();
 
-  // 🔐 Hook para gerenciamento centralizado de tokens
+  // ðŸ” Hook para gerenciamento centralizado de tokens
   const useTokenManager = () => {
     const setAuthToken = (token: string) => {
       localStorage.setItem("access_token", token);
@@ -51,59 +52,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const { setAuthToken, setTempToken, clearAllTokens } = useTokenManager();
 
-  // 🧭 Navegação padronizada
+  // ðŸ§­ NavegaÃ§Ã£o padronizada
   const navigateWithDelay = (to: string, delay = NAVIGATION_DELAY) => {
     setTimeout(() => navigate({ to }), delay);
   };
-
-  // 🎨 Hook para toasts padronizados
-  const useAuthToasts = () => {
-    const showSuccessToast = (
-      title: string,
-      message: string,
-      duration = TOAST_DURATIONS.SUCCESS,
-    ) => {
-      showToast({
-        type: "success",
-        title,
-        message,
-        expandable: false,
-        duration,
-      });
-    };
-
-    const showInfoToast = (
-      title: string,
-      message: string,
-      duration = TOAST_DURATIONS.INFO,
-    ) => {
-      showToast({
-        type: "info",
-        title,
-        message,
-        expandable: false,
-        duration,
-      });
-    };
-
-    const showErrorToast = (
-      title: string,
-      message: string,
-      duration = TOAST_DURATIONS.ERROR,
-    ) => {
-      showToast({
-        type: "error",
-        title,
-        message,
-        expandable: true,
-        duration,
-      });
-    };
-
-    return { showSuccessToast, showInfoToast, showErrorToast };
-  };
-
-  const { showSuccessToast, showInfoToast } = useAuthToasts();
 
   // Zustand store integration
   const {
@@ -131,25 +83,28 @@ export function AuthProvider({ children }: PropsWithChildren) {
     },
     onSuccess: (data: LoginResponse, variables: LoginCredentials) => {
       if (data.mfaRequired && data.tempToken) {
-        // MFA é necessário - salva token temporário e redireciona para MFA
+        // MFA Ã© necessÃ¡rio - salva token temporÃ¡rio e redireciona para MFA
         setTempToken(data.tempToken);
 
-        // Extrai email do credential para usar na página MFA
+        // Extrai email do credential para usar na pÃ¡gina MFA
         const email = data.user?.email || variables.credential;
 
-        showInfoToast(
-          t("toasts.info.mfaRequiredTitle"),
-          `Um código de 6 dígitos foi enviado para ${email}`,
-        );
+        showToast({
+          type: "info",
+          title: t("toasts.info.mfaRequiredTitle"),
+          message: `Um cÃ³digo de 6 dÃ­gitos foi enviado para ${email}`,
+          expandable: false,
+          duration: TOAST_DURATIONS.INFO,
+        });
 
-        // Redireciona para verificação MFA
+        // Redireciona para verificaÃ§Ã£o MFA
         navigateWithDelay("/auth/mfa-verification");
         return;
       }
 
       // Login direto sem MFA
       if (data.token && data.user) {
-        // Constrói usuário no formato esperado pelo store
+        // ConstrÃ³i usuÃ¡rio no formato esperado pelo store
         const user = {
           id: data.user.id,
           email: data.user.email,
@@ -165,12 +120,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
         setAuthToken(data.token);
 
         // Success toast
-        showSuccessToast(
-          t("toasts.success.loginTitle"),
-          t("toasts.success.loginMessage", {
+        showToast({
+          type: "success",
+          title: t("toasts.success.loginTitle"),
+          message: t("toasts.success.loginMessage", {
             name: data.user.displayName || data.user.email,
           }),
-        );
+          expandable: false,
+          duration: TOAST_DURATIONS.SUCCESS,
+        });
 
         // Navigate to home
         navigateWithDelay("/home");
@@ -189,25 +147,28 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const logoutMutation = useMutation({
     mutationFn: authService.logout,
     onSuccess: async () => {
-      // 🚀 SEQUÊNCIA OTIMIZADA: Evitar race conditions
+      // ðŸš€ SEQUÃŠNCIA OTIMIZADA: Evitar race conditions
 
-      // 1️⃣ Limpar auth state primeiro
+      // 1ï¸âƒ£ Limpar auth state primeiro
       storeLogout();
       clearAllTokens();
 
-      // 2️⃣ Limpar cache React Query e aguardar completar
+      // 2ï¸âƒ£ Limpar cache React Query e aguardar completar
       await queryClient.clear();
 
-      // 3️⃣ Garantir que todas as queries pendentes sejam canceladas
+      // 3ï¸âƒ£ Garantir que todas as queries pendentes sejam canceladas
       queryClient.cancelQueries();
 
-      // 4️⃣ Mostrar toast
-      showInfoToast(
-        t("toasts.success.logoutTitle"),
-        t("toasts.success.logoutMessage"),
-      );
+      // 4ï¸âƒ£ Mostrar toast
+      showToast({
+        type: "info",
+        title: t("toasts.success.logoutTitle"),
+        message: t("toasts.success.logoutMessage"),
+        expandable: false,
+        duration: TOAST_DURATIONS.INFO,
+      });
 
-      // 5️⃣ Navegar sem delay para evitar race conditions
+      // 5ï¸âƒ£ Navegar sem delay para evitar race conditions
       navigate({ to: "/auth/login" });
     },
     onError: (error: AuthError) => {
@@ -221,13 +182,19 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setError(null);
       return authService.forgotPassword(credentials);
     },
-    onSuccess: () => {
-      showSuccessToast(
-        t("toasts.success.forgotPasswordTitle"),
-        t("toasts.success.forgotPasswordMessage"),
-      );
+    onSuccess: (_data, variables) => {
+      showToast({
+        type: "success",
+        title: t("toasts.success.forgotPasswordTitle"),
+        message: t("toasts.success.forgotPasswordMessage"),
+        expandable: false,
+        duration: TOAST_DURATIONS.SUCCESS,
+      });
 
-      // Navigate to MFA verification if needed
+      // Salva o email para usar na verificaÃ§Ã£o MFA
+      localStorage.setItem("forgot_password_email", variables.email);
+
+      // Navigate to MFA verification para reset de senha
       navigateWithDelay("/auth/mfa-verification");
     },
     onError: (error: AuthError, variables: ForgotPasswordCredentials) => {
@@ -243,30 +210,58 @@ export function AuthProvider({ children }: PropsWithChildren) {
       return authService.verifyMfa(credentials);
     },
     onSuccess: (data: AuthResponse) => {
-      // Store user
+      // Verificar se Ã© um fluxo de reset de senha (forgot password)
+      const isForgotPasswordFlow = localStorage.getItem(
+        "forgot_password_email",
+      );
+
+      if (isForgotPasswordFlow) {
+        // Remove o flag de forgot password
+        localStorage.removeItem("forgot_password_email");
+
+        showToast({
+          type: "success",
+          title: t("toasts.success.mfaTitle"),
+          message: t("toasts.info.resetPasswordRedirect"),
+          expandable: false,
+          duration: TOAST_DURATIONS.SUCCESS,
+        });
+
+        // Redireciona para reset-password
+        navigate({ to: "/auth/reset-password" });
+        return;
+      }
+
+      // Store user (fluxo de login normal)
       storeLogin(data.user);
 
       // Primeiro login: redireciona para definir nova senha
       if (data.isFirstLogin) {
-        showInfoToast(
-          t("toasts.info.firstLoginTitle"),
-          t("toasts.info.firstLoginMessage"),
-        );
+        showToast({
+          type: "info",
+          title: t("toasts.info.firstLoginTitle"),
+          message: t("toasts.info.firstLoginMessage"),
+          expandable: false,
+          duration: TOAST_DURATIONS.INFO,
+        });
 
         navigate({ to: "/auth/first-login" });
         return;
       }
 
       // MFA verificado com sucesso: sempre navega para home
-      // (independente de ter access_token ou não - o useQuery cuida do resto)
+      // (independente de ter access_token ou nÃ£o - o useQuery cuida do resto)
       if (data.access_token) {
         setAuthToken(data.access_token);
       }
 
-      showSuccessToast(
-        t("toasts.success.mfaTitle"),
-        t("toasts.success.mfaMessage", { name: data.user.name }),
-      );
+      showToast({
+        type: "success",
+        title: t("toasts.success.mfaTitle"),
+        message: t("toasts.success.mfaMessage", { name: data.user.name }),
+        expandable: false,
+        duration: TOAST_DURATIONS.SUCCESS,
+      });
 
       navigate({ to: "/home" });
     },
@@ -280,12 +275,39 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const resendMfaCodeMutation = useMutation({
     mutationFn: authService.resendMfaCode,
     onSuccess: () => {
-      showSuccessToast(
-        t("toasts.success.mfaCodeResentTitle"),
-        t("toasts.success.mfaCodeResentMessage"),
-      );
+      showToast({
+        type: "success",
+        title: t("toasts.success.mfaCodeResentTitle"),
+        message: t("toasts.success.mfaCodeResentMessage"),
+        expandable: false,
+        duration: TOAST_DURATIONS.SUCCESS,
+      });
     },
     onError: (error: AuthError) => {
+      handleAuthError(error);
+    },
+  });
+
+  // Reset password mutation
+  const resetPasswordMutation = useMutation({
+    mutationFn: (credentials: ChangePasswordCredentials) => {
+      setError(null);
+      return authService.resetPassword(credentials);
+    },
+    onSuccess: () => {
+      showToast({
+        type: "success",
+        title: t("toasts.success.passwordChangedTitle"),
+        message: t("toasts.success.passwordChangedMessage"),
+        expandable: false,
+        duration: TOAST_DURATIONS.SUCCESS,
+      });
+
+      // Redireciona para home após sucesso
+      navigateWithDelay("/home");
+    },
+    onError: (error: AuthError) => {
+      setError(error.message);
       handleAuthError(error);
     },
   });
@@ -297,9 +319,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
     retry: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
-    refetchOnMount: false, // Não refaz query ao montar componente
-    refetchOnReconnect: false, // Não refaz query ao reconectar
-    enabled: !isAuthenticated && !mfaVerificationMutation.isPending, // Não executa durante MFA
+    refetchOnMount: false, // NÃ£o refaz query ao montar componente
+    refetchOnReconnect: false, // NÃ£o refaz query ao reconectar
+    enabled: !isAuthenticated && !mfaVerificationMutation.isPending, // NÃ£o executa durante MFA
   });
 
   // Enhanced error handling with 4 strategies
@@ -402,7 +424,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
         logoutMutation.isPending ||
         forgotPasswordMutation.isPending ||
         mfaVerificationMutation.isPending ||
-        resendMfaCodeMutation.isPending,
+        resendMfaCodeMutation.isPending ||
+        resetPasswordMutation.isPending,
     );
   }, [
     isCheckingAuth,
@@ -410,6 +433,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     forgotPasswordMutation.isPending,
     mfaVerificationMutation.isPending,
     resendMfaCodeMutation.isPending,
+    resetPasswordMutation.isPending,
     setLoading,
   ]);
 
@@ -420,18 +444,19 @@ export function AuthProvider({ children }: PropsWithChildren) {
     isLoading: isLoading || isCheckingAuth,
     error,
     currentLoginEmail,
-    mfaRequired: false, // Será gerenciado pelo estado do login
-    tempToken: null, // Será gerenciado pelo estado do login
+    mfaRequired: false, // SerÃ¡ gerenciado pelo estado do login
+    tempToken: null, // SerÃ¡ gerenciado pelo estado do login
 
     // Actions
     login: loginMutation.mutate,
     logout: logoutMutation.mutate,
     forgotPassword: forgotPasswordMutation.mutate,
     verifyMfa: mfaVerificationMutation.mutate,
+    resetPassword: resetPasswordMutation.mutate,
     resendMfaCode: resendMfaCodeMutation.mutate,
     clearError,
     checkAuth: () => authService.checkAuth(),
-    setMfaRequired: () => {}, // Implementar se necessário
+    setMfaRequired: () => {}, // Implementar se necessÃ¡rio
 
     // Mutation states - Login
     isLoginPending: loginMutation.isPending,
@@ -450,6 +475,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
     mfaVerificationError: mfaVerificationMutation.error,
     isResendMfaCodePending: resendMfaCodeMutation.isPending,
     resendMfaCodeError: resendMfaCodeMutation.error,
+
+    // Mutation states - Reset Password
+    isResetPasswordPending: resetPasswordMutation.isPending,
+    resetPasswordError: resetPasswordMutation.error,
   };
 
   return (
