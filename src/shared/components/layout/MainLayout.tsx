@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { Sidebar } from "./sidebar/Sidebar";
-import { TopBar } from "./topbar/TopBar";
+import { Sidebar } from "./sidebar/Sidebar.js";
+import { TopBar } from "./topbar/TopBar.js";
 
 interface MainLayoutProps {
   children: ReactNode;
