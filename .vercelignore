@@ -1,9 +1,10 @@
 # Ignora arquivos e diretórios durante o deploy
+
 .github/
 docs/
 scripts/
 coverage/
-*.md
+\*.md
 .env.local
 .env.development
 .env.test

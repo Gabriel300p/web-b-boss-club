@@ -41,8 +41,5 @@
         }
       ]
     }
-  ],
-  "env": {
-    "VITE_APP_ENV": "production"
-  }
+  ]
 }
