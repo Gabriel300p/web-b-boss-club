@@ -1,3 +1,8 @@
+import {
+  changePasswordSchema as changePasswordValidationSchema,
+  passwordSchema,
+  strongPasswordSchema,
+} from "@shared/schemas/password.schema";
 import { z } from "zod";
 
 // Schema para roles do usuário baseado no Prisma
@@ -23,10 +28,7 @@ export const loginSchema = z.object({
     .string()
     .min(1, "Email ou CPF é obrigatório")
     .max(100, "Email ou CPF deve ter no máximo 100 caracteres"),
-  password: z
-    .string()
-    .min(1, "Senha é obrigatória")
-    .max(50, "Senha deve ter no máximo 50 caracteres"),
+  password: passwordSchema,
 });
 
 // Schema para verificação MFA (6 dígitos numéricos)
@@ -48,16 +50,8 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z
   .object({
-    password: z
-      .string()
-      .min(1, "Senha é obrigatória")
-      .min(8, "Senha deve ter pelo menos 8 caracteres")
-      .max(50, "Senha deve ter no máximo 50 caracteres"),
-    confirmPassword: z
-      .string()
-      .min(1, "Confirmar senha é obrigatório")
-      .min(8, "Confirmar senha deve ter pelo menos 8 caracteres")
-      .max(50, "Confirmar senha deve ter no máximo 50 caracteres"),
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Senhas não coincidem",
@@ -67,18 +61,7 @@ export const resetPasswordSchema = z
 // Schema para mudança de senha com validação forte
 export const changePasswordSchema = z
   .object({
-    newPassword: z
-      .string()
-      .min(1, "Nova senha é obrigatória")
-      .min(8, "Senha deve ter pelo menos 8 caracteres")
-      .max(50, "Senha deve ter no máximo 50 caracteres")
-      .regex(/[A-Z]/, "Senha deve conter pelo menos uma letra maiúscula")
-      .regex(/[a-z]/, "Senha deve conter pelo menos uma letra minúscula")
-      .regex(/[0-9]/, "Senha deve conter pelo menos um número")
-      .regex(
-        /[^A-Za-z0-9]/,
-        "Senha deve conter pelo menos um caractere especial",
-      ),
+    newPassword: changePasswordValidationSchema,
     confirmPassword: z.string().min(1, "Confirmar senha é obrigatório"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -99,16 +82,8 @@ export const registerSchema = z
       .min(1, "Email é obrigatório")
       .email("Email inválido")
       .max(100, "Email deve ter no máximo 100 caracteres"),
-    password: z
-      .string()
-      .min(1, "Senha é obrigatória")
-      .min(8, "Senha deve ter pelo menos 8 caracteres")
-      .max(50, "Senha deve ter no máximo 50 caracteres"),
-    confirmPassword: z
-      .string()
-      .min(1, "Confirmar senha é obrigatório")
-      .min(8, "Confirmar senha deve ter pelo menos 8 caracteres")
-      .max(50, "Confirmar senha deve ter no máximo 50 caracteres"),
+    password: strongPasswordSchema,
+    confirmPassword: strongPasswordSchema,
     terms: z.boolean().refine((val) => val === true, {
       message: "Você deve aceitar os termos e condições",
     }),

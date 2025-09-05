@@ -2,7 +2,11 @@
  * 📝 Barbershop Staff Schema Definitions
  * Validation schemas for barbershop staff management
  */
-import { emailSchema, nameSchema } from "@shared/schemas/common";
+import {
+  emailSchema,
+  nameSchema,
+  passwordSchema,
+} from "@shared/schemas/common";
 import { z } from "zod";
 
 // 🏷️ Enum definitions matching backend
@@ -99,10 +103,7 @@ export const createStaffFormSchema = z.object({
   barbershop_id: z.string().min(1, "ID da barbearia é obrigatório"),
   user: z.object({
     email: emailSchema,
-    password: z
-      .string()
-      .min(8, "Senha deve ter pelo menos 8 caracteres")
-      .optional(),
+    password: passwordSchema.optional(),
     first_name: nameSchema,
     last_name: z.string().optional(),
     display_name: z.string().optional(),

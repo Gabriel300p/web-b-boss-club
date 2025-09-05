@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { passwordSchema } from "./password.schema";
 
 // Common field schemas
 export const emailSchema = z
@@ -6,11 +7,7 @@ export const emailSchema = z
   .min(1, "Email é obrigatório")
   .email("Email deve ter um formato válido");
 
-export const passwordSchema = z
-  .string()
-  .min(1, "Senha é obrigatória")
-  .min(6, "Senha deve ter pelo menos 6 caracteres")
-  .max(100, "Senha deve ter no máximo 100 caracteres");
+export { passwordSchema };
 
 export const nameSchema = z
   .string()
