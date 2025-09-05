@@ -120,10 +120,13 @@ export async function logoutRequest(): Promise<void> {
 
 export async function forgotPasswordRequest(values: {
   email: string;
-}): Promise<{ message: string }> {
+}): Promise<{ message: string; tempToken?: string }> {
   try {
     const response = await authApiService.resetPassword(values.email);
-    return { message: response.data.message };
+    return { 
+      message: response.data.message,
+      tempToken: response.data.tempToken
+    };
   } catch (error: unknown) {
     if (error instanceof Error) {
       if (error.message.includes("não encontrado")) {

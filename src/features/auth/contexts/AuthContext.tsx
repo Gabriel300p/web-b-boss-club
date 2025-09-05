@@ -182,7 +182,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setError(null);
       return authService.forgotPassword(credentials);
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
       showToast({
         type: "success",
         title: t("toasts.success.forgotPasswordTitle"),
@@ -191,8 +191,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
         duration: TOAST_DURATIONS.SUCCESS,
       });
 
-      // Salva o email para usar na verificaÃ§Ã£o MFA
+      // Salva o email para usar na verificação MFA
       localStorage.setItem("forgot_password_email", variables.email);
+
+      // Se o backend retornar tempToken, salva no localStorage (para forgot password flow)
+      if (data && typeof data === 'object' && 'tempToken' in data && data.tempToken) {
+        localStorage.setItem("temp_token", data.tempToken as string);
+      }
 
       // Navigate to MFA verification para reset de senha
       navigateWithDelay("/auth/mfa-verification");
@@ -210,14 +215,22 @@ export function AuthProvider({ children }: PropsWithChildren) {
       return authService.verifyMfa(credentials);
     },
     onSuccess: (data: AuthResponse) => {
+      console.log("🔍 [DEBUG] MFA onSuccess data:", data);
+      
       // Verificar se Ã© um fluxo de reset de senha (forgot password)
       const isForgotPasswordFlow = localStorage.getItem(
         "forgot_password_email",
       );
+      
+      console.log("🔍 [DEBUG] isForgotPasswordFlow:", isForgotPasswordFlow);
 
       if (isForgotPasswordFlow) {
+        console.log("✅ [DEBUG] É forgot password - redirecionando para reset-password");
+        
         // Remove o flag de forgot password
         localStorage.removeItem("forgot_password_email");
+        // Remove temp token também
+        localStorage.removeItem("temp_token");
 
         showToast({
           type: "success",
@@ -232,6 +245,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
         return;
       }
 
+      console.log("✅ [DEBUG] É login normal - fazendo storeLogin");
+      
       // Store user (fluxo de login normal)
       storeLogin(data.user);
 

@@ -172,8 +172,8 @@ export class AuthApiService {
    */
   async resetPassword(
     email: string,
-  ): Promise<ApiResponse<{ message: string; success: boolean }>> {
-    return await apiService.post<{ message: string; success: boolean }>(
+  ): Promise<ApiResponse<{ message: string; success: boolean; tempToken?: string }>> {
+    return await apiService.post<{ message: string; success: boolean; tempToken?: string }>(
       `${this.baseUrl}/reset-password`,
       { email },
     );
