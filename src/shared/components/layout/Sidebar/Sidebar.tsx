@@ -11,7 +11,7 @@ interface SidebarProps {
   className?: string;
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export default function Sidebar({ className }: SidebarProps) {
   const { isOpen, close, isCollapsed } = useSidebar();
   const { user } = useAuth();
 
