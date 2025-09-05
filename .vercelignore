@@ -1,0 +1,12 @@
+# Ignora arquivos e diretórios durante o deploy
+
+.github/
+docs/
+scripts/
+coverage/
+\*.md
+.env.local
+.env.development
+.env.test
+node_modules/
+.git/
