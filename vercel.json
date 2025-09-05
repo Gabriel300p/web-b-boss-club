@@ -42,11 +42,6 @@
       ]
     }
   ],
-  "github": {
-    "enabled": true,
-    "autoDeployOnPush": true,
-    "silent": false
-  },
   "env": {
     "VITE_APP_ENV": "production"
   }
