@@ -1,5 +1,5 @@
 import { Divider } from "@/shared/components/ui";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useStableStaffManagement } from "../hooks/useStableStaffManagement";
 import { BarbershopStaffPageContent } from "./sections/BarbershopStaffPageContent";
@@ -17,11 +17,12 @@ export function BarbershopStaffPage() {
     statistics,
     isLoading,
     refetch,
+    onTableSettingsChange,
   } = useStableStaffManagement();
 
   // 🎯 lastUpdated estável que só muda quando dados são realmente carregados
-  const [lastUpdated, setLastUpdated] = useState(() => 
-    new Date().toLocaleTimeString("pt-BR")
+  const [lastUpdated, setLastUpdated] = useState(() =>
+    new Date().toLocaleTimeString("pt-BR"),
   );
   const previousLoadingRef = useRef(isLoading);
 
@@ -34,12 +35,12 @@ export function BarbershopStaffPage() {
   useEffect(() => {
     const wasLoading = previousLoadingRef.current;
     const isCurrentlyLoading = isLoading;
-    
+
     // Só atualizar quando estava loading e agora não está mais (dados carregados)
     if (wasLoading && !isCurrentlyLoading) {
       updateLastUpdated();
     }
-    
+
     previousLoadingRef.current = isCurrentlyLoading;
   }, [isLoading, updateLastUpdated]); // 🔥 Add updateLastUpdated to dependencies
 
@@ -60,6 +61,7 @@ export function BarbershopStaffPage() {
         resetFilters={resetFilters}
         hasActiveFilters={hasActiveFilters}
         refetch={refetch}
+        onTableSettingsChange={onTableSettingsChange}
       />
     </div>
   );

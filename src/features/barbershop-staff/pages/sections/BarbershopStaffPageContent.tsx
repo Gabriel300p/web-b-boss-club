@@ -2,6 +2,7 @@ import { EmptyState } from "@/shared/components/common/EmptyState";
 import { FilterSkeleton } from "@/shared/components/skeletons/FilterSkeletons";
 import { TableSkeleton } from "@/shared/components/skeletons/TableSkeleton";
 import { useStableLoading } from "@/shared/hooks/useStableLoading";
+import type { TableSettingsConfig } from "@shared/types/table.types";
 import type {
   QueryObserverResult,
   RefetchOptions,
@@ -29,6 +30,7 @@ interface BarbershopStaffPageContentProps {
   resetFilters: () => void;
   hasActiveFilters: boolean;
   refetch: (options?: RefetchOptions) => Promise<QueryObserverResult>;
+  onTableSettingsChange?: (settings: TableSettingsConfig) => void;
 }
 
 export function BarbershopStaffPageContent({
@@ -39,6 +41,7 @@ export function BarbershopStaffPageContent({
   updateFilter,
   resetFilters,
   hasActiveFilters,
+  onTableSettingsChange,
 }: BarbershopStaffPageContentProps) {
   const { t } = useTranslation("barbershop-staff");
 
@@ -77,6 +80,7 @@ export function BarbershopStaffPageContent({
           filters={filters}
           onFilterChange={updateFilter}
           onClearFilters={resetFilters}
+          onTableSettingsChange={onTableSettingsChange}
         />
         {/* 🎯 Subtle loading indicator during filtering */}
         {isFiltering && <FilterSkeleton />}
