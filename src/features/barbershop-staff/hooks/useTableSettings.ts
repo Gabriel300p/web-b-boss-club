@@ -4,19 +4,22 @@
  */
 
 import { useTableSettings as useSharedTableSettings } from "@shared/hooks/useTableSettings";
-import type { TableSettingsConfig } from "@shared/types/table.types";
+import type {
+  TableColumn,
+  TableSettingsConfig,
+} from "@shared/types/table.types";
 import { useCallback, useMemo } from "react";
 
 const TABLE_ID = "barbershop-staff";
 
-export function useTableSettings() {
+export function useTableSettings(columns: TableColumn[]) {
   const {
     settings,
     appliedColumns,
     updateSettings,
     resetSettings,
     saveSettings,
-  } = useSharedTableSettings(TABLE_ID, []);
+  } = useSharedTableSettings(TABLE_ID, columns);
 
   // 🎯 Handler para mudanças nas configurações
   const handleTableSettingsChange = useCallback(

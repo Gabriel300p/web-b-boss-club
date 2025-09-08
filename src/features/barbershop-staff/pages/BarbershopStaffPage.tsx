@@ -18,6 +18,7 @@ export function BarbershopStaffPage() {
     isLoading,
     refetch,
     onTableSettingsChange,
+    tableSettings,
   } = useStableStaffManagement();
 
   // 🎯 lastUpdated estável que só muda quando dados são realmente carregados
@@ -62,6 +63,7 @@ export function BarbershopStaffPage() {
         hasActiveFilters={hasActiveFilters}
         refetch={refetch}
         onTableSettingsChange={onTableSettingsChange}
+        tableSettings={tableSettings}
       />
     </div>
   );

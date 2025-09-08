@@ -35,22 +35,28 @@ const TableRowMemo = memo(function TableRowMemo<TData>({
         index={index}
         className="border-b border-neutral-700/50 transition-colors hover:bg-neutral-800/30 data-[state=selected]:bg-neutral-800/50"
       >
-        {row.getVisibleCells().map((cell: Cell<TData, unknown>) => (
-          <TableCell key={cell.id}>
-            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-          </TableCell>
-        ))}
+        {row
+          .getVisibleCells()
+          .filter((cell: Cell<TData, unknown>) => cell.column.getIsVisible())
+          .map((cell: Cell<TData, unknown>) => (
+            <TableCell key={cell.id}>
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </TableCell>
+          ))}
       </AnimatedTableRow>
     );
   }
 
   return (
     <TableRow className="border-b border-neutral-700/50 transition-colors hover:bg-neutral-800/30 data-[state=selected]:bg-neutral-800/50">
-      {row.getVisibleCells().map((cell: Cell<TData, unknown>) => (
-        <TableCell key={cell.id}>
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </TableCell>
-      ))}
+      {row
+        .getVisibleCells()
+        .filter((cell: Cell<TData, unknown>) => cell.column.getIsVisible())
+        .map((cell: Cell<TData, unknown>) => (
+          <TableCell key={cell.id}>
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        ))}
     </TableRow>
   );
 });
@@ -61,22 +67,40 @@ export function OptimizedTable<TData>({
 }: OptimizedTableProps<TData>) {
   const { rows } = table.getRowModel();
 
+  // Debug: Log visible columns
+  console.log(
+    "🔍 All columns:",
+    table
+      .getAllColumns()
+      .map((col) => ({ id: col.id, accessorKey: col.accessorKey })),
+  );
+  console.log(
+    "🔍 Visible columns:",
+    table
+      .getAllColumns()
+      .filter((col) => col.getIsVisible())
+      .map((col) => ({ id: col.id, accessorKey: col.accessorKey })),
+  );
+  console.log("🔍 Column visibility state:", table.getState().columnVisibility);
+
   return (
     <AnimatedBox variant="fadeIn" className="rounded-lg">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                </TableHead>
-              ))}
+              {headerGroup.headers
+                .filter((header) => header.column.getIsVisible())
+                .map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </TableHead>
+                ))}
             </TableRow>
           ))}
         </TableHeader>

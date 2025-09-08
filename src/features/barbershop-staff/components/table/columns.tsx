@@ -36,6 +36,7 @@ export const createColumns = ({
 
   return [
     {
+      id: "first_name",
       accessorKey: "first_name",
       header: ({ column }) => (
         <TableSort column={column} className="ml-5">
@@ -62,6 +63,7 @@ export const createColumns = ({
       },
     },
     {
+      id: "user.email",
       accessorKey: "user.email",
       enableSorting: true,
       header: ({ column }) => (
@@ -79,6 +81,7 @@ export const createColumns = ({
       },
     },
     {
+      id: "role_in_shop",
       accessorKey: "role_in_shop",
       header: ({ column }) => (
         <TableSort column={column} align="center">
@@ -120,6 +123,7 @@ export const createColumns = ({
       },
     },
     {
+      id: "status",
       accessorKey: "status",
       header: ({ column }) => (
         <TableSort column={column} align="center">
@@ -159,6 +163,7 @@ export const createColumns = ({
       },
     },
     {
+      id: "is_available",
       accessorKey: "is_available",
       header: ({ column }) => (
         <TableSort column={column} align="center">
@@ -183,6 +188,7 @@ export const createColumns = ({
       },
     },
     {
+      id: "hire_date",
       accessorKey: "hire_date",
       header: ({ column }) => (
         <TableSort column={column} align="center">

@@ -31,6 +31,7 @@ interface BarbershopStaffPageContentProps {
   hasActiveFilters: boolean;
   refetch: (options?: RefetchOptions) => Promise<QueryObserverResult>;
   onTableSettingsChange?: (settings: TableSettingsConfig) => void;
+  tableSettings?: TableSettingsConfig;
 }
 
 export function BarbershopStaffPageContent({
@@ -42,6 +43,7 @@ export function BarbershopStaffPageContent({
   resetFilters,
   hasActiveFilters,
   onTableSettingsChange,
+  tableSettings,
 }: BarbershopStaffPageContentProps) {
   const { t } = useTranslation("barbershop-staff");
 
@@ -109,6 +111,7 @@ export function BarbershopStaffPageContent({
           data={staff}
           pagination={pagination}
           onPaginationChange={(page) => updateFilter("page", page)}
+          tableSettings={tableSettings}
         />
       )}
     </div>
