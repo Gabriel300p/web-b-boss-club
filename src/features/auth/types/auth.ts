@@ -70,7 +70,11 @@ export interface AuthError extends Error {
     | "validation_error"
     | "mfa_required"
     | "mfa_invalid"
-    | "mfa_expired";
+    | "mfa_expired"
+    | "duplicate_cpf"
+    | "duplicate_email"
+    | "invalid_cpf"
+    | "invalid_email";
   message: string;
 }
 

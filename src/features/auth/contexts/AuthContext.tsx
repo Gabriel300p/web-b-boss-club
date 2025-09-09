@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../../app/store/auth";
 import { useToast } from "../../../shared/hooks/useToast";
+import { getUserFriendlyMessage } from "../../../shared/utils/api.utils";
 import { authService } from "../services/auth.service";
 import type {
   AuthContextType,
@@ -375,6 +376,22 @@ export function AuthProvider({ children }: PropsWithChildren) {
         });
         title = t("toasts.errors.titles.accountLocked");
         break;
+      case "duplicate_cpf":
+        userMessage = t("toasts.errors.messages.duplicateCpf");
+        title = t("toasts.errors.titles.dataConflict");
+        break;
+      case "duplicate_email":
+        userMessage = t("toasts.errors.messages.duplicateEmail");
+        title = t("toasts.errors.titles.dataConflict");
+        break;
+      case "invalid_cpf":
+        userMessage = t("toasts.errors.messages.invalidCpf");
+        title = t("toasts.errors.titles.dataConflict");
+        break;
+      case "invalid_email":
+        userMessage = t("toasts.errors.messages.invalidEmail");
+        title = t("toasts.errors.titles.dataConflict");
+        break;
       case "mfa_required":
         userMessage = t("toasts.mfa.messages.required");
         title = t("toasts.mfa.titles.required");
@@ -392,7 +409,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         title = t("toasts.errors.titles.connectionError");
         break;
       default:
-        userMessage = error.message || userMessage;
+        userMessage = getUserFriendlyMessage(error) || userMessage;
     }
 
     // Strategy 2: Contextual actions (will be handled by individual toast actions)

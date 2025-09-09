@@ -118,13 +118,18 @@
         "invalidLogin": "Login Inválido",
         "userNotFound": "Usuário Não Encontrado",
         "accountLocked": "Conta Bloqueada",
-        "connectionError": "Erro de Conexão"
+        "connectionError": "Erro de Conexão",
+        "dataConflict": "Conflito de Dados"
       },
       "messages": {
-        "invalidCredentials": "Credenciais inválidas{{context}}. Verifique seu email e senha ou clique em \"Redefinir Senha\" para receber um novo código de verificação.",
+        "invalidCredentials": "Email/CPF ou senha incorretos{{context}}. Verifique suas credenciais e tente novamente.",
         "userNotFound": "Usuário não encontrado{{context}}.",
         "accountLocked": "Conta temporariamente bloqueada{{context}} por segurança.",
         "networkError": "Erro de conexão. Verifique sua internet e tente novamente.",
+        "duplicateCpf": "Este CPF já está cadastrado no sistema. Use outro CPF ou faça login na conta existente.",
+        "duplicateEmail": "Este email já está cadastrado no sistema. Use outro email ou faça login na conta existente.",
+        "invalidCpf": "CPF inválido. Verifique se o CPF foi digitado corretamente.",
+        "invalidEmail": "Email inválido. Verifique se o email foi digitado corretamente.",
         "unexpectedError": "Ocorreu um erro inesperado."
       },
       "actions": {

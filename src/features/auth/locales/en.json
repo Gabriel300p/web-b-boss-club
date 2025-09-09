@@ -116,13 +116,18 @@
         "invalidLogin": "Invalid Login",
         "userNotFound": "User Not Found",
         "accountLocked": "Account Locked",
-        "connectionError": "Connection Error"
+        "connectionError": "Connection Error",
+        "dataConflict": "Data Conflict"
       },
       "messages": {
-        "invalidCredentials": "Invalid credentials{{context}}. Check your email and password or click \"Reset Password\" to receive a new verification code.",
+        "invalidCredentials": "Invalid email/CPF or password{{context}}. Check your credentials and try again.",
         "userNotFound": "User not found{{context}}.",
         "accountLocked": "Account temporarily locked{{context}} for security.",
         "networkError": "Connection error. Check your internet and try again.",
+        "duplicateCpf": "This CPF is already registered in the system. Use another CPF or log in to the existing account.",
+        "duplicateEmail": "This email is already registered in the system. Use another email or log in to the existing account.",
+        "invalidCpf": "Invalid CPF. Please check if the CPF was entered correctly (numbers only).",
+        "invalidEmail": "Invalid email. Please check if the email was entered correctly.",
         "unexpectedError": "An unexpected error occurred."
       },
       "actions": {

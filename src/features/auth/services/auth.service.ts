@@ -35,29 +35,39 @@ export async function loginRequest(
   } catch (error: unknown) {
     // Trata erros do authApiService
     if (error instanceof Error) {
+      const errorMessage = error.message.toLowerCase();
+
       // Mapeia códigos de erro do backend para códigos locais
       if (
-        error.message.includes("credenciais") ||
-        error.message.includes("senha")
+        errorMessage.includes("credenciais") ||
+        errorMessage.includes("senha") ||
+        error.message.includes("Credenciais inválidas")
       ) {
         throw createAuthError(
           "invalid_credentials",
-          "Email/CPF ou senha incorretos",
+          "Email/CPF ou senha incorretos. Verifique suas credenciais e tente novamente.",
         );
       }
-      if (error.message.includes("não encontrado")) {
+      if (
+        errorMessage.includes("não encontrado") ||
+        errorMessage.includes("nao encontrado")
+      ) {
         throw createAuthError("user_not_found", "Usuário não encontrado");
       }
       if (
-        error.message.includes("bloqueada") ||
-        error.message.includes("suspensa")
+        errorMessage.includes("bloqueada") ||
+        errorMessage.includes("suspensa")
       ) {
         throw createAuthError(
           "account_locked",
           "Conta temporariamente bloqueada",
         );
       }
-      if (error.message.includes("rede") || error.message.includes("conexão")) {
+      if (
+        errorMessage.includes("rede") ||
+        errorMessage.includes("conexão") ||
+        errorMessage.includes("conexao")
+      ) {
         throw createAuthError(
           "network_error",
           "Erro de conexão com o servidor",

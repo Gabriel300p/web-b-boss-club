@@ -74,7 +74,8 @@ export class ApiService {
         return response;
       },
       async (error: AxiosError<ApiError>) => {
-        logError(error, "API Service");
+        const formattedError = this.formatError(error);
+        logError(formattedError, "API Service");
 
         if (error.response?.status === 401) {
           // Verifica se é um erro de change-password (não limpa tokens)
@@ -87,7 +88,7 @@ export class ApiService {
             this.handleUnauthorized();
           }
         }
-        return Promise.reject(this.formatError(error));
+        return Promise.reject(formattedError);
       },
     );
   }

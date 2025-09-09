@@ -173,6 +173,30 @@ export function getErrorDetails(error: unknown): {
  * 🎯 Obtém mensagem de erro amigável para o usuário
  */
 export function getUserFriendlyMessage(error: unknown): string {
+  // Prioridade 1: Se tem userMessage específico do backend, usar ele
+  if (error && typeof error === "object" && "userMessage" in error) {
+    const userMessage = (error as { userMessage: string }).userMessage;
+    if (userMessage && userMessage.trim()) {
+      return userMessage;
+    }
+  }
+
+  // Prioridade 2: Se tem message específico do backend, usar ele
+  if (error && typeof error === "object" && "message" in error) {
+    const message = (error as { message: string }).message;
+    if (
+      message &&
+      message.trim() &&
+      message !== "Request failed with status code 401" &&
+      message !== "Request failed with status code 422" &&
+      message !== "Request failed with status code 500" &&
+      message !== "Token de autenticação inválido ou expirado"
+    ) {
+      return message;
+    }
+  }
+
+  // Prioridade 3: Fallback para mensagens genéricas por status
   const status = getErrorStatus(error);
 
   switch (status) {
