@@ -1,21 +1,19 @@
 import i18n from "@/app/i18n/init";
-import { PencilSimpleLineIcon, XCircleIcon } from "@shared/components/icons";
-import { Button } from "@shared/components/ui/button";
 import TableSort from "@shared/components/ui/table-sort";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
+import { StaffActions, type StaffActionHandlers } from "./columns-actions";
 
-interface StaffColumnsProps {
-  onEdit: (staff: BarbershopStaff) => void;
-  onDelete: (staff: BarbershopStaff) => void;
-}
+// 🎯 Interface para props das colunas
+type StaffColumnsProps = StaffActionHandlers;
 
 // 🚀 Optimized column creation for barbershop staff
 export const createColumns = ({
+  onView,
   onEdit,
-  onDelete,
+  onToggleStatus,
 }: StaffColumnsProps): ColumnDef<BarbershopStaff>[] => {
   const t = i18n.getFixedT(i18n.language, "barbershop-staff");
 
@@ -234,29 +232,11 @@ export const createColumns = ({
       header: () => <div className="text-center">{t("fields.actions")}</div>,
       cell: ({ row }) => {
         const staff = row.original;
+        const handlers = { onView, onEdit, onToggleStatus };
 
         return (
-          <div className="flex justify-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onEdit(staff)}
-              className="h-8 w-8 p-0 text-blue-400 hover:bg-blue-900/30 hover:text-blue-300"
-              aria-label={t("actions.edit")}
-              title={t("actions.edit")}
-            >
-              <PencilSimpleLineIcon className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onDelete(staff)}
-              className="h-8 w-8 p-0 text-red-400 hover:bg-red-900/30 hover:text-red-300"
-              aria-label={t("actions.delete")}
-              title={t("actions.delete")}
-            >
-              <XCircleIcon className="h-4 w-4" />
-            </Button>
+          <div className="flex justify-center">
+            <StaffActions staff={staff} handlers={handlers} t={t} />
           </div>
         );
       },

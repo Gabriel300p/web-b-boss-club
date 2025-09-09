@@ -62,13 +62,17 @@ export function BarbershopStaffPageContent({
 
   // �📋 Table columns
   const columns = createColumns({
+    onView: (staff) => {
+      // TODO: Implementar modal de visualização
+      console.log("View staff:", staff);
+    },
     onEdit: (staff) => {
-      // TODO: Implementar edição
+      // TODO: Implementar navegação para edição
       console.log("Edit staff:", staff);
     },
-    onDelete: (staff) => {
-      // TODO: Implementar exclusão
-      console.log("Delete staff:", staff);
+    onToggleStatus: (staff) => {
+      // TODO: Implementar dialog de confirmação
+      console.log("Toggle status for staff:", staff);
     },
   });
 
