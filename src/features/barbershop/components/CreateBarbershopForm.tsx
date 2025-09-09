@@ -34,17 +34,10 @@ export function CreateBarbershopForm() {
 
   const handleSubmit = async (data: CreateBarbershopFormData) => {
     try {
-      console.log("🎯 DADOS DO FORMULÁRIO:", data);
-      console.log("📤 Enviando para API...");
-
-      // setSubmitErrors([]); // Limpar erros anteriores
-
       await createBarbershop({
         barbershop: data.barbershop,
         owner: data.owner,
       });
-
-      console.log("✅ Sucesso!");
     } catch (err) {
       console.error("❌ Erro ao criar barbearia:", err);
       // setSubmitErrors(["Erro ao criar barbearia. Tente novamente."]);

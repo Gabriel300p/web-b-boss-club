@@ -25,50 +25,28 @@ export class BarbershopApiService {
       const response = await apiService.post<unknown>(this.baseUrl, data);
       return response.data;
     } catch (error: unknown) {
-      // Debug: Log do erro para verificar o que está sendo recebido
-      console.log("🔍 Barbershop API Error:", {
-        error,
-        message:
-          error instanceof Error ? error.message : "Not an Error instance",
-        type: typeof error,
-      });
-
       // Trata erros específicos do backend
       let errorMessage = "";
-      let originalMessage = "";
 
       if (error instanceof Error) {
         errorMessage = error.message.toLowerCase();
-        originalMessage = error.message;
       } else if (error && typeof error === "object" && "message" in error) {
         // Se for um ApiError, extrai a mensagem
         const apiError = error as { message: string; status?: number };
         errorMessage = apiError.message.toLowerCase();
-        originalMessage = apiError.message;
       }
 
       if (errorMessage) {
-        // Mapeia códigos de erro do backend para códigos locais
-        console.log("🔍 Checking error message:", {
-          originalMessage,
-          lowerCaseMessage: errorMessage,
-          hasEmail: errorMessage.includes("email"),
-          hasCadastrado: errorMessage.includes("cadastrado"),
-          hasCpf: errorMessage.includes("cpf"),
-        });
-
         if (
           errorMessage.includes("cpf") &&
           errorMessage.includes("cadastrado")
         ) {
-          console.log("✅ Detected CPF duplicate error");
           throw createBarbershopError(
             "duplicate_cpf",
             "Este CPF já está cadastrado no sistema. Use outro CPF ou faça login na conta existente.",
           );
         }
         if (errorMessage.includes("cpf") && errorMessage.includes("inválido")) {
-          console.log("✅ Detected CPF validation error");
           throw createBarbershopError(
             "invalid_cpf",
             "CPF inválido. Verifique se o CPF foi digitado corretamente (apenas números).",
@@ -78,7 +56,6 @@ export class BarbershopApiService {
           errorMessage.includes("email") &&
           errorMessage.includes("cadastrado")
         ) {
-          console.log("✅ Detected EMAIL duplicate error");
           throw createBarbershopError(
             "duplicate_email",
             "Este email já está cadastrado no sistema. Use outro email ou faça login na conta existente.",
@@ -88,7 +65,6 @@ export class BarbershopApiService {
           errorMessage.includes("email") &&
           errorMessage.includes("inválido")
         ) {
-          console.log("✅ Detected EMAIL validation error");
           throw createBarbershopError(
             "invalid_email",
             "Email inválido. Verifique se o email foi digitado corretamente.",
@@ -105,14 +81,8 @@ export class BarbershopApiService {
           );
         }
 
-        // Re-throw o erro original se não conseguir mapear
-        console.log(
-          "⚠️ No specific error mapping found, re-throwing original error",
-        );
         throw error;
       }
-
-      console.log("⚠️ Error is not an Error instance, creating generic error");
       throw createBarbershopError(
         "server_error",
         "Erro desconhecido ao criar barbearia",

@@ -43,7 +43,7 @@ export function BarbershopStaffPageContent({
   resetFilters,
   hasActiveFilters,
   onTableSettingsChange,
-  tableSettings,
+  // tableSettings,
 }: BarbershopStaffPageContentProps) {
   const { t } = useTranslation("barbershop-staff");
 
@@ -111,7 +111,6 @@ export function BarbershopStaffPageContent({
           data={staff}
           pagination={pagination}
           onPaginationChange={(page) => updateFilter("page", page)}
-          tableSettings={tableSettings}
         />
       )}
     </div>

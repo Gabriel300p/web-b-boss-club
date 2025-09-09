@@ -136,7 +136,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
     },
     onError: (error: AuthError, variables: LoginCredentials) => {
-      setError(error.message);
+      setError(getUserFriendlyMessage(error));
       handleAuthError(error, variables.credential);
     },
     onSettled: () => {

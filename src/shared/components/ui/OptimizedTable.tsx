@@ -67,22 +67,6 @@ export function OptimizedTable<TData>({
 }: OptimizedTableProps<TData>) {
   const { rows } = table.getRowModel();
 
-  // Debug: Log visible columns
-  console.log(
-    "🔍 All columns:",
-    table
-      .getAllColumns()
-      .map((col) => ({ id: col.id, accessorKey: col.accessorKey })),
-  );
-  console.log(
-    "🔍 Visible columns:",
-    table
-      .getAllColumns()
-      .filter((col) => col.getIsVisible())
-      .map((col) => ({ id: col.id, accessorKey: col.accessorKey })),
-  );
-  console.log("🔍 Column visibility state:", table.getState().columnVisibility);
-
   return (
     <AnimatedBox variant="fadeIn" className="rounded-lg">
       <Table>

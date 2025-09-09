@@ -33,6 +33,30 @@ export async function loginRequest(
 
     throw createAuthError("server_error", "Resposta inválida do servidor");
   } catch (error: unknown) {
+    // Se for um ApiError do backend, preserva a mensagem específica
+    if (error && typeof error === "object" && "userMessage" in error) {
+      const apiError = error as {
+        userMessage: string;
+        message: string;
+        status: number;
+      };
+      throw createAuthError(
+        "invalid_credentials",
+        apiError.userMessage || apiError.message,
+      );
+    }
+
+    // Se for um ApiError com message específica, usa ela
+    if (error && typeof error === "object" && "message" in error) {
+      const apiError = error as { message: string; status: number };
+      if (
+        apiError.message &&
+        apiError.message !== "Request failed with status code 401"
+      ) {
+        throw createAuthError("invalid_credentials", apiError.message);
+      }
+    }
+
     // Trata erros do authApiService
     if (error instanceof Error) {
       const errorMessage = error.message.toLowerCase();
