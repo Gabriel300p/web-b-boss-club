@@ -7,7 +7,7 @@ import type {
   QueryObserverResult,
   RefetchOptions,
 } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface UseReloadDataOptions {
@@ -20,6 +20,7 @@ interface UseReloadDataOptions {
 interface UseReloadDataReturn {
   isReloading: boolean;
   isButtonDisabled: boolean;
+  countdown: number;
   handleReload: () => Promise<void>;
   reloadButtonProps: {
     label: string;
@@ -33,7 +34,7 @@ export function useReloadData({
   refetch,
   resetFilters,
   namespace = "common",
-  cooldownMs = 5000,
+  cooldownMs = 10000,
 }: UseReloadDataOptions): UseReloadDataReturn {
   const { success, error } = useToast();
   const { t } = useTranslation(namespace);
@@ -41,6 +42,8 @@ export function useReloadData({
   // 🎯 Estados para controle do reload
   const [isReloading, setIsReloading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // 🎯 Função de reload com animação, toast e cooldown
   const handleReload = useCallback(async () => {
@@ -73,10 +76,29 @@ export function useReloadData({
     } finally {
       setIsReloading(false);
 
-      // Cooldown configurável
-      setTimeout(() => {
-        setIsButtonDisabled(false);
-      }, cooldownMs);
+      // Cooldown configurável com countdown
+      const cooldownSeconds = Math.ceil(cooldownMs / 1000);
+      setCountdown(cooldownSeconds);
+      setIsButtonDisabled(true);
+
+      // Limpar interval anterior se existir
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+      }
+
+      countdownIntervalRef.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            if (countdownIntervalRef.current) {
+              clearInterval(countdownIntervalRef.current);
+              countdownIntervalRef.current = null;
+            }
+            setIsButtonDisabled(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     }
   }, [
     isButtonDisabled,
@@ -89,6 +111,16 @@ export function useReloadData({
     cooldownMs,
   ]);
 
+  // 🧹 Cleanup do interval quando o componente for desmontado
+  useEffect(() => {
+    return () => {
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+        countdownIntervalRef.current = null;
+      }
+    };
+  }, []);
+
   // 🎯 Props do botão para facilitar o uso
   const reloadButtonProps = {
     label: t("empty.noData.action"),
@@ -100,6 +132,7 @@ export function useReloadData({
   return {
     isReloading,
     isButtonDisabled,
+    countdown,
     handleReload,
     reloadButtonProps,
   };

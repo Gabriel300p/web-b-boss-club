@@ -8,7 +8,6 @@ import type {
   QueryObserverResult,
   RefetchOptions,
 } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
 import { BarbershopStaffFilters } from "../../components/filter/BarbershopStaffFilters";
 import { BarbershopStaffDataTable } from "../../components/table/BarbershopStaffDataTable";
 import { createColumns } from "../../components/table/columns";
@@ -47,13 +46,12 @@ export function BarbershopStaffPageContent({
   onTableSettingsChange,
   // tableSettings,
 }: BarbershopStaffPageContentProps) {
-  const { t } = useTranslation("barbershop-staff");
   // 🎯 Hook de reload componentizado
-  const { isReloading, reloadButtonProps } = useReloadData({
+  const { isReloading, countdown, reloadButtonProps } = useReloadData({
     refetch,
     resetFilters,
     namespace: "barbershop-staff",
-    cooldownMs: 5000,
+    cooldownMs: 10000,
   });
 
   // �️ Stabilize loading state to prevent skeleton duplication in StrictMode
@@ -98,23 +96,16 @@ export function BarbershopStaffPageContent({
       </div>
       {stableLoading || isReloading ? (
         <TableSkeleton />
-      ) : shouldShowEmptyState ? (
+      ) : shouldShowEmptyState || shouldShowFilteredEmptyState ? (
         <div className="mb-12 flex flex-col items-center gap-4">
           <EmptyState type="noData" />
           <ReloadButton
             {...reloadButtonProps}
             isLoading={isReloading}
+            countdown={countdown}
             className="mt-4"
           />
         </div>
-      ) : shouldShowFilteredEmptyState ? (
-        <EmptyState
-          type="filtered"
-          action={{
-            label: t("empty.filtered.action"),
-            onClick: resetFilters,
-          }}
-        />
       ) : (
         <BarbershopStaffDataTable
           columns={columns}

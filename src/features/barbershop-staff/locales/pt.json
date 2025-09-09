@@ -43,7 +43,7 @@
       "title": "Nenhum resultado disponível",
       "message": "Não há barbeiros para exibir no momento.",
       "action": "Recarregar Dados",
-      "actionDisabled": "Aguarde 5 segundos..."
+      "actionDisabled": "Aguarde..."
     },
     "filtered": {
       "title": "Nenhum resultado encontrado",

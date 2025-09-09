@@ -12,6 +12,7 @@ interface ReloadButtonProps {
   onClick: () => void;
   isDisabled: boolean;
   isLoading?: boolean;
+  countdown?: number;
   className?: string;
   size?: "sm" | "default" | "lg";
   variant?: "default" | "outline" | "ghost";
@@ -23,11 +24,12 @@ export function ReloadButton({
   onClick,
   isDisabled,
   isLoading = false,
+  countdown = 0,
   className,
   size = "default",
   variant = "outline",
 }: ReloadButtonProps) {
-  const displayLabel = isDisabled ? disabledLabel : label;
+  const displayLabel = isDisabled ? `${disabledLabel} (${countdown}s)` : label;
   const isButtonDisabled = isDisabled || isLoading;
 
   return (

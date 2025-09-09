@@ -25,7 +25,7 @@
   "empty": {
     "noData": {
       "action": "Reload Data",
-      "actionDisabled": "Wait 5 seconds..."
+      "actionDisabled": "Wait"
     }
   },
   "toasts": {
