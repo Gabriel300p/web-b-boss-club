@@ -122,7 +122,7 @@
         "dataConflict": "Conflito de Dados"
       },
       "messages": {
-        "invalidCredentials": "Email/CPF ou senha incorretos{{context}}. Verifique suas credenciais e tente novamente.",
+        "invalidCredentials": "Email/CPF ou senha incorretos. Verifique suas credenciais e tente novamente.",
         "userNotFound": "Usuário não encontrado{{context}}.",
         "accountLocked": "Conta temporariamente bloqueada{{context}} por segurança.",
         "networkError": "Erro de conexão. Verifique sua internet e tente novamente.",

@@ -120,7 +120,7 @@
         "dataConflict": "Data Conflict"
       },
       "messages": {
-        "invalidCredentials": "Invalid email/CPF or password{{context}}. Check your credentials and try again.",
+        "invalidCredentials": "Invalid email/CPF or password. Check your credentials and try again.",
         "userNotFound": "User not found{{context}}.",
         "accountLocked": "Account temporarily locked{{context}} for security.",
         "networkError": "Connection error. Check your internet and try again.",
