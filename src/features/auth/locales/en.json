@@ -32,6 +32,7 @@
         "submit": "Continue",
         "loading": "Signing in...",
         "forgotPassword": "Forgot my password",
+        "createAccount": "Create account",
         "forgotPasswordQuestion": "Forgot your password?",
         "forgotPasswordLink": "Click here to reset"
       },

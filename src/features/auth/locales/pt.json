@@ -32,6 +32,7 @@
         "submit": "Continuar",
         "loading": "Entrando...",
         "forgotPassword": "Esqueci minha senha",
+        "createAccount": "Criar conta",
         "forgotPasswordQuestion": "Esqueceu sua senha?",
         "forgotPasswordLink": "Clique aqui para redefinir"
       },

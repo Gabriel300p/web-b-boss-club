@@ -135,6 +135,14 @@ export function LoginForm() {
             </>
           )}
         </Button>
+        <div className="flex items-center justify-center">
+          <Link
+            to="/auth/create-barbershop"
+            className="text-primary/80 text-center text-sm font-medium underline transition-opacity duration-200 hover:opacity-80"
+          >
+            {t("forms.login.actions.createAccount")}
+          </Link>
+        </div>
       </form>
     </Form>
   );
