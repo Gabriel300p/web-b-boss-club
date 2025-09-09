@@ -85,12 +85,12 @@ export class AuthApiService {
       credentials,
     );
 
-    // Se login for bem-sucedido e não precisar de MFA, salva o token
+    // Se login for bem-sucedido e não precisar de verificação, salva o token
     if (response.data.token) {
       apiService.setAuthToken(response.data.token);
     }
 
-    // Se precisar de MFA, salva o token temporário
+    // Se precisar de verificação, salva o token temporário
     if (response.data.tempToken) {
       apiService.setTempToken(response.data.tempToken);
     }
@@ -99,13 +99,13 @@ export class AuthApiService {
   }
 
   /**
-   * 🔐 Verifica código MFA
+   * 🔐 Verifica código de verificação
    */
   async verifyMfa(code: string): Promise<ApiResponse<VerifyMfaResponse>> {
     const tempToken = apiService.getTempToken();
 
     if (!tempToken) {
-      throw new Error("Token temporário MFA não encontrado");
+      throw new Error("Token temporário de verificação não encontrado");
     }
 
     const response = await apiService.post<VerifyMfaResponse>(
@@ -132,7 +132,7 @@ export class AuthApiService {
       return await apiService.get<UserProfile>(`${this.baseUrl}/profile`);
     }
 
-    // Se não tiver token normal, tenta com o token temporário MFA
+    // Se não tiver token normal, tenta com o token temporário de verificação
     const tempToken = apiService.getTempToken();
 
     if (tempToken) {
@@ -220,7 +220,7 @@ export class AuthApiService {
   }
 
   /**
-   * 🔑 Obtém token temporário MFA
+   * 🔑 Obtém token temporário de verificação
    */
   getTempToken(): string | null {
     return apiService.getTempToken();
@@ -232,6 +232,29 @@ export class AuthApiService {
   async refreshToken(): Promise<ApiResponse<{ token: string }>> {
     return await apiService.post<{ token: string }>(
       `${this.baseUrl}/refresh-token`,
+    );
+  }
+
+  /**
+   * 🔄 Reenvia código de verificação
+   */
+  async resendMfaCode(): Promise<
+    ApiResponse<{ message: string; success: boolean }>
+  > {
+    const tempToken = apiService.getTempToken();
+
+    if (!tempToken) {
+      throw new Error("Token temporário de verificação não encontrado");
+    }
+
+    return await apiService.post<{ message: string; success: boolean }>(
+      `${this.baseUrl}/resend-mfa`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${tempToken}`,
+        },
+      },
     );
   }
 

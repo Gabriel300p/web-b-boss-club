@@ -21,12 +21,12 @@ export async function loginRequest(
   try {
     const response = await authApiService.login(values);
 
-    // Se login for bem-sucedido e não precisar de MFA, retorna diretamente
+    // Se login for bem-sucedido e não precisar de verificação, retorna diretamente
     if (!response.data.mfaRequired && response.data.token) {
       return response.data;
     }
 
-    // Se precisar de MFA, retorna com flag
+    // Se precisar de verificação, retorna com flag
     if (response.data.mfaRequired) {
       return response.data;
     }
@@ -191,7 +191,7 @@ export async function mfaVerificationRequest(
     const response = await authApiService.verifyMfa(values.code);
 
     if (response.data.success) {
-      // Usa os dados retornados pela verificação MFA diretamente
+      // Usa os dados retornados pela verificação de código diretamente
       const result = {
         user: {
           id: response.data.user.id,
@@ -209,14 +209,43 @@ export async function mfaVerificationRequest(
       return result;
     }
 
-    throw createAuthError("mfa_invalid", "Código MFA inválido");
+    throw createAuthError("mfa_invalid", "Código de verificação inválido");
   } catch (error: unknown) {
+    // Se for um ApiError do backend, preserva a mensagem específica
+    if (error && typeof error === "object" && "userMessage" in error) {
+      const apiError = error as {
+        userMessage: string;
+        message: string;
+        status: number;
+      };
+
+      // Mapeia erros específicos do backend para códigos de erro apropriados
+      if (
+        apiError.userMessage?.includes("inválido") ||
+        apiError.userMessage?.includes("expirado")
+      ) {
+        throw createAuthError("mfa_invalid", apiError.userMessage);
+      }
+      if (apiError.userMessage?.includes("não encontrado")) {
+        throw createAuthError("user_not_found", apiError.userMessage);
+      }
+
+      // Para outros erros do backend, usa a mensagem específica
+      throw createAuthError(
+        "mfa_invalid",
+        apiError.userMessage || apiError.message,
+      );
+    }
+
     if (error instanceof Error) {
       if (
         error.message.includes("inválido") ||
         error.message.includes("expirado")
       ) {
-        throw createAuthError("mfa_invalid", "Código MFA inválido ou expirado");
+        throw createAuthError(
+          "mfa_invalid",
+          "Código de verificação inválido ou expirado",
+        );
       }
       if (error.message.includes("não encontrado")) {
         throw createAuthError("user_not_found", "Usuário não encontrado");
@@ -227,39 +256,65 @@ export async function mfaVerificationRequest(
           "Erro de conexão com o servidor",
         );
       }
+      if (
+        error.message.includes("401") ||
+        error.message.includes("Unauthorized")
+      ) {
+        throw createAuthError(
+          "mfa_invalid",
+          "Código de verificação inválido ou expirado",
+        );
+      }
       throw createAuthError(
-        "server_error",
-        error.message || "Erro ao verificar código MFA",
+        "mfa_invalid",
+        error.message ||
+          "Código de verificação inválido. Verifique o código e tente novamente.",
       );
     }
     throw createAuthError(
-      "server_error",
-      "Erro desconhecido ao verificar código MFA",
+      "mfa_invalid",
+      "Código de verificação inválido. Verifique o código e tente novamente.",
     );
   }
 }
 
 export async function resendMfaCodeRequest(): Promise<{ message: string }> {
   try {
-    // Simulate API call for now - implementar quando backend suportar
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    return { message: "Código reenviado com sucesso" };
+    const response = await authApiService.resendMfaCode();
+    return { message: response.data.message };
   } catch (error: unknown) {
     if (error instanceof Error) {
+      if (
+        error.message.includes("Token temporário de verificação não encontrado")
+      ) {
+        throw createAuthError(
+          "unauthorized",
+          "Sessão expirada. Por favor, solicite um novo código.",
+        );
+      }
       if (error.message.includes("rede") || error.message.includes("conexão")) {
         throw createAuthError(
           "network_error",
           "Erro de conexão com o servidor",
         );
       }
+      if (
+        error.message.includes("rate limit") ||
+        error.message.includes("muitas tentativas")
+      ) {
+        throw createAuthError(
+          "server_error",
+          "Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.",
+        );
+      }
       throw createAuthError(
         "server_error",
-        error.message || "Erro ao reenviar código MFA",
+        error.message || "Erro ao reenviar código de verificação",
       );
     }
     throw createAuthError(
       "server_error",
-      "Erro desconhecido ao reenviar código MFA",
+      "Erro desconhecido ao reenviar código de verificação",
     );
   }
 }

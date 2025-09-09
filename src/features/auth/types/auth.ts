@@ -16,7 +16,7 @@ export interface RegisterCredentials extends LoginCredentials {
   confirmPassword: string;
 }
 
-// Resposta do login que pode requerer MFA
+// Resposta do login que pode requerer verificação
 export interface LoginResponse {
   mfaRequired: boolean;
   tempToken?: string;
@@ -29,7 +29,7 @@ export interface LoginResponse {
   };
 }
 
-// Resposta da verificação MFA
+// Resposta da verificação de código
 export interface MfaVerificationResponse {
   success: boolean;
   message: string;
@@ -43,7 +43,7 @@ export interface MfaVerificationResponse {
   isFirstLogin: boolean;
 }
 
-// Resposta de autenticação completa (após MFA)
+// Resposta de autenticação completa (após verificação)
 export interface AuthResponse {
   user: {
     id: string;
@@ -83,7 +83,7 @@ export interface ForgotPasswordCredentials {
   email: string;
 }
 
-// MFA verification credentials (apenas código)
+// Credenciais de verificação de código (apenas código)
 export interface MfaVerificationCredentials {
   code: string; // código de 6 dígitos
 }
@@ -127,7 +127,7 @@ export interface AuthContextType {
   isForgotPasswordPending: boolean;
   forgotPasswordError: AuthError | null;
 
-  // Mutation states - MFA
+  // Mutation states - Verification
   isMfaVerificationPending: boolean;
   mfaVerificationError: AuthError | null;
   isResendMfaCodePending: boolean;

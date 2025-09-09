@@ -76,7 +76,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     state.error ? null : state.user?.email || null,
   );
 
-  // Login mutation with enhanced error handling and MFA support
+  // Login mutation with enhanced error handling and verification support
   const loginMutation = useMutation({
     mutationFn: (credentials: LoginCredentials) => {
       setError(null);
@@ -84,10 +84,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
     },
     onSuccess: (data: LoginResponse, variables: LoginCredentials) => {
       if (data.mfaRequired && data.tempToken) {
-        // MFA Ã© necessÃ¡rio - salva token temporÃ¡rio e redireciona para MFA
+        // Verificação é necessária - salva token temporário e redireciona para verificação
         setTempToken(data.tempToken);
 
-        // Extrai email do credential para usar na pÃ¡gina MFA
+        // Extrai email do credential para usar na página de verificação
         const email = data.user?.email || variables.credential;
 
         showToast({
@@ -98,12 +98,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
           duration: TOAST_DURATIONS.INFO,
         });
 
-        // Redireciona para verificaÃ§Ã£o MFA
+        // Redireciona para verificação de código
         navigateWithDelay("/auth/mfa-verification");
         return;
       }
 
-      // Login direto sem MFA
+      // Login direto sem verificação
       if (data.token && data.user) {
         // ConstrÃ³i usuÃ¡rio no formato esperado pelo store
         const user = {
@@ -182,7 +182,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         duration: TOAST_DURATIONS.SUCCESS,
       });
 
-      // Salva o email para usar na verificação MFA
+      // Salva o email para usar na verificação de código
       localStorage.setItem("forgot_password_email", variables.email);
 
       // Se o backend retornar tempToken, salva no localStorage (para forgot password flow)
@@ -195,7 +195,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         localStorage.setItem("temp_token", data.tempToken as string);
       }
 
-      // Navigate to MFA verification para reset de senha
+      // Navigate to code verification para reset de senha
       navigateWithDelay("/auth/mfa-verification");
     },
     onError: (error: AuthError, variables: ForgotPasswordCredentials) => {
@@ -204,7 +204,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     },
   });
 
-  // MFA verification mutation
+  // Code verification mutation
   const mfaVerificationMutation = useMutation({
     mutationFn: (credentials: MfaVerificationCredentials) => {
       setError(null);
@@ -267,7 +267,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         return;
       }
 
-      // MFA verificado com sucesso: sempre navega para home
+      // Código verificado com sucesso: sempre navega para home
       // (independente de ter access_token ou nÃ£o - o useQuery cuida do resto)
       if (data.access_token) {
         setAuthToken(data.access_token);
@@ -289,7 +289,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     },
   });
 
-  // Resend MFA code mutation
+  // Resend verification code mutation
   const resendMfaCodeMutation = useMutation({
     mutationFn: authService.resendMfaCode,
     onSuccess: () => {
@@ -393,16 +393,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
         title = t("toasts.errors.titles.dataConflict");
         break;
       case "mfa_required":
-        userMessage = t("toasts.mfa.messages.required");
-        title = t("toasts.mfa.titles.required");
+        userMessage = t("toasts.verification.messages.required");
+        title = t("toasts.verification.titles.required");
         break;
       case "mfa_invalid":
-        userMessage = t("toasts.mfa.messages.invalid");
-        title = t("toasts.mfa.titles.invalid");
+        userMessage = t("toasts.verification.messages.invalid");
+        title = t("toasts.verification.titles.invalid");
         break;
       case "mfa_expired":
-        userMessage = t("toasts.mfa.messages.expired");
-        title = t("toasts.mfa.titles.expired");
+        userMessage = t("toasts.verification.messages.expired");
+        title = t("toasts.verification.titles.expired");
         break;
       case "network_error":
         userMessage = t("toasts.errors.messages.networkError");
@@ -424,12 +424,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
           return {
             label: t("toasts.errors.actions.reload"),
             onClick: () => window.location.reload(),
-          };
-        case "mfa_invalid":
-        case "mfa_expired":
-          return {
-            label: t("toasts.mfa.actions.resendCode"),
-            onClick: () => resendMfaCodeMutation.mutate(),
           };
         default:
           return {
@@ -511,7 +505,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     isForgotPasswordPending: forgotPasswordMutation.isPending,
     forgotPasswordError: forgotPasswordMutation.error,
 
-    // Mutation states - MFA
+    // Mutation states - Verification
     isMfaVerificationPending: mfaVerificationMutation.isPending,
     mfaVerificationError: mfaVerificationMutation.error,
     isResendMfaCodePending: resendMfaCodeMutation.isPending,

@@ -83,7 +83,12 @@ export class ApiService {
             "/auth/change-password",
           );
 
-          if (!isChangePasswordError) {
+          // Verifica se é um erro de MFA (não limpa tokens nem redireciona)
+          const isMfaError =
+            error.config?.url?.includes("/auth/verify-mfa") ||
+            error.config?.url?.includes("/auth/resend-mfa");
+
+          if (!isChangePasswordError && !isMfaError) {
             // Token expirado ou inválido (apenas para outras rotas)
             this.handleUnauthorized();
           }

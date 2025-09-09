@@ -31,7 +31,7 @@ export const loginSchema = z.object({
   password: passwordSchema,
 });
 
-// Schema para verificação MFA (6 dígitos numéricos)
+// Schema para verificação de código (6 dígitos numéricos)
 export const mfaVerificationSchema = z.object({
   code: z
     .string()

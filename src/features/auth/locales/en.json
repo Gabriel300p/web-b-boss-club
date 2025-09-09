@@ -68,7 +68,7 @@
       },
       "errors": {
         "title": "Verification Error:",
-        "invalidCode": "Invalid MFA code. Check the code or request a new one."
+        "invalidCode": "The code you entered is incorrect. Check the code received by email and try again."
       }
     },
     "resetPassword": {
@@ -142,18 +142,18 @@
       "mfaRequiredTitle": "Security verification required",
       "firstLoginTitle": "First Login",
       "firstLoginMessage": "Please set a new password for your account",
-      "resetPasswordRedirect": "MFA verified! Now set your new password."
+      "resetPasswordRedirect": "Code verified! Now set your new password."
     },
-    "mfa": {
+    "verification": {
       "titles": {
-        "required": "MFA Verification Required",
-        "invalid": "Invalid MFA Code",
-        "expired": "MFA Code Expired"
+        "required": "Security Verification Required",
+        "invalid": "Invalid Verification Code",
+        "expired": "Verification Code Expired"
       },
       "messages": {
-        "required": "MFA verification is required to continue",
-        "invalid": "Invalid or expired MFA code",
-        "expired": "MFA code expired. Request a new code"
+        "required": "Security verification is required to continue",
+        "invalid": "The code you entered is incorrect or has expired. Check the code received by email and try again.",
+        "expired": "The verification code has expired. Click 'Resend code' to receive a new one."
       },
       "actions": {
         "resendCode": "Resend Code"
