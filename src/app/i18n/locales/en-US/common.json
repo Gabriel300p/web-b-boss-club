@@ -15,10 +15,32 @@
     "confirm": "Confirm",
     "cancel": "Cancel",
     "close": "Close",
-    "save": "Save"
+    "save": "Save",
+    "reload": "Reload Data"
   },
   "feedback": {
     "success": "Operation completed successfully.",
     "genericError": "Something unexpected happened."
+  },
+  "empty": {
+    "noData": {
+      "action": "Reload Data",
+      "actionDisabled": "Wait 5 seconds..."
+    }
+  },
+  "toasts": {
+    "success": {
+      "reloadTitle": "Data reloaded!",
+      "reloadMessage": "Data has been updated successfully",
+      "reloadDescription": "The list has been reloaded"
+    },
+    "errors": {
+      "titles": {
+        "reloadError": "Error Reloading Data"
+      },
+      "messages": {
+        "reloadFailed": "Error reloading data. Please try again."
+      }
+    }
   }
 }

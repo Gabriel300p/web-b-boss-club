@@ -24,13 +24,13 @@ export function BarbershopStaffPageHeader({
         <div className="flex items-center gap-6">
           <div className="space-y-2">
             <h1 className="text-2xl leading-tight font-semibold text-neutral-100">
-              Barbeiros
+              {t("pages.staff.title")}
             </h1>
             <p className="text-base font-normal text-neutral-400">
               <strong className="font-semibold text-neutral-100">
                 {totalCount}
               </strong>{" "}
-              total, atualizado às{" "}
+              {t("statistics.total")}, {t("statistics.updatedAt")}{" "}
               <strong className="font-semibold text-neutral-100">
                 {lastUpdated}
               </strong>
@@ -46,7 +46,7 @@ export function BarbershopStaffPageHeader({
                 <div className="flex items-center gap-2">
                   <div className="size-2 rounded-lg bg-emerald-700" />
                   <span className="text-sm font-medium text-neutral-400">
-                    Ativos
+                    {t("statistics.active")}
                   </span>
                 </div>
               </div>
@@ -58,7 +58,7 @@ export function BarbershopStaffPageHeader({
                 <div className="flex items-center gap-2">
                   <div className="size-2 rounded-lg bg-red-700" />
                   <span className="text-sm font-medium text-neutral-400">
-                    Inativos
+                    {t("statistics.inactive")}
                   </span>
                 </div>
               </div>

@@ -181,7 +181,9 @@ export const createColumns = ({
                   : "border-red-700/50 bg-red-900/30 text-red-400"
               }`}
             >
-              {isAvailable ? "Disponível" : "Indisponível"}
+              {isAvailable
+                ? t("availability.available")
+                : t("availability.unavailable")}
             </span>
           </div>
         );

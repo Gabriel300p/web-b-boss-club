@@ -5,8 +5,9 @@
 import { useToast } from "@shared/hooks";
 import { createAppError, ErrorHandler, ErrorTypes } from "@shared/lib/errors";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuthStore } from "../../../app/store/auth";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useAuthStore } from "../../../app/store/auth";
 
 import type {
   CreateStaffFormData,
@@ -55,22 +56,28 @@ const DEFAULT_FILTERS: StaffFilters = {
 const EMPTY_INITIAL_FILTERS: StaffFilters = DEFAULT_FILTERS;
 
 // 🚀 Main hook for staff list with filters
-export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS) {
+export function useBarbershopStaff(
+  filters: StaffFilters = EMPTY_INITIAL_FILTERS,
+) {
   // 🎯 Memoize merged filters to prevent unnecessary re-renders
-  const mergedFilters = useMemo(() => ({ 
-    ...DEFAULT_FILTERS, 
-    ...filters 
-  }), [filters]);
-  
+  const mergedFilters = useMemo(
+    () => ({
+      ...DEFAULT_FILTERS,
+      ...filters,
+    }),
+    [filters],
+  );
+
   const { success } = useToast();
   const queryClient = useQueryClient();
   const errorHandler = ErrorHandler.getInstance();
   const { user } = useAuthStore(); // 🔑 Obter usuário atual para isolamento de cache
+  const { t } = useTranslation("barbershop-staff");
 
   // 🎯 Memoize query key to prevent unnecessary re-fetches
-  const queryKey = useMemo(() => 
-    STAFF_QUERY_KEYS.staff.list(mergedFilters, user?.id), 
-    [mergedFilters, user?.id]
+  const queryKey = useMemo(
+    () => STAFF_QUERY_KEYS.staff.list(mergedFilters, user?.id),
+    [mergedFilters, user?.id],
   );
 
   // 🔄 Query for fetching staff list
@@ -99,16 +106,16 @@ export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS
       });
 
       success(
-        "Funcionário criado!",
-        `${data.staff.first_name} foi adicionado à equipe`,
-        "O funcionário foi criado com sucesso",
+        t("toasts.success.createTitle"),
+        t("toasts.success.createMessage", { name: data.staff.first_name }),
+        t("toasts.success.createDescription"),
       );
     },
     onError: (error) => {
       const appError = createAppError(
         ErrorTypes.API_ERROR,
         "CREATE_STAFF_FAILED",
-        "Erro ao criar funcionário",
+        t("toasts.errors.messages.createFailed"),
         {
           details: error,
           context: { action: "create", entity: "staff" },
@@ -135,16 +142,16 @@ export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS
       });
 
       success(
-        "Funcionário atualizado!",
-        `${data.first_name} foi atualizado com sucesso`,
-        "As alterações foram salvas",
+        t("toasts.success.updateTitle"),
+        t("toasts.success.updateMessage", { name: data.first_name }),
+        t("toasts.success.updateDescription"),
       );
     },
     onError: (error) => {
       const appError = createAppError(
         ErrorTypes.API_ERROR,
         "UPDATE_STAFF_FAILED",
-        "Erro ao atualizar funcionário",
+        t("toasts.errors.messages.updateFailed"),
         {
           details: error,
           context: { action: "update", entity: "staff" },
@@ -170,16 +177,16 @@ export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS
       });
 
       success(
-        "Funcionário removido!",
-        "O funcionário foi removido da equipe",
-        "A remoção foi realizada com sucesso",
+        t("toasts.success.deleteTitle"),
+        t("toasts.success.deleteMessage"),
+        t("toasts.success.deleteDescription"),
       );
     },
     onError: (error) => {
       const appError = createAppError(
         ErrorTypes.API_ERROR,
         "DELETE_STAFF_FAILED",
-        "Erro ao remover funcionário",
+        t("toasts.errors.messages.deleteFailed"),
         {
           details: error,
           context: { action: "delete", entity: "staff" },

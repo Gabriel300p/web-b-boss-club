@@ -15,10 +15,32 @@
     "confirm": "Confirmar",
     "cancel": "Cancelar",
     "close": "Fechar",
-    "save": "Salvar"
+    "save": "Salvar",
+    "reload": "Recarregar Dados"
   },
   "feedback": {
     "success": "Operação realizada com sucesso.",
     "genericError": "Algo inesperado aconteceu."
+  },
+  "empty": {
+    "noData": {
+      "action": "Recarregar Dados",
+      "actionDisabled": "Aguarde 5 segundos..."
+    }
+  },
+  "toasts": {
+    "success": {
+      "reloadTitle": "Dados recarregados!",
+      "reloadMessage": "Os dados foram atualizados com sucesso",
+      "reloadDescription": "A lista foi recarregada"
+    },
+    "errors": {
+      "titles": {
+        "reloadError": "Erro ao Recarregar Dados"
+      },
+      "messages": {
+        "reloadFailed": "Erro ao recarregar dados. Tente novamente."
+      }
+    }
   }
 }

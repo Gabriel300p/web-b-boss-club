@@ -1,6 +1,7 @@
-import { EmptyState } from "@/shared/components/common/EmptyState";
+import { EmptyState, ReloadButton } from "@/shared/components/common";
 import { FilterSkeleton } from "@/shared/components/skeletons/FilterSkeletons";
 import { TableSkeleton } from "@/shared/components/skeletons/TableSkeleton";
+import { useReloadData } from "@/shared/hooks";
 import { useStableLoading } from "@/shared/hooks/useStableLoading";
 import type { TableSettingsConfig } from "@shared/types/table.types";
 import type {
@@ -42,10 +43,18 @@ export function BarbershopStaffPageContent({
   updateFilter,
   resetFilters,
   hasActiveFilters,
+  refetch,
   onTableSettingsChange,
   // tableSettings,
 }: BarbershopStaffPageContentProps) {
   const { t } = useTranslation("barbershop-staff");
+  // 🎯 Hook de reload componentizado
+  const { isReloading, reloadButtonProps } = useReloadData({
+    refetch,
+    resetFilters,
+    namespace: "barbershop-staff",
+    cooldownMs: 5000,
+  });
 
   // �️ Stabilize loading state to prevent skeleton duplication in StrictMode
   const { isLoading: stableLoading } = useStableLoading({
@@ -87,16 +96,17 @@ export function BarbershopStaffPageContent({
         {/* 🎯 Subtle loading indicator during filtering */}
         {isFiltering && <FilterSkeleton />}
       </div>
-      {stableLoading ? (
+      {stableLoading || isReloading ? (
         <TableSkeleton />
       ) : shouldShowEmptyState ? (
-        <EmptyState
-          type="noData"
-          action={{
-            label: t("empty.noData.action"),
-            onClick: () => {},
-          }}
-        />
+        <div className="mb-12 flex flex-col items-center gap-4">
+          <EmptyState type="noData" />
+          <ReloadButton
+            {...reloadButtonProps}
+            isLoading={isReloading}
+            className="mt-4"
+          />
+        </div>
       ) : shouldShowFilteredEmptyState ? (
         <EmptyState
           type="filtered"

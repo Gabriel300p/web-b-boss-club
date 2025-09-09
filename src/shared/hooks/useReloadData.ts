@@ -1,0 +1,106 @@
+/**
+ * 🪝 useReloadData Hook
+ * Hook reutilizável para funcionalidade de reload com animação, toast e cooldown
+ */
+import { useToast } from "@shared/hooks";
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+} from "@tanstack/react-query";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
+
+interface UseReloadDataOptions {
+  refetch: (options?: RefetchOptions) => Promise<QueryObserverResult>;
+  resetFilters?: () => void;
+  namespace?: string;
+  cooldownMs?: number;
+}
+
+interface UseReloadDataReturn {
+  isReloading: boolean;
+  isButtonDisabled: boolean;
+  handleReload: () => Promise<void>;
+  reloadButtonProps: {
+    label: string;
+    disabledLabel: string;
+    onClick: () => void;
+    isDisabled: boolean;
+  };
+}
+
+export function useReloadData({
+  refetch,
+  resetFilters,
+  namespace = "common",
+  cooldownMs = 5000,
+}: UseReloadDataOptions): UseReloadDataReturn {
+  const { success, error } = useToast();
+  const { t } = useTranslation(namespace);
+
+  // 🎯 Estados para controle do reload
+  const [isReloading, setIsReloading] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  // 🎯 Função de reload com animação, toast e cooldown
+  const handleReload = useCallback(async () => {
+    if (isButtonDisabled || isReloading) return;
+
+    try {
+      setIsReloading(true);
+      setIsButtonDisabled(true);
+
+      // Resetar filtros se fornecido
+      if (resetFilters) {
+        resetFilters();
+      }
+
+      // Recarregar dados
+      await refetch();
+
+      // Toast de sucesso
+      success(
+        t("toasts.success.reloadTitle"),
+        t("toasts.success.reloadMessage"),
+        t("toasts.success.reloadDescription"),
+      );
+    } catch {
+      // Toast de erro
+      error(
+        t("toasts.errors.titles.reloadError"),
+        t("toasts.errors.messages.reloadFailed"),
+      );
+    } finally {
+      setIsReloading(false);
+
+      // Cooldown configurável
+      setTimeout(() => {
+        setIsButtonDisabled(false);
+      }, cooldownMs);
+    }
+  }, [
+    isButtonDisabled,
+    isReloading,
+    resetFilters,
+    refetch,
+    success,
+    error,
+    t,
+    cooldownMs,
+  ]);
+
+  // 🎯 Props do botão para facilitar o uso
+  const reloadButtonProps = {
+    label: t("empty.noData.action"),
+    disabledLabel: t("empty.noData.actionDisabled"),
+    onClick: handleReload,
+    isDisabled: isButtonDisabled || isReloading,
+  };
+
+  return {
+    isReloading,
+    isButtonDisabled,
+    handleReload,
+    reloadButtonProps,
+  };
+}

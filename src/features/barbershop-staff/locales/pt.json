@@ -1,0 +1,139 @@
+{
+  "pages": {
+    "staff": {
+      "title": "Barbeiros",
+      "subtitle": "Gerencie sua equipe de barbeiros"
+    }
+  },
+  "fields": {
+    "name": "Nome",
+    "email": "Email",
+    "role": "Função",
+    "status": "Status",
+    "available": "Disponibilidade",
+    "hireDate": "Data de Contratação",
+    "actions": "Ações"
+  },
+  "roles": {
+    "barber": "Barbeiro",
+    "owner": "Proprietário",
+    "superAdmin": "Super Admin",
+    "client": "Cliente",
+    "pending": "Pendente"
+  },
+  "status": {
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "suspended": "Suspenso",
+    "terminated": "Demitido"
+  },
+  "availability": {
+    "available": "Disponível",
+    "unavailable": "Indisponível"
+  },
+  "actions": {
+    "new": "Novo",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "reload": "Recarregar Dados",
+    "clearFilters": "Limpar Filtros"
+  },
+  "empty": {
+    "noData": {
+      "title": "Nenhum resultado disponível",
+      "message": "Não há barbeiros para exibir no momento.",
+      "action": "Recarregar Dados",
+      "actionDisabled": "Aguarde 5 segundos..."
+    },
+    "filtered": {
+      "title": "Nenhum resultado encontrado",
+      "message": "Nenhum barbeiro corresponde aos filtros aplicados.",
+      "action": "Limpar Filtros"
+    }
+  },
+  "statistics": {
+    "total": "total",
+    "updatedAt": "atualizado às",
+    "active": "Ativos",
+    "inactive": "Inativos"
+  },
+  "toasts": {
+    "success": {
+      "createTitle": "Funcionário criado!",
+      "createMessage": "{{name}} foi adicionado à equipe",
+      "createDescription": "O funcionário foi criado com sucesso",
+      "updateTitle": "Funcionário atualizado!",
+      "updateMessage": "{{name}} foi atualizado com sucesso",
+      "updateDescription": "As alterações foram salvas",
+      "deleteTitle": "Funcionário removido!",
+      "deleteMessage": "O funcionário foi removido da equipe",
+      "deleteDescription": "A remoção foi realizada com sucesso",
+      "reloadTitle": "Dados recarregados!",
+      "reloadMessage": "Os dados foram atualizados com sucesso",
+      "reloadDescription": "A lista de barbeiros foi recarregada"
+    },
+    "errors": {
+      "titles": {
+        "createError": "Erro ao Criar Funcionário",
+        "updateError": "Erro ao Atualizar Funcionário",
+        "deleteError": "Erro ao Remover Funcionário",
+        "loadError": "Erro ao Carregar Dados",
+        "reloadError": "Erro ao Recarregar Dados"
+      },
+      "messages": {
+        "createFailed": "Erro ao criar funcionário. Tente novamente.",
+        "updateFailed": "Erro ao atualizar funcionário. Tente novamente.",
+        "deleteFailed": "Erro ao remover funcionário. Tente novamente.",
+        "loadFailed": "Erro ao carregar dados dos funcionários. Tente novamente.",
+        "reloadFailed": "Erro ao recarregar dados. Tente novamente.",
+        "networkError": "Erro de conexão. Verifique sua internet e tente novamente.",
+        "unexpectedError": "Ocorreu um erro inesperado."
+      },
+      "actions": {
+        "tryAgain": "Tentar Novamente",
+        "reload": "Recarregar"
+      }
+    }
+  },
+  "filters": {
+    "search": {
+      "placeholder": "Pesquisar barbeiros...",
+      "shortcut": "Ctrl + E"
+    },
+    "status": {
+      "label": "Status",
+      "all": "Todos",
+      "active": "Ativos",
+      "inactive": "Inativos"
+    },
+    "role": {
+      "label": "Função",
+      "all": "Todas",
+      "barber": "Barbeiros",
+      "owner": "Proprietários"
+    },
+    "availability": {
+      "label": "Disponibilidade",
+      "all": "Todas",
+      "available": "Disponíveis",
+      "unavailable": "Indisponíveis"
+    }
+  },
+  "table": {
+    "columns": {
+      "name": "Nome",
+      "email": "Email",
+      "role": "Função",
+      "status": "Status",
+      "availability": "Disponibilidade",
+      "hireDate": "Data de Contratação"
+    },
+    "pagination": {
+      "showing": "Mostrando",
+      "of": "de",
+      "results": "resultados",
+      "previous": "Anterior",
+      "next": "Próximo"
+    }
+  }
+}
