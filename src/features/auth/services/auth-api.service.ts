@@ -35,6 +35,7 @@ export interface VerifyMfaResponse {
     mfaVerified: boolean;
   };
   isFirstLogin: boolean;
+  access_token?: string; // Token do Supabase para autenticação
 }
 
 export interface UserProfile {
@@ -172,11 +173,14 @@ export class AuthApiService {
    */
   async resetPassword(
     email: string,
-  ): Promise<ApiResponse<{ message: string; success: boolean; tempToken?: string }>> {
-    return await apiService.post<{ message: string; success: boolean; tempToken?: string }>(
-      `${this.baseUrl}/reset-password`,
-      { email },
-    );
+  ): Promise<
+    ApiResponse<{ message: string; success: boolean; tempToken?: string }>
+  > {
+    return await apiService.post<{
+      message: string;
+      success: boolean;
+      tempToken?: string;
+    }>(`${this.baseUrl}/reset-password`, { email });
   }
 
   /**
@@ -238,10 +242,10 @@ export class AuthApiService {
     newPassword: string,
     confirmPassword: string,
   ): Promise<ApiResponse<{ message: string; success: boolean }>> {
-    // Tentar usar access_token primeiro, depois temp_token
+    // Para change-password, priorizar temp_token (primeiro login) sobre access_token
     const authToken = this.getAuthToken();
     const tempToken = this.getTempToken();
-    const token = authToken || tempToken;
+    const token = tempToken || authToken; // ← Invertido: temp_token primeiro!
 
     if (!token) {
       throw new Error("Token de autenticação não encontrado");

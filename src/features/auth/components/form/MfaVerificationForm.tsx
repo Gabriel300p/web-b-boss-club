@@ -64,13 +64,6 @@ export function MfaVerificationForm() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          console.log("🔐 MFA Form submitted with form data:", { code: value });
-          console.log(
-            "🔑 Current temp token:",
-            localStorage.getItem("temp_token"),
-          );
-          console.log("📝 Input value:", value);
-
           verifyMfa({ code: value });
         }}
         className="flex flex-col items-stretch justify-center gap-8"

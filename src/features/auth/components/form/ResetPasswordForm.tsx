@@ -23,10 +23,10 @@ import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
 export function ResetPasswordForm() {
   const { t } = useTranslation("auth");
 
-  // Detectar se é primeiro login baseado na URL
-  const isFirstLogin =
-    window.location.pathname === "/auth/first-login" ||
-    window.location.search.includes("firstLogin=true");
+  // Detectar contexto baseado em query params
+  const urlParams = new URLSearchParams(window.location.search);
+  const context = urlParams.get("context");
+  const isFirstLogin = context === "first-login";
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -86,9 +86,6 @@ export function ResetPasswordForm() {
             )}
           />
 
-          {/* Password Strength Indicator */}
-          <PasswordStrengthIndicator password={form.watch("newPassword")} />
-
           <FormField
             control={form.control}
             name="confirmPassword"
@@ -124,6 +121,9 @@ export function ResetPasswordForm() {
               </FormItem>
             )}
           />
+
+          {/* Password Strength Indicator */}
+          <PasswordStrengthIndicator password={form.watch("newPassword")} />
           {/* Error message display */}
           {error && (
             <AuthError

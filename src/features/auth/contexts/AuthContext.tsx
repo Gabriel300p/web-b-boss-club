@@ -92,7 +92,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         showToast({
           type: "info",
           title: t("toasts.info.mfaRequiredTitle"),
-          message: `Um cÃ³digo de 6 dÃ­gitos foi enviado para ${email}`,
+          message: `Um código de 6 dígitos foi enviado para ${email}`,
           expandable: false,
           duration: TOAST_DURATIONS.INFO,
         });
@@ -147,19 +147,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const logoutMutation = useMutation({
     mutationFn: authService.logout,
     onSuccess: async () => {
-      // ðŸš€ SEQUÃŠNCIA OTIMIZADA: Evitar race conditions
-
-      // 1ï¸âƒ£ Limpar auth state primeiro
       storeLogout();
       clearAllTokens();
 
-      // 2ï¸âƒ£ Limpar cache React Query e aguardar completar
       await queryClient.clear();
-
-      // 3ï¸âƒ£ Garantir que todas as queries pendentes sejam canceladas
       queryClient.cancelQueries();
-
-      // 4ï¸âƒ£ Mostrar toast
       showToast({
         type: "info",
         title: t("toasts.success.logoutTitle"),
@@ -167,8 +159,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
         expandable: false,
         duration: TOAST_DURATIONS.INFO,
       });
-
-      // 5ï¸âƒ£ Navegar sem delay para evitar race conditions
       navigate({ to: "/auth/login" });
     },
     onError: (error: AuthError) => {
@@ -195,7 +185,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
       localStorage.setItem("forgot_password_email", variables.email);
 
       // Se o backend retornar tempToken, salva no localStorage (para forgot password flow)
-      if (data && typeof data === 'object' && 'tempToken' in data && data.tempToken) {
+      if (
+        data &&
+        typeof data === "object" &&
+        "tempToken" in data &&
+        data.tempToken
+      ) {
         localStorage.setItem("temp_token", data.tempToken as string);
       }
 
@@ -215,22 +210,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
       return authService.verifyMfa(credentials);
     },
     onSuccess: (data: AuthResponse) => {
-      console.log("🔍 [DEBUG] MFA onSuccess data:", data);
-      
       // Verificar se Ã© um fluxo de reset de senha (forgot password)
       const isForgotPasswordFlow = localStorage.getItem(
         "forgot_password_email",
       );
-      
-      console.log("🔍 [DEBUG] isForgotPasswordFlow:", isForgotPasswordFlow);
 
       if (isForgotPasswordFlow) {
-        console.log("✅ [DEBUG] É forgot password - redirecionando para reset-password");
-        
         // Remove o flag de forgot password
         localStorage.removeItem("forgot_password_email");
-        // Remove temp token também
-        localStorage.removeItem("temp_token");
+        // NÃO remove temp_token - será usado para AuthGuard e change-password
 
         showToast({
           type: "success",
@@ -240,18 +228,29 @@ export function AuthProvider({ children }: PropsWithChildren) {
           duration: TOAST_DURATIONS.SUCCESS,
         });
 
-        // Redireciona para reset-password
-        navigate({ to: "/auth/reset-password" });
+        // Redireciona para reset-password com contexto forgot-password
+        navigate({
+          to: "/auth/reset-password",
+          search: { context: "forgot-password" },
+        });
         return;
       }
 
-      console.log("✅ [DEBUG] É login normal - fazendo storeLogin");
-      
       // Store user (fluxo de login normal)
       storeLogin(data.user);
 
-      // Primeiro login: redireciona para definir nova senha
+      // Salva access_token se disponível (tanto para primeiro login quanto login normal)
+      if (data.access_token) {
+        setAuthToken(data.access_token);
+      }
+
+      // Primeiro login: mantém temp_token para reset password
       if (data.isFirstLogin) {
+        // Mantém o temp_token atual para usar no reset password
+        const currentTempToken = localStorage.getItem("temp_token");
+        if (currentTempToken) {
+          // Token já está salvo, não precisa fazer nada
+        }
         showToast({
           type: "info",
           title: t("toasts.info.firstLoginTitle"),
@@ -260,7 +259,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
           duration: TOAST_DURATIONS.INFO,
         });
 
-        navigate({ to: "/auth/first-login" });
+        navigate({
+          to: "/auth/reset-password",
+          search: { context: "first-login" },
+        });
         return;
       }
 
@@ -310,6 +312,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       return authService.resetPassword(credentials);
     },
     onSuccess: () => {
+      // Limpa temp_token após sucesso do reset-password
+      localStorage.removeItem("temp_token");
+
       showToast({
         type: "success",
         title: t("toasts.success.passwordChangedTitle"),
@@ -334,9 +339,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
     retry: false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
-    refetchOnMount: false, // NÃ£o refaz query ao montar componente
-    refetchOnReconnect: false, // NÃ£o refaz query ao reconectar
-    enabled: !isAuthenticated && !mfaVerificationMutation.isPending, // NÃ£o executa durante MFA
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    enabled:
+      !isAuthenticated &&
+      !mfaVerificationMutation.isPending &&
+      !resetPasswordMutation.isPending &&
+      !localStorage.getItem("temp_token"), // Não executa se tem temp_token (forgot-password flow)
   });
 
   // Enhanced error handling with 4 strategies

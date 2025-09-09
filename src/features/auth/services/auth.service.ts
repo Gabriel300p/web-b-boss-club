@@ -123,9 +123,9 @@ export async function forgotPasswordRequest(values: {
 }): Promise<{ message: string; tempToken?: string }> {
   try {
     const response = await authApiService.resetPassword(values.email);
-    return { 
+    return {
       message: response.data.message,
-      tempToken: response.data.tempToken
+      tempToken: response.data.tempToken,
     };
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -168,7 +168,7 @@ export async function mfaVerificationRequest(
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        access_token: "",
+        access_token: response.data.access_token || "",
         isFirstLogin: response.data.isFirstLogin,
       };
 

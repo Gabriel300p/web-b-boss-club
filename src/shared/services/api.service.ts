@@ -54,9 +54,12 @@ export class ApiService {
     // Request interceptor - adiciona token de autenticação
     this.api.interceptors.request.use(
       (config) => {
-        const token = this.getAuthToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+        // Só adiciona token se não existir header Authorization manual
+        if (!config.headers.Authorization) {
+          const token = this.getAuthToken();
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
         }
         return config;
       },
@@ -74,8 +77,15 @@ export class ApiService {
         logError(error, "API Service");
 
         if (error.response?.status === 401) {
-          // Token expirado ou inválido
-          this.handleUnauthorized();
+          // Verifica se é um erro de change-password (não limpa tokens)
+          const isChangePasswordError = error.config?.url?.includes(
+            "/auth/change-password",
+          );
+
+          if (!isChangePasswordError) {
+            // Token expirado ou inválido (apenas para outras rotas)
+            this.handleUnauthorized();
+          }
         }
         return Promise.reject(this.formatError(error));
       },

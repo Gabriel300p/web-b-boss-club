@@ -22,7 +22,6 @@ import { Route as AuthResetPasswordRouteImport } from './app/routes/auth/reset-p
 import { Route as AuthMfaVerificationRouteImport } from './app/routes/auth/mfa-verification'
 import { Route as AuthLoginRouteImport } from './app/routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './app/routes/auth/forgot-password'
-import { Route as AuthFirstLoginRouteImport } from './app/routes/auth/first-login'
 import { Route as AuthCreateBarbershopRouteImport } from './app/routes/auth/create-barbershop'
 
 const UnitsRoute = UnitsRouteImport.update({
@@ -90,11 +89,6 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthFirstLoginRoute = AuthFirstLoginRouteImport.update({
-  id: '/auth/first-login',
-  path: '/auth/first-login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthCreateBarbershopRoute = AuthCreateBarbershopRouteImport.update({
   id: '/auth/create-barbershop',
   path: '/auth/create-barbershop',
@@ -112,7 +106,6 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/units': typeof UnitsRoute
   '/auth/create-barbershop': typeof AuthCreateBarbershopRoute
-  '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/mfa-verification': typeof AuthMfaVerificationRoute
@@ -129,7 +122,6 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/units': typeof UnitsRoute
   '/auth/create-barbershop': typeof AuthCreateBarbershopRoute
-  '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/mfa-verification': typeof AuthMfaVerificationRoute
@@ -147,7 +139,6 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/units': typeof UnitsRoute
   '/auth/create-barbershop': typeof AuthCreateBarbershopRoute
-  '/auth/first-login': typeof AuthFirstLoginRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/mfa-verification': typeof AuthMfaVerificationRoute
@@ -166,7 +157,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/units'
     | '/auth/create-barbershop'
-    | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/mfa-verification'
@@ -183,7 +173,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/units'
     | '/auth/create-barbershop'
-    | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/mfa-verification'
@@ -200,7 +189,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/units'
     | '/auth/create-barbershop'
-    | '/auth/first-login'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/mfa-verification'
@@ -218,7 +206,6 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   UnitsRoute: typeof UnitsRoute
   AuthCreateBarbershopRoute: typeof AuthCreateBarbershopRoute
-  AuthFirstLoginRoute: typeof AuthFirstLoginRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthMfaVerificationRoute: typeof AuthMfaVerificationRoute
@@ -318,13 +305,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/first-login': {
-      id: '/auth/first-login'
-      path: '/auth/first-login'
-      fullPath: '/auth/first-login'
-      preLoaderRoute: typeof AuthFirstLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth/create-barbershop': {
       id: '/auth/create-barbershop'
       path: '/auth/create-barbershop'
@@ -346,7 +326,6 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   UnitsRoute: UnitsRoute,
   AuthCreateBarbershopRoute: AuthCreateBarbershopRoute,
-  AuthFirstLoginRoute: AuthFirstLoginRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthMfaVerificationRoute: AuthMfaVerificationRoute,

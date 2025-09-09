@@ -11,7 +11,7 @@ const ResetPasswordPage = lazy(() =>
 
 export const Route = createFileRoute("/auth/reset-password")({
   component: () => (
-    <AuthGuard requireAuth={false}>
+    <AuthGuard requireAuth={true}>
       <ResetPasswordPage />
     </AuthGuard>
   ),

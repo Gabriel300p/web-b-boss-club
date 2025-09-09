@@ -116,18 +116,6 @@ export function PasswordStrengthIndicator({
           </div>
         ))}
       </div>
-
-      {/* Overall status */}
-      {allPassed && (
-        <div className="rounded-lg bg-green-50 p-3 dark:bg-green-900/20">
-          <div className="flex items-center space-x-2">
-            <CheckIcon className="h-5 w-5 text-green-500" weight="bold" />
-            <span className="text-sm font-medium text-green-700 dark:text-green-300">
-              {t("forms.resetPassword.validation.strongPassword")}
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
