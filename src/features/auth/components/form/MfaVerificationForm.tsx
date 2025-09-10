@@ -133,9 +133,8 @@ export function MfaVerificationForm() {
 
         {/* Error message display */}
         {verificationError && (
-          <div className="rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-950">
-            <div className="text-sm text-red-800 dark:text-red-200">
-              <strong>{t("forms.mfaVerification.errors.title")}</strong>{" "}
+          <div className="rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-900 dark:bg-red-950/30">
+            <div className="text-medium mx-auto text-center text-sm text-red-800 dark:text-neutral-200">
               {verificationError.message ||
                 t("forms.mfaVerification.errors.invalidCode")}
             </div>

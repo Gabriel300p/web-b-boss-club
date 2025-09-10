@@ -1,10 +1,11 @@
-﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../../app/store/auth";
 import { useToast } from "../../../shared/hooks/useToast";
+import { tokenManager } from "../../../shared/services/token-manager";
 import { getUserFriendlyMessage } from "../../../shared/utils/api.utils";
 import { authService } from "../services/auth.service";
 import type {
@@ -19,7 +20,7 @@ import type {
 } from "../types/auth";
 import { AuthContext } from "./authContextDefinition";
 
-// ðŸŽ¯ Constantes centralizadas
+// 🎯 Constantes centralizadas
 const NAVIGATION_DELAY = 300;
 const TOAST_DURATIONS = {
   SUCCESS: 3000,
@@ -33,27 +34,24 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { showToast } = useToast();
   const queryClient = useQueryClient();
 
-  // ðŸ” Hook para gerenciamento centralizado de tokens
-  const useTokenManager = () => {
-    const setAuthToken = (token: string) => {
-      localStorage.setItem("access_token", token);
-    };
-
-    const setTempToken = (token: string) => {
-      localStorage.setItem("temp_token", token);
-    };
-
-    const clearAllTokens = () => {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("temp_token");
-    };
-
-    return { setAuthToken, setTempToken, clearAllTokens };
+  // 🎯 Usa TokenManager centralizado
+  const setAuthToken = (token: string, expiresIn?: number) => {
+    tokenManager.setAccessToken(token, expiresIn);
   };
 
-  const { setAuthToken, setTempToken, clearAllTokens } = useTokenManager();
+  const setTempToken = (token: string) => {
+    tokenManager.setTempToken(token);
+  };
 
-  // ðŸ§­ NavegaÃ§Ã£o padronizada
+  const clearAllTokens = () => {
+    tokenManager.clearAllTokens();
+  };
+
+  const clearAllAuthData = () => {
+    tokenManager.clearAllAuthData();
+  };
+
+  // 🎯 Navegação padronizada
   const navigateWithDelay = (to: string, delay = NAVIGATION_DELAY) => {
     setTimeout(() => navigate({ to }), delay);
   };
@@ -105,7 +103,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       // Login direto sem verificação
       if (data.token && data.user) {
-        // ConstrÃ³i usuÃ¡rio no formato esperado pelo store
+        // Constrói usuário no formato esperado pelo store
         const user = {
           id: data.user.id,
           email: data.user.email,
@@ -149,7 +147,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     mutationFn: authService.logout,
     onSuccess: async () => {
       storeLogout();
-      clearAllTokens();
+      clearAllAuthData(); // Limpa todos os dados de auth, incluindo fluxos especiais
 
       await queryClient.clear();
       queryClient.cancelQueries();
@@ -183,16 +181,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
       });
 
       // Salva o email para usar na verificação de código
-      localStorage.setItem("forgot_password_email", variables.email);
+      tokenManager.setForgotPasswordEmail(variables.email);
 
-      // Se o backend retornar tempToken, salva no localStorage (para forgot password flow)
+      // Se o backend retornar tempToken, salva usando TokenManager
       if (
         data &&
         typeof data === "object" &&
         "tempToken" in data &&
         data.tempToken
       ) {
-        localStorage.setItem("temp_token", data.tempToken as string);
+        setTempToken(data.tempToken as string);
       }
 
       // Navigate to code verification para reset de senha
@@ -211,14 +209,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
       return authService.verifyMfa(credentials);
     },
     onSuccess: (data: AuthResponse) => {
-      // Verificar se Ã© um fluxo de reset de senha (forgot password)
-      const isForgotPasswordFlow = localStorage.getItem(
-        "forgot_password_email",
-      );
+      // Verificar se é um fluxo de reset de senha (forgot password)
+      const isForgotPasswordFlow = tokenManager.getForgotPasswordEmail();
 
       if (isForgotPasswordFlow) {
         // Remove o flag de forgot password
-        localStorage.removeItem("forgot_password_email");
+        tokenManager.clearForgotPasswordEmail();
         // NÃO remove temp_token - será usado para AuthGuard e change-password
 
         showToast({
@@ -248,7 +244,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       // Primeiro login: mantém temp_token para reset password
       if (data.isFirstLogin) {
         // Mantém o temp_token atual para usar no reset password
-        const currentTempToken = localStorage.getItem("temp_token");
+        const currentTempToken = tokenManager.getTempToken();
         if (currentTempToken) {
           // Token já está salvo, não precisa fazer nada
         }
@@ -268,7 +264,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
 
       // Código verificado com sucesso: sempre navega para home
-      // (independente de ter access_token ou nÃ£o - o useQuery cuida do resto)
+      // (independente de ter access_token ou não - o useQuery cuida do resto)
       if (data.access_token) {
         setAuthToken(data.access_token);
       }
@@ -314,7 +310,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     },
     onSuccess: () => {
       // Limpa temp_token após sucesso do reset-password
-      localStorage.removeItem("temp_token");
+      tokenManager.clearTempToken();
 
       showToast({
         type: "success",
@@ -333,12 +329,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
     },
   });
 
-  // Auto-check authentication on mount
+  // Auto-check authentication on mount - OTIMIZADO
   const { data: authData, isLoading: isCheckingAuth } = useQuery({
     queryKey: ["auth", "check"],
     queryFn: authService.checkAuth,
     retry: false,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 15, // 15 minutos (aumentado de 5)
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
@@ -346,7 +342,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       !isAuthenticated &&
       !mfaVerificationMutation.isPending &&
       !resetPasswordMutation.isPending &&
-      !localStorage.getItem("temp_token"), // Não executa se tem temp_token (forgot-password flow)
+      !tokenManager.getTempToken(), // Usa TokenManager
   });
 
   // Enhanced error handling with 4 strategies
@@ -404,47 +400,50 @@ export function AuthProvider({ children }: PropsWithChildren) {
         userMessage = t("toasts.verification.messages.expired");
         title = t("toasts.verification.titles.expired");
         break;
-      case "network_error":
-        userMessage = t("toasts.errors.messages.networkError");
-        title = t("toasts.errors.titles.connectionError");
+      case "validation_error":
+        userMessage = t("toasts.errors.messages.validationError");
+        title = t("toasts.errors.titles.validationError");
+        break;
+      case "unauthorized":
+        userMessage = t("toasts.errors.messages.unauthorized");
+        title = t("toasts.errors.titles.unauthorized");
+        break;
+      case "server_error":
+        userMessage = t("toasts.errors.messages.serverError");
+        title = t("toasts.errors.titles.serverError");
         break;
       default:
-        userMessage = getUserFriendlyMessage(error) || userMessage;
+        userMessage = t("toasts.errors.messages.unexpectedError");
+        title = t("toasts.errors.titles.authError");
     }
 
-    // Strategy 2: Contextual actions (will be handled by individual toast actions)
-    const getRetryAction = () => {
-      switch (error.code) {
-        case "invalid_credentials":
-          return {
-            label: t("toasts.errors.actions.resetPassword"),
-            onClick: () => navigate({ to: "/auth/forgot-password" }),
-          };
-        case "network_error":
-          return {
-            label: t("toasts.errors.actions.reload"),
-            onClick: () => window.location.reload(),
-          };
-        default:
-          return {
-            label: t("toasts.errors.actions.tryAgain"),
-            onClick: () => clearError(),
-          };
-      }
-    };
-
-    // Strategy 3 & 4: Toast notification with progressive disclosure
+    // Strategy 2: Show toast with user-friendly message
     showToast({
       type: "error",
       title,
       message: userMessage,
       expandable: true,
       duration: TOAST_DURATIONS.ERROR,
-      action: getRetryAction(),
+    });
+
+    // Strategy 3: Handle specific error cases
+    if (error.code === "unauthorized") {
+      // Token expirado - limpa tokens e redireciona
+      clearAllTokens();
+      storeLogout();
+      navigate({ to: "/auth/login" });
+    }
+
+    // Strategy 4: Log error for debugging
+    console.error("Auth Error:", {
+      code: error.code,
+      message: error.message,
+      context: errorContext,
+      timestamp: new Date().toISOString(),
     });
   };
 
-  // Auto-authentication check
+  // Auto-login effect - OTIMIZADO
   useEffect(() => {
     if (authData?.user && !isAuthenticated) {
       storeLogin(authData.user);
@@ -479,8 +478,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
     isLoading: isLoading || isCheckingAuth,
     error,
     currentLoginEmail,
-    mfaRequired: false, // SerÃ¡ gerenciado pelo estado do login
-    tempToken: null, // SerÃ¡ gerenciado pelo estado do login
+    mfaRequired: false, // Será gerenciado pelo estado do login
+    tempToken: null, // Será gerenciado pelo estado do login
 
     // Actions
     login: loginMutation.mutate,
@@ -491,7 +490,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     resendMfaCode: resendMfaCodeMutation.mutate,
     clearError,
     checkAuth: () => authService.checkAuth(),
-    setMfaRequired: () => {}, // Implementar se necessÃ¡rio
+    setMfaRequired: () => {}, // Implementar se necessário
 
     // Mutation states - Login
     isLoginPending: loginMutation.isPending,
@@ -505,15 +504,19 @@ export function AuthProvider({ children }: PropsWithChildren) {
     isForgotPasswordPending: forgotPasswordMutation.isPending,
     forgotPasswordError: forgotPasswordMutation.error,
 
-    // Mutation states - Verification
+    // Mutation states - MFA Verification
     isMfaVerificationPending: mfaVerificationMutation.isPending,
     mfaVerificationError: mfaVerificationMutation.error,
-    isResendMfaCodePending: resendMfaCodeMutation.isPending,
-    resendMfaCodeError: resendMfaCodeMutation.error,
 
     // Mutation states - Reset Password
     isResetPasswordPending: resetPasswordMutation.isPending,
     resetPasswordError: resetPasswordMutation.error,
+
+    // Mutation states - Resend MFA Code
+    isResendMfaCodePending: resendMfaCodeMutation.isPending,
+    resendMfaCodeError: resendMfaCodeMutation.error,
+
+    // Query states - removido authCheckError que não existe no tipo
   };
 
   return (

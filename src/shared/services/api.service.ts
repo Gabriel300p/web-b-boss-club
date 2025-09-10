@@ -24,6 +24,7 @@ export interface ApiError {
 
 import { CURRENT_API_URL } from "../config/environment.js";
 import { logError } from "../utils/api.utils.js";
+import { tokenManager } from "./token-manager.js";
 
 // Configuração base do axios - URL direta do arquivo de configuração
 const API_BASE_URL = CURRENT_API_URL;
@@ -99,22 +100,39 @@ export class ApiService {
   }
 
   /**
-   * 🔑 Obtém token de autenticação do localStorage
+   * 🔑 Obtém token de autenticação usando TokenManager
    */
   private getAuthToken(): string | null {
-    return localStorage.getItem("access_token");
+    return tokenManager.getAccessToken();
   }
 
   /**
-   * 🚫 Trata erro de autenticação (401)
+   * 🚫 Trata erro de autenticação (401) - MELHORADO
    */
   private handleUnauthorized(): void {
-    // Remove token expirado
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("temp_token");
+    // Log para debug
+    console.log("[ApiService] Handling unauthorized error");
+
+    // Verifica se há temp_token (fluxos de MFA/forgot password)
+    const hasTempToken = tokenManager.getTempToken();
+
+    if (hasTempToken) {
+      // Preserva temp_token em fluxos específicos
+      console.log(
+        "[ApiService] Preserving temp_token for MFA/forgot password flow",
+      );
+      tokenManager.clearAccessToken(); // Limpa apenas access_token
+    } else {
+      // Limpa todos os tokens se não há fluxo especial
+      console.log(
+        "[ApiService] Clearing all tokens - no special flow detected",
+      );
+      tokenManager.clearAllTokens();
+    }
 
     // Redireciona para login se não estiver na página de login
     if (window.location.pathname !== "/auth/login") {
+      console.log("[ApiService] Redirecting to login");
       window.location.href = "/auth/login";
     }
   }
@@ -133,6 +151,20 @@ export class ApiService {
       message: error.message || "Erro de conexão com o servidor",
       timestamp: new Date().toISOString(),
     };
+  }
+
+  /**
+   * 🔑 Obtém temp token usando TokenManager
+   */
+  public getTempToken(): string | null {
+    return tokenManager.getTempToken();
+  }
+
+  /**
+   * 📊 Obtém status dos tokens
+   */
+  public getTokenStatus() {
+    return tokenManager.getTokenStatus();
   }
 
   /**
@@ -206,42 +238,6 @@ export class ApiService {
       data: response.data,
       status: response.status,
     };
-  }
-
-  /**
-   * 🔑 Define token de autenticação
-   */
-  setAuthToken(token: string): void {
-    localStorage.setItem("access_token", token);
-  }
-
-  /**
-   * 🔑 Define token temporário para MFA
-   */
-  setTempToken(token: string): void {
-    localStorage.setItem("temp_token", token);
-  }
-
-  /**
-   * 🔑 Obtém token temporário para MFA
-   */
-  getTempToken(): string | null {
-    return localStorage.getItem("temp_token");
-  }
-
-  /**
-   * 🧹 Remove todos os tokens
-   */
-  clearTokens(): void {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("temp_token");
-  }
-
-  /**
-   * 🔍 Verifica se usuário está autenticado
-   */
-  isAuthenticated(): boolean {
-    return !!this.getAuthToken();
   }
 }
 

@@ -1,5 +1,6 @@
 import { AnimatedBox } from "@/shared/components/animations/motion";
 import { useDelayedLoading } from "@/shared/hooks/useDelayedLoading";
+import { tokenManager } from "@/shared/services/token-manager";
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
@@ -25,7 +26,7 @@ export function AuthGuard({
   const shouldShowSkeleton = useDelayedLoading(isLoading, 200);
 
   // Verifica se tem temp_token (para forgot-password flow)
-  const hasTempToken = localStorage.getItem("temp_token");
+  const hasTempToken = tokenManager.getTempToken();
 
   useEffect(() => {
     // Don't redirect while still loading

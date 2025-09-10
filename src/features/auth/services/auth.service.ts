@@ -1,4 +1,5 @@
 // src/features/auth/services/auth.service.ts
+import { tokenManager } from "../../../shared/services/token-manager.js";
 import type {
   AuthError,
   AuthResponse,
@@ -132,7 +133,8 @@ export async function checkAuthRequest(): Promise<{
         error.message.includes("não autorizado") ||
         error.message.includes("expirado")
       ) {
-        localStorage.removeItem("access_token");
+        // Usa TokenManager para limpar token
+        tokenManager.clearAccessToken();
         throw createAuthError("unauthorized", "Sessão expirada");
       }
       throw createAuthError("server_error", "Erro ao verificar autenticação");
