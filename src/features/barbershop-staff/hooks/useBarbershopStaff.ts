@@ -20,6 +20,7 @@ import {
   fetchStaffById,
   fetchStaffList,
   fetchStaffStats,
+  toggleStaffStatus,
   updateStaff,
 } from "../services/barbershop-staff.service";
 
@@ -196,6 +197,58 @@ export function useBarbershopStaff(
     },
   });
 
+  // 🔄 Toggle status mutation
+  const toggleStatusMutation = useMutation({
+    mutationFn: toggleStaffStatus,
+    onSuccess: async (updatedStaff) => {
+      // Invalidate and immediately refetch staff list
+      await queryClient.invalidateQueries({
+        queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
+      });
+      await queryClient.refetchQueries({
+        queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: STAFF_QUERY_KEYS.staff.detail(updatedStaff.id, user?.id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: STAFF_QUERY_KEYS.staff.stats(undefined, user?.id),
+      });
+
+      const isActive = updatedStaff.status === "ACTIVE";
+      success(
+        isActive
+          ? t("toasts.success.activateTitle", {
+              defaultValue: "Colaborador ativado!",
+            })
+          : t("toasts.success.deactivateTitle", {
+              defaultValue: "Colaborador inativado!",
+            }),
+        isActive
+          ? t("toasts.success.activateMessage", {
+              defaultValue: "O colaborador foi ativado com sucesso.",
+            })
+          : t("toasts.success.deactivateMessage", {
+              defaultValue: "O colaborador foi inativado com sucesso.",
+            }),
+      );
+    },
+    onError: (error) => {
+      const appError = createAppError(
+        ErrorTypes.API_ERROR,
+        "TOGGLE_STATUS_FAILED",
+        t("toasts.errors.messages.toggleStatusFailed", {
+          defaultValue: "Erro ao alterar status do colaborador",
+        }),
+        {
+          details: error,
+          context: { action: "toggleStatus", entity: "staff" },
+        },
+      );
+      errorHandler.handle(appError);
+    },
+  });
+
   // 🍞 Toast-enabled mutation wrappers
   const createStaffWithToast = async (data: CreateStaffFormData) => {
     return await createMutation.mutateAsync(data);
@@ -212,6 +265,10 @@ export function useBarbershopStaff(
     await deleteMutation.mutateAsync(id);
   };
 
+  const toggleStaffStatusWithToast = async (id: string) => {
+    return await toggleStatusMutation.mutateAsync(id);
+  };
+
   return {
     // Data
     staff: staffData?.data || [],
@@ -224,6 +281,7 @@ export function useBarbershopStaff(
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    isTogglingStatus: toggleStatusMutation.isPending,
 
     // Error state
     error,
@@ -232,6 +290,7 @@ export function useBarbershopStaff(
     createStaff: createStaffWithToast,
     updateStaff: updateStaffWithToast,
     deleteStaff: deleteStaffWithToast,
+    toggleStaffStatus: toggleStaffStatusWithToast,
     refetch,
   };
 }

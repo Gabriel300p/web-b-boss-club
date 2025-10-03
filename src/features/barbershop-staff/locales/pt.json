@@ -33,10 +33,34 @@
   },
   "actions": {
     "new": "Novo",
+    "addNew": "Adicionar novo",
     "edit": "Editar",
     "delete": "Excluir",
     "reload": "Recarregar Dados",
-    "clearFilters": "Limpar Filtros"
+    "clearFilters": "Limpar Filtros",
+    "cancel": "Cancelar",
+    "create": "Adicionar",
+    "creating": "Adicionando..."
+  },
+  "modals": {
+    "createStaff": {
+      "title": "Adicionar novo barbeiro",
+      "fields": {
+        "fullName": "Nome Completo",
+        "cpf": "CPF",
+        "email": "Email"
+      },
+      "placeholders": {
+        "fullName": "Digite o nome completo do barbeiro",
+        "cpf": "000.000.000-00",
+        "email": "email@exemplo.com"
+      },
+      "hints": {
+        "cpfFormat": "Digite apenas números. A máscara será aplicada automaticamente.",
+        "email": "Se preenchido, será criado um usuário com senha automática."
+      },
+      "optional": "opcional"
+    }
   },
   "empty": {
     "noData": {

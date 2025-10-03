@@ -111,3 +111,11 @@ export async function updateStaff(
 export async function deleteStaff(id: string): Promise<void> {
   await apiService.delete(`/barbershop-staff/${id}`);
 }
+
+// 🔄 Toggle staff status (ACTIVE ↔️ INACTIVE)
+export async function toggleStaffStatus(id: string): Promise<BarbershopStaff> {
+  const response = await apiService.delete<BarbershopStaff>(
+    `/barbershop-staff/${id}`,
+  );
+  return response.data;
+}

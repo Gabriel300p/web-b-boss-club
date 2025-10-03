@@ -66,9 +66,11 @@ export function useStableStaffManagement() {
   // 🎯 Create table columns for settings
   const tableColumns: TableColumn[] = useMemo(() => {
     // Create columns with dummy handlers for conversion
+    // Handlers reais serão passados pela página
     const columns = createColumns({
+      onView: () => {},
       onEdit: () => {},
-      onDelete: () => {},
+      onToggleStatus: () => {},
     });
 
     return columns

@@ -7,6 +7,7 @@ import {
   nameSchema,
   passwordSchema,
 } from "@shared/schemas/common";
+import { cleanCPF, validateCPF } from "@shared/utils/cpf.utils";
 import { z } from "zod";
 
 // 🏷️ Enum definitions matching backend
@@ -124,6 +125,49 @@ export const createStaffFormSchema = z.object({
   internal_notes: z.string().optional(),
 });
 
+// 📝 MINIMAL form schema for creating staff (Phase 1 - MVP)
+// Only essential fields: full name, CPF, and optional email
+export const createStaffMinimalFormSchema = z.object({
+  full_name: z
+    .string()
+    .min(1, "Nome completo é obrigatório")
+    .max(100, "Nome deve ter no máximo 100 caracteres")
+    .regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Nome deve conter apenas letras e espaços"),
+  cpf: z
+    .string()
+    .min(1, "CPF é obrigatório")
+    .refine(
+      (val) => {
+        const cleaned = cleanCPF(val);
+        return cleaned.length === 11;
+      },
+      {
+        message: "CPF deve ter 11 dígitos",
+      },
+    )
+    .refine(
+      (val) => {
+        return validateCPF(val);
+      },
+      {
+        message: "CPF inválido. Verifique os dígitos digitados",
+      },
+    ),
+  email: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        // Se preenchido, deve ser um email válido
+        if (!val || val.trim() === "") return true;
+        return emailSchema.safeParse(val).success;
+      },
+      {
+        message: "Email deve ter um formato válido",
+      },
+    ),
+});
+
 // 📝 Form schema for updating staff
 export const updateStaffFormSchema = z.object({
   first_name: nameSchema.optional(),
@@ -226,6 +270,9 @@ export const staffStatsResponseSchema = z.object({
 // 🔧 Type definitions
 export type BarbershopStaff = z.infer<typeof barbershopStaffSchema>;
 export type CreateStaffFormData = z.infer<typeof createStaffFormSchema>;
+export type CreateStaffMinimalFormData = z.infer<
+  typeof createStaffMinimalFormSchema
+>;
 export type UpdateStaffFormData = z.infer<typeof updateStaffFormSchema>;
 export type StaffFilters = z.infer<typeof staffFiltersSchema>;
 export type CreateStaffResponse = z.infer<typeof createStaffResponseSchema>;
@@ -233,3 +280,12 @@ export type StaffListResponse = z.infer<typeof staffListResponseSchema>;
 export type StaffStatsResponse = z.infer<typeof staffStatsResponseSchema>;
 export type StaffStatus = z.infer<typeof staffStatusEnum>;
 export type UserRole = z.infer<typeof userRoleEnum>;
+
+// 🔧 Type for minimal staff creation data (used by hook)
+export type CreateStaffMinimalData = {
+  first_name: string;
+  last_name?: string;
+  cpf: string;
+  email?: string;
+  status?: StaffStatus;
+};

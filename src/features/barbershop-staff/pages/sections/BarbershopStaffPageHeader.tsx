@@ -8,12 +8,14 @@ interface BarbershopStaffPageHeaderProps {
   totalCount?: number;
   statistics?: StaffListResponse["statistics"];
   lastUpdated?: string;
+  onCreateClick?: () => void;
 }
 
 export function BarbershopStaffPageHeader({
   totalCount = 0,
   statistics,
   lastUpdated = new Date().toLocaleTimeString("pt-BR"),
+  onCreateClick,
 }: BarbershopStaffPageHeaderProps) {
   const { t } = useTranslation("barbershop-staff");
 
@@ -67,12 +69,12 @@ export function BarbershopStaffPageHeader({
         </div>
 
         <Button
-          onClick={() => {}}
+          onClick={onCreateClick}
           size="default"
           className="flex items-center gap-1.5 rounded-md px-3.5 py-3 transition-opacity duration-300 hover:opacity-80"
         >
           <PlusCircleIcon weight="fill" className="size-5" />
-          <span className="hidden sm:block">{t("actions.new")}</span>
+          <span className="hidden sm:block">{t("actions.addNew")}</span>
         </Button>
       </div>
     </div>

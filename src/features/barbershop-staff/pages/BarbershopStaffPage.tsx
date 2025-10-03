@@ -1,11 +1,21 @@
 import { Divider } from "@/shared/components/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { CreateStaffModal } from "../components/dialogs/CreateStaffModal";
+import { ToggleStaffStatusModal } from "../components/dialogs/ToggleStaffStatusModal";
+import { useBarbershopStaff } from "../hooks/useBarbershopStaff";
 import { useStableStaffManagement } from "../hooks/useStableStaffManagement";
+import type { BarbershopStaff } from "../schemas/barbershop-staff.schemas";
 import { BarbershopStaffPageContent } from "./sections/BarbershopStaffPageContent";
 import { BarbershopStaffPageHeader } from "./sections/BarbershopStaffPageHeader";
 
 export function BarbershopStaffPage() {
+  // 🎯 Modal states
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isToggleStatusModalOpen, setIsToggleStatusModalOpen] = useState(false);
+  const [selectedStaff, setSelectedStaff] = useState<BarbershopStaff | null>(
+    null,
+  );
   // 🛡️ Use hook estável que NÃO causa re-renders desnecessários
   const {
     filters,
@@ -20,6 +30,23 @@ export function BarbershopStaffPage() {
     onTableSettingsChange,
     tableSettings,
   } = useStableStaffManagement();
+
+  // 🎯 Hook com ações (toggle status, etc)
+  const { toggleStaffStatus, isTogglingStatus } = useBarbershopStaff(filters);
+
+  // 🎯 Handlers para ações
+  const handleToggleStatus = useCallback((staff: BarbershopStaff) => {
+    setSelectedStaff(staff);
+    setIsToggleStatusModalOpen(true);
+  }, []);
+
+  const handleConfirmToggleStatus = useCallback(async () => {
+    if (!selectedStaff) return;
+
+    await toggleStaffStatus(selectedStaff.id);
+    setIsToggleStatusModalOpen(false);
+    setSelectedStaff(null);
+  }, [selectedStaff, toggleStaffStatus]);
 
   // 🎯 lastUpdated estável que só muda quando dados são realmente carregados
   const [lastUpdated, setLastUpdated] = useState(() =>
@@ -46,25 +73,47 @@ export function BarbershopStaffPage() {
   }, [isLoading, updateLastUpdated]); // 🔥 Add updateLastUpdated to dependencies
 
   return (
-    <div className="m-5 flex flex-col gap-5 rounded-xl bg-neutral-900 p-6">
-      <BarbershopStaffPageHeader
-        totalCount={pagination?.total || 0}
-        statistics={statistics}
-        lastUpdated={lastUpdated}
+    <>
+      <div className="m-5 flex flex-col gap-5 rounded-xl bg-neutral-900 p-6">
+        <BarbershopStaffPageHeader
+          totalCount={pagination?.total || 0}
+          statistics={statistics}
+          lastUpdated={lastUpdated}
+          onCreateClick={() => setIsCreateModalOpen(true)}
+        />
+        <Divider className="my-1" />
+        <BarbershopStaffPageContent
+          staff={staff}
+          pagination={pagination}
+          isLoading={isLoading}
+          filters={filters}
+          updateFilter={updateFilter}
+          resetFilters={resetFilters}
+          hasActiveFilters={hasActiveFilters}
+          refetch={refetch}
+          onTableSettingsChange={onTableSettingsChange}
+          tableSettings={tableSettings}
+          onToggleStatus={handleToggleStatus}
+        />
+      </div>
+
+      {/* Modal de criação de colaborador */}
+      <CreateStaffModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
       />
-      <Divider className="my-1" />
-      <BarbershopStaffPageContent
-        staff={staff}
-        pagination={pagination}
-        isLoading={isLoading}
-        filters={filters}
-        updateFilter={updateFilter}
-        resetFilters={resetFilters}
-        hasActiveFilters={hasActiveFilters}
-        refetch={refetch}
-        onTableSettingsChange={onTableSettingsChange}
-        tableSettings={tableSettings}
+
+      {/* Modal de confirmação para inativar/ativar colaborador */}
+      <ToggleStaffStatusModal
+        isOpen={isToggleStatusModalOpen}
+        onClose={() => {
+          setIsToggleStatusModalOpen(false);
+          setSelectedStaff(null);
+        }}
+        onConfirm={handleConfirmToggleStatus}
+        staff={selectedStaff}
+        isLoading={isTogglingStatus}
       />
-    </div>
+    </>
   );
 }

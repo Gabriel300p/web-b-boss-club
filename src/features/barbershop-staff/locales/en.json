@@ -33,10 +33,34 @@
   },
   "actions": {
     "new": "New",
+    "addNew": "Add new",
     "edit": "Edit",
     "delete": "Delete",
     "reload": "Reload Data",
-    "clearFilters": "Clear Filters"
+    "clearFilters": "Clear Filters",
+    "cancel": "Cancel",
+    "create": "Add",
+    "creating": "Adding..."
+  },
+  "modals": {
+    "createStaff": {
+      "title": "Add new barber",
+      "fields": {
+        "fullName": "Full Name",
+        "cpf": "CPF",
+        "email": "Email"
+      },
+      "placeholders": {
+        "fullName": "Enter the barber's full name",
+        "cpf": "000.000.000-00",
+        "email": "email@example.com"
+      },
+      "hints": {
+        "cpfFormat": "Enter numbers only. The mask will be applied automatically.",
+        "email": "If filled, a user will be created with auto-generated password."
+      },
+      "optional": "optional"
+    }
   },
   "empty": {
     "noData": {

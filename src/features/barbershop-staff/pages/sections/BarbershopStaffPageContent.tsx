@@ -32,6 +32,7 @@ interface BarbershopStaffPageContentProps {
   refetch: (options?: RefetchOptions) => Promise<QueryObserverResult>;
   onTableSettingsChange?: (settings: TableSettingsConfig) => void;
   tableSettings?: TableSettingsConfig;
+  onToggleStatus: (staff: BarbershopStaff) => void;
 }
 
 export function BarbershopStaffPageContent({
@@ -44,6 +45,7 @@ export function BarbershopStaffPageContent({
   hasActiveFilters,
   refetch,
   onTableSettingsChange,
+  onToggleStatus,
   // tableSettings,
 }: BarbershopStaffPageContentProps) {
   // 🎯 Hook de reload componentizado
@@ -60,7 +62,7 @@ export function BarbershopStaffPageContent({
     minLoadingTime: 200, // Minimum loading time for better UX
   });
 
-  // �📋 Table columns
+  // 📋 Table columns
   const columns = createColumns({
     onView: (staff) => {
       // TODO: Implementar modal de visualização
@@ -70,10 +72,7 @@ export function BarbershopStaffPageContent({
       // TODO: Implementar navegação para edição
       console.log("Edit staff:", staff);
     },
-    onToggleStatus: (staff) => {
-      // TODO: Implementar dialog de confirmação
-      console.log("Toggle status for staff:", staff);
-    },
+    onToggleStatus,
   });
 
   // 🎯 Separate loading states: filters should NEVER show skeleton during filtering
