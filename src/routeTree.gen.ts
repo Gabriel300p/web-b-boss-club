@@ -12,10 +12,8 @@ import { Route as rootRouteImport } from './app/routes/__root'
 import { Route as UnitsRouteImport } from './app/routes/units'
 import { Route as SettingsRouteImport } from './app/routes/settings'
 import { Route as ServicesRouteImport } from './app/routes/services'
-import { Route as RecordsRouteImport } from './app/routes/records'
 import { Route as HomeRouteImport } from './app/routes/home'
 import { Route as HelpRouteImport } from './app/routes/help'
-import { Route as ComunicacoesRouteImport } from './app/routes/comunicacoes'
 import { Route as BarbershopStaffRouteImport } from './app/routes/barbershop-staff'
 import { Route as IndexRouteImport } from './app/routes/index'
 import { Route as AuthResetPasswordRouteImport } from './app/routes/auth/reset-password'
@@ -39,11 +37,6 @@ const ServicesRoute = ServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RecordsRoute = RecordsRouteImport.update({
-  id: '/records',
-  path: '/records',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -52,11 +45,6 @@ const HomeRoute = HomeRouteImport.update({
 const HelpRoute = HelpRouteImport.update({
   id: '/help',
   path: '/help',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ComunicacoesRoute = ComunicacoesRouteImport.update({
-  id: '/comunicacoes',
-  path: '/comunicacoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BarbershopStaffRoute = BarbershopStaffRouteImport.update({
@@ -98,10 +86,8 @@ const AuthCreateBarbershopRoute = AuthCreateBarbershopRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/barbershop-staff': typeof BarbershopStaffRoute
-  '/comunicacoes': typeof ComunicacoesRoute
   '/help': typeof HelpRoute
   '/home': typeof HomeRoute
-  '/records': typeof RecordsRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
   '/units': typeof UnitsRoute
@@ -114,10 +100,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/barbershop-staff': typeof BarbershopStaffRoute
-  '/comunicacoes': typeof ComunicacoesRoute
   '/help': typeof HelpRoute
   '/home': typeof HomeRoute
-  '/records': typeof RecordsRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
   '/units': typeof UnitsRoute
@@ -131,10 +115,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/barbershop-staff': typeof BarbershopStaffRoute
-  '/comunicacoes': typeof ComunicacoesRoute
   '/help': typeof HelpRoute
   '/home': typeof HomeRoute
-  '/records': typeof RecordsRoute
   '/services': typeof ServicesRoute
   '/settings': typeof SettingsRoute
   '/units': typeof UnitsRoute
@@ -149,10 +131,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/barbershop-staff'
-    | '/comunicacoes'
     | '/help'
     | '/home'
-    | '/records'
     | '/services'
     | '/settings'
     | '/units'
@@ -165,10 +145,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/barbershop-staff'
-    | '/comunicacoes'
     | '/help'
     | '/home'
-    | '/records'
     | '/services'
     | '/settings'
     | '/units'
@@ -181,10 +159,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/barbershop-staff'
-    | '/comunicacoes'
     | '/help'
     | '/home'
-    | '/records'
     | '/services'
     | '/settings'
     | '/units'
@@ -198,10 +174,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BarbershopStaffRoute: typeof BarbershopStaffRoute
-  ComunicacoesRoute: typeof ComunicacoesRoute
   HelpRoute: typeof HelpRoute
   HomeRoute: typeof HomeRoute
-  RecordsRoute: typeof RecordsRoute
   ServicesRoute: typeof ServicesRoute
   SettingsRoute: typeof SettingsRoute
   UnitsRoute: typeof UnitsRoute
@@ -235,13 +209,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/records': {
-      id: '/records'
-      path: '/records'
-      fullPath: '/records'
-      preLoaderRoute: typeof RecordsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/home': {
       id: '/home'
       path: '/home'
@@ -254,13 +221,6 @@ declare module '@tanstack/react-router' {
       path: '/help'
       fullPath: '/help'
       preLoaderRoute: typeof HelpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/comunicacoes': {
-      id: '/comunicacoes'
-      path: '/comunicacoes'
-      fullPath: '/comunicacoes'
-      preLoaderRoute: typeof ComunicacoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/barbershop-staff': {
@@ -318,10 +278,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BarbershopStaffRoute: BarbershopStaffRoute,
-  ComunicacoesRoute: ComunicacoesRoute,
   HelpRoute: HelpRoute,
   HomeRoute: HomeRoute,
-  RecordsRoute: RecordsRoute,
   ServicesRoute: ServicesRoute,
   SettingsRoute: SettingsRoute,
   UnitsRoute: UnitsRoute,

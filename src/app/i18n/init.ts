@@ -13,8 +13,6 @@ import enUSBarbershopStaff from "@/features/barbershop-staff/locales/en.json";
 import ptBRBarbershopStaff from "@/features/barbershop-staff/locales/pt.json";
 import enUSBarbershop from "@/features/barbershop/locales/en.json";
 import ptBRBarbershop from "@/features/barbershop/locales/pt.json";
-import enUSComunicacoes from "@/features/comunicacoes/i18n/en-US.json";
-import ptBRComunicacoes from "@/features/comunicacoes/i18n/pt-BR.json";
 
 export const DEFAULT_LOCALE = "pt-BR";
 export const FALLBACK_LOCALE = "en-US";
@@ -47,7 +45,6 @@ const resources = {
   "pt-BR": {
     common: ptBRCommon,
     records: ptBRRecords,
-    comunicacoes: ptBRComunicacoes,
     auth: ptBRAuth,
     barbershop: ptBRBarbershop,
     "barbershop-staff": ptBRBarbershopStaff,
@@ -55,7 +52,6 @@ const resources = {
   "en-US": {
     common: enUSCommon,
     records: enUSRecords,
-    comunicacoes: enUSComunicacoes,
     auth: enUSAuth,
     barbershop: enUSBarbershop,
     "barbershop-staff": enUSBarbershopStaff,
