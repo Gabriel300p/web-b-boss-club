@@ -8,13 +8,17 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-neutral-100 dark:bg-neutral-950">
-      <div className="h-[calc(100vh-0rem)]">
-        <Sidebar />
-      </div>
-      <div className="flex flex-1 flex-col">
+    <div className="flex h-screen overflow-hidden bg-neutral-100 dark:bg-neutral-950">
+      {/* Sidebar fixa */}
+      <Sidebar />
+      
+      {/* Container principal com topbar fixa e conteúdo scrollável */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* TopBar fixa */}
         <TopBar />
-        <main>{children}</main>
+        
+        {/* Main content scrollável */}
+        <main className="flex-1 overflow-y-auto p-5">{children}</main>
       </div>
     </div>
   );

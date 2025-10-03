@@ -149,8 +149,16 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
+  html {
+    height: 100%;
+    overflow: hidden;
+  }
+  
   body {
     @apply bg-background text-foreground;
+    height: 100%;
+    overflow: hidden;
     font-family:
       "Inter",
       -apple-system,
@@ -167,6 +175,11 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  
+  #root {
+    height: 100%;
+    overflow: hidden;
   }
 
   /* 🎨 Scroll personalizado que respeita o tema */

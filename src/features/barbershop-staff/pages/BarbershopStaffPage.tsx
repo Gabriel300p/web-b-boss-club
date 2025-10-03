@@ -74,7 +74,7 @@ export function BarbershopStaffPage() {
 
   return (
     <>
-      <div className="m-5 flex flex-col gap-5 rounded-xl bg-neutral-900 p-6">
+      <div className="flex flex-col gap-5 rounded-xl bg-neutral-900 p-6">
         <BarbershopStaffPageHeader
           totalCount={pagination?.total || 0}
           statistics={statistics}

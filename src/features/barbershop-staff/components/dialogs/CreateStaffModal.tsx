@@ -111,7 +111,7 @@ export const CreateStaffModal = memo(function CreateStaffModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-neutral-900">
+          <DialogTitle className="mb-2 flex items-center gap-3">
             <PlusCircleIcon className="h-5 w-5" />
             {modalTitle}
           </DialogTitle>
