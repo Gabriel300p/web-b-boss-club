@@ -4,24 +4,24 @@
  */
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@shared/components/ui/alert-dialog";
-import { memo } from "react";
+import { Button } from "@shared/components/ui/button";
+import { useToast } from "@shared/hooks";
+import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
 
 interface ToggleStaffStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => Promise<void>;
   staff: BarbershopStaff | null;
-  isLoading?: boolean;
 }
 
 /**
@@ -32,11 +32,35 @@ export const ToggleStaffStatusModal = memo(function ToggleStaffStatusModal({
   onClose,
   onConfirm,
   staff,
-  isLoading = false,
 }: ToggleStaffStatusModalProps) {
   const { t } = useTranslation("barbershop-staff");
+  const { error } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!staff) return null;
+
+  const handleConfirm = async () => {
+    try {
+      setIsLoading(true);
+      await onConfirm();
+      // NÃO fechar aqui - deixar a página gerenciar isso
+    } catch (err) {
+      console.error("Erro ao alterar status:", err);
+      // Mostrar toast de erro
+      error(
+        t("toasts.errors.toggleStatusTitle", {
+          defaultValue: "Erro ao alterar status",
+        }),
+        t("toasts.errors.toggleStatusMessage", {
+          defaultValue:
+            "Não foi possível alterar o status do colaborador. Tente novamente.",
+        }),
+      );
+      // Em caso de erro, manter modal aberto
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const isActive = staff.status === "ACTIVE";
   const lastName =
@@ -50,56 +74,69 @@ export const ToggleStaffStatusModal = memo(function ToggleStaffStatusModal({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            {isActive
-              ? t("modals.toggleStatus.deactivateTitle", {
-                  defaultValue: "Deseja inativar esse colaborador?",
-                })
-              : t("modals.toggleStatus.activateTitle", {
-                  defaultValue: "Deseja ativar esse colaborador?",
-                })}
-          </AlertDialogTitle>
-          <AlertDialogDescription className="space-y-2">
-            <p>
+      <AlertDialogContent className="max-w-md">
+        <AlertDialogHeader className="space-y-4">
+          <div className="flex items-start gap-3">
+            <div
+              className={`flex min-h-14 min-w-14 items-center justify-center rounded-full ${
+                isActive
+                  ? "bg-red-500/10 text-red-500"
+                  : "bg-green-500/10 text-green-500"
+              }`}
+            >
+              {isActive ? (
+                <AlertCircle className="h-6 w-6" />
+              ) : (
+                <CheckCircle className="h-6 w-6" />
+              )}
+            </div>
+            <AlertDialogTitle className="text-xl">
               {isActive
-                ? t("modals.toggleStatus.deactivateDescription", {
-                    defaultValue:
-                      "Este colaborador irá alterar de status para inativo. Você poderá ativá-lo novamente, se necessário.",
+                ? t("modals.toggleStatus.deactivateTitle", {
+                    defaultValue: `Deseja inativar esse colaborador ${staffName}?`,
                   })
-                : t("modals.toggleStatus.activateDescription", {
-                    defaultValue:
-                      "Este colaborador irá alterar de status para ativo e poderá voltar a trabalhar normalmente.",
+                : t("modals.toggleStatus.activateTitle", {
+                    defaultValue: `Deseja ativar esse colaborador ${staffName}?`,
                   })}
-            </p>
-            <p className="font-semibold text-neutral-200">
-              {t("modals.toggleStatus.staffName", {
-                defaultValue: "Colaborador:",
-              })}{" "}
-              {staffName}
-            </p>
-          </AlertDialogDescription>
+              <p className="mt-2 text-base font-normal text-neutral-400">
+                {isActive
+                  ? t("modals.toggleStatus.deactivateDescription", {
+                      defaultValue:
+                        "Este colaborador irá alterar de status para inativo. Você poderá ativá-lo novamente, se necessário.",
+                    })
+                  : t("modals.toggleStatus.activateDescription", {
+                      defaultValue:
+                        "Este colaborador irá alterar de status para ativo e poderá voltar a trabalhar normalmente.",
+                    })}
+              </p>
+            </AlertDialogTitle>
+          </div>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>
-            {t("actions.cancel", { defaultValue: "Fechar" })}
+
+        <AlertDialogFooter className="mt-2">
+          <AlertDialogCancel disabled={isLoading} className="min-w-[100px]">
+            {t("actions.cancel", { defaultValue: "Cancelar" })}
           </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={onConfirm}
+          <Button
+            onClick={handleConfirm}
             disabled={isLoading}
-            className={
+            className={` ${
               isActive
-                ? "bg-red-600 text-white hover:bg-red-700"
-                : "bg-green-600 text-white hover:bg-green-700"
-            }
+                ? "bg-red-600 text-white hover:bg-red-700 disabled:bg-red-800"
+                : "bg-green-600 text-white hover:bg-green-700 disabled:bg-green-800"
+            }`}
           >
-            {isLoading
-              ? t("actions.processing", { defaultValue: "Processando..." })
-              : isActive
-                ? t("actions.deactivate", { defaultValue: "Inativar" })
-                : t("actions.activate", { defaultValue: "Ativar" })}
-          </AlertDialogAction>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t("actions.processing", { defaultValue: "Processando..." })}
+              </>
+            ) : isActive ? (
+              t("actions.deactivate", { defaultValue: "Inativar" })
+            ) : (
+              t("actions.activate", { defaultValue: "Ativar" })
+            )}
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -1,8 +1,14 @@
 import i18n from "@/app/i18n/init";
+import { Badge } from "@shared/components/ui/badge";
 import TableSort from "@shared/components/ui/table-sort";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import {
+  getAvailabilityBadge,
+  getRoleBadge,
+  getStatusBadge,
+} from "../../helpers/column.helper";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
 import { StaffActions, type StaffActionHandlers } from "./columns-actions";
 
@@ -16,21 +22,6 @@ export const createColumns = ({
   onToggleStatus,
 }: StaffColumnsProps): ColumnDef<BarbershopStaff>[] => {
   const t = i18n.getFixedT(i18n.language, "barbershop-staff");
-
-  const statusMap: Record<string, string> = {
-    ACTIVE: t("status.active", { defaultValue: "Ativo" }),
-    INACTIVE: t("status.inactive", { defaultValue: "Inativo" }),
-    SUSPENDED: t("status.suspended", { defaultValue: "Suspenso" }),
-    TERMINATED: t("status.terminated", { defaultValue: "Demitido" }),
-  };
-
-  const roleMap: Record<string, string> = {
-    BARBER: t("roles.barber", { defaultValue: "Barbeiro" }),
-    BARBERSHOP_OWNER: t("roles.owner", { defaultValue: "Proprietário" }),
-    SUPER_ADMIN: t("roles.superAdmin", { defaultValue: "Super Admin" }),
-    CLIENT: t("roles.client", { defaultValue: "Cliente" }),
-    PENDING: t("roles.pending", { defaultValue: "Pendente" }),
-  };
 
   return [
     {
@@ -88,34 +79,11 @@ export const createColumns = ({
       ),
       cell: ({ row }) => {
         const role = row.getValue("role_in_shop") as string;
-
-        // Definir cores baseadas no role (modo escuro)
-        const getRoleStyles = (role: string) => {
-          switch (role) {
-            case "BARBER":
-              return "bg-blue-900/30 text-blue-400 border border-blue-700/50";
-            case "BARBERSHOP_OWNER":
-              return "bg-purple-900/30 text-purple-400 border border-purple-700/50";
-            case "SUPER_ADMIN":
-              return "bg-red-900/30 text-red-400 border border-red-700/50";
-            case "CLIENT":
-              return "bg-green-900/30 text-green-400 border border-green-700/50";
-            case "PENDING":
-              return "bg-yellow-900/30 text-yellow-400 border border-yellow-700/50";
-            default:
-              return "bg-neutral-800/50 text-neutral-300 border border-neutral-600/50";
-          }
-        };
+        const badgeConfig = getRoleBadge(role, t);
 
         return (
           <div className="flex justify-center">
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getRoleStyles(
-                role,
-              )}`}
-            >
-              {roleMap[role] || role}
-            </span>
+            <Badge {...badgeConfig} />
           </div>
         );
       },
@@ -130,32 +98,11 @@ export const createColumns = ({
       ),
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
-
-        // Definir cores baseadas no status (modo escuro)
-        const getStatusStyles = (status: string) => {
-          switch (status) {
-            case "ACTIVE":
-              return "bg-green-900/30 text-green-400 border border-green-700/50";
-            case "INACTIVE":
-              return "bg-gray-900/30 text-gray-400 border border-gray-700/50";
-            case "SUSPENDED":
-              return "bg-yellow-900/30 text-yellow-400 border border-yellow-700/50";
-            case "TERMINATED":
-              return "bg-red-900/30 text-red-400 border border-red-700/50";
-            default:
-              return "bg-neutral-800/50 text-neutral-300 border border-neutral-600/50";
-          }
-        };
+        const badgeConfig = getStatusBadge(status, t);
 
         return (
           <div className="flex justify-center">
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusStyles(
-                status,
-              )}`}
-            >
-              {statusMap[status] || status}
-            </span>
+            <Badge {...badgeConfig} />
           </div>
         );
       },
@@ -170,19 +117,11 @@ export const createColumns = ({
       ),
       cell: ({ row }) => {
         const isAvailable = row.getValue("is_available") as boolean;
+        const badgeConfig = getAvailabilityBadge(isAvailable, t);
+
         return (
           <div className="flex justify-center">
-            <span
-              className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
-                isAvailable
-                  ? "border-green-700/50 bg-green-900/30 text-green-400"
-                  : "border-red-700/50 bg-red-900/30 text-red-400"
-              }`}
-            >
-              {isAvailable
-                ? t("availability.available")
-                : t("availability.unavailable")}
-            </span>
+            <Badge {...badgeConfig} />
           </div>
         );
       },

@@ -200,22 +200,10 @@ export function useBarbershopStaff(
   // 🔄 Toggle status mutation
   const toggleStatusMutation = useMutation({
     mutationFn: toggleStaffStatus,
-    onSuccess: async (updatedStaff) => {
-      // Invalidate and immediately refetch staff list
-      await queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
-      });
-      await queryClient.refetchQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
-      });
-      queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.detail(updatedStaff.id, user?.id),
-      });
-      queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.stats(undefined, user?.id),
-      });
-
+    onSuccess: (updatedStaff) => {
       const isActive = updatedStaff.status === "ACTIVE";
+
+      // 🚀 Toast imediato (não bloqueia)
       success(
         isActive
           ? t("toasts.success.activateTitle", {
@@ -232,6 +220,19 @@ export function useBarbershopStaff(
               defaultValue: "O colaborador foi inativado com sucesso.",
             }),
       );
+
+      // 🔄 Invalidar em background (não bloqueia)
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
+        });
+        queryClient.invalidateQueries({
+          queryKey: STAFF_QUERY_KEYS.staff.detail(updatedStaff.id, user?.id),
+        });
+        queryClient.invalidateQueries({
+          queryKey: STAFF_QUERY_KEYS.staff.stats(undefined, user?.id),
+        });
+      }, 0);
     },
     onError: (error) => {
       const appError = createAppError(

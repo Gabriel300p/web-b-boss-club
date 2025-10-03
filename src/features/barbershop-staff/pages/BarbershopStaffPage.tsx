@@ -32,7 +32,7 @@ export function BarbershopStaffPage() {
   } = useStableStaffManagement();
 
   // 🎯 Hook com ações (toggle status, etc)
-  const { toggleStaffStatus, isTogglingStatus } = useBarbershopStaff(filters);
+  const { toggleStaffStatus } = useBarbershopStaff(filters);
 
   // 🎯 Handlers para ações
   const handleToggleStatus = useCallback((staff: BarbershopStaff) => {
@@ -112,7 +112,6 @@ export function BarbershopStaffPage() {
         }}
         onConfirm={handleConfirmToggleStatus}
         staff={selectedStaff}
-        isLoading={isTogglingStatus}
       />
     </>
   );
