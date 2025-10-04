@@ -115,6 +115,10 @@ export function BarbershopStaffPageContent({
           data={staff}
           pagination={pagination}
           onPaginationChange={(page) => updateFilter("page", page)}
+          onPageSizeChange={(limit) => {
+            updateFilter("limit", limit);
+            updateFilter("page", 1); // Reset to first page when changing page size
+          }}
         />
       )}
     </div>

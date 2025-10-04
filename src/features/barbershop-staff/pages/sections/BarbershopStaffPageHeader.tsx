@@ -71,7 +71,7 @@ export function BarbershopStaffPageHeader({
         <Button
           onClick={onCreateClick}
           size="default"
-          className="flex items-center gap-1.5 rounded-md px-3.5 py-3 transition-opacity duration-300 hover:opacity-80"
+          className="flex items-center gap-1.5 rounded-md px-3.5 py-3 font-semibold transition-opacity duration-300 hover:opacity-80"
         >
           <PlusCircleIcon weight="fill" className="size-5" />
           <span className="hidden sm:block">{t("actions.addNew")}</span>

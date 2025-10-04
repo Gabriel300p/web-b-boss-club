@@ -12,6 +12,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@shared/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@shared/components/ui/form";
 import { Input } from "@shared/components/ui/input";
 import { maskCPF } from "@shared/utils/cpf.utils";
 import { memo, useEffect, useMemo } from "react";
@@ -55,18 +64,19 @@ export const CreateStaffModal = memo(function CreateStaffModal({
     [],
   );
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    watch,
-    formState: { errors, isSubmitting, isValid },
-  } = useForm<CreateStaffMinimalFormData>({
+  const form = useForm<CreateStaffMinimalFormData>({
     resolver: zodResolver(createStaffMinimalFormSchema),
     mode: "onChange",
     defaultValues,
   });
+
+  const {
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { isSubmitting, isValid },
+  } = form;
 
   const watchedCpf = watch("cpf");
 
@@ -117,136 +127,117 @@ export const CreateStaffModal = memo(function CreateStaffModal({
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Campo: Nome Completo */}
-          <div className="space-y-2">
-            <label
-              htmlFor="full_name"
-              className="block text-sm font-medium text-neutral-700"
-            >
-              {t("modals.createStaff.fields.fullName")}{" "}
-              <span className="text-red-500">*</span>
-            </label>
-            <Input
-              id="full_name"
-              placeholder={t("modals.createStaff.placeholders.fullName")}
-              {...register("full_name")}
-              className={errors.full_name ? "border-red-500" : ""}
-              aria-invalid={!!errors.full_name}
-              aria-describedby={
-                errors.full_name ? "full_name-error" : undefined
-              }
-              disabled={isSubmitting || isLoading}
-            />
-            {errors.full_name && (
-              <p
-                id="full_name-error"
-                className="mt-1 text-sm text-red-600"
-                role="alert"
-              >
-                {errors.full_name.message}
-              </p>
-            )}
-          </div>
-
-          {/* Campo: CPF */}
-          <div className="space-y-2">
-            <label
-              htmlFor="cpf"
-              className="block text-sm font-medium text-neutral-700"
-            >
-              {t("modals.createStaff.fields.cpf")}{" "}
-              <span className="text-red-500">*</span>
-            </label>
-            <Input
-              id="cpf"
-              placeholder={t("modals.createStaff.placeholders.cpf")}
-              {...register("cpf")}
-              className={errors.cpf ? "border-red-500" : ""}
-              aria-invalid={!!errors.cpf}
-              aria-describedby={errors.cpf ? "cpf-error" : undefined}
-              disabled={isSubmitting || isLoading}
-              maxLength={14} // XXX.XXX.XXX-XX
-            />
-            {errors.cpf && (
-              <p
-                id="cpf-error"
-                className="mt-1 text-sm text-red-600"
-                role="alert"
-              >
-                {errors.cpf.message}
-              </p>
-            )}
-            <p className="text-xs text-neutral-500">
-              {t("modals.createStaff.hints.cpfFormat")}
-            </p>
-          </div>
-
-          {/* Campo: Email (Opcional) */}
-          <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-neutral-700"
-            >
-              {t("modals.createStaff.fields.email")}{" "}
-              <span className="text-xs text-neutral-500">
-                ({t("modals.createStaff.optional")})
-              </span>
-            </label>
-            <Input
-              id="email"
-              type="email"
-              placeholder={t("modals.createStaff.placeholders.email")}
-              {...register("email")}
-              className={errors.email ? "border-red-500" : ""}
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? "email-error" : undefined}
-              disabled={isSubmitting || isLoading}
-            />
-            {errors.email && (
-              <p
-                id="email-error"
-                className="mt-1 text-sm text-red-600"
-                role="alert"
-              >
-                {errors.email.message}
-              </p>
-            )}
-            <p className="text-xs text-neutral-500">
-              {t("modals.createStaff.hints.email")}
-            </p>
-          </div>
-
-          {/* Footer com botões */}
-          <DialogFooter className="flex gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={isSubmitting || isLoading}
-            >
-              <ProhibitIcon className="mr-2 h-4 w-4" />
-              {t("actions.cancel")}
-            </Button>
-            <Button
-              type="submit"
-              disabled={!isValid || isSubmitting || isLoading}
-              className="min-w-[120px]"
-            >
-              {isLoading || isSubmitting ? (
-                <>
-                  <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  {t("actions.creating")}
-                </>
-              ) : (
-                <>
-                  <PlusCircleIcon className="mr-2 h-4 w-4" />
-                  {t("actions.create")}
-                </>
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Campo: Nome Completo */}
+            <FormField
+              control={form.control}
+              name="full_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("modals.createStaff.fields.fullName")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={t(
+                        "modals.createStaff.placeholders.fullName",
+                      )}
+                      disabled={isSubmitting || isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </Button>
-          </DialogFooter>
-        </form>
+            />
+
+            {/* Campo: CPF */}
+            <FormField
+              control={form.control}
+              name="cpf"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("modals.createStaff.fields.cpf")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={t("modals.createStaff.placeholders.cpf")}
+                      disabled={isSubmitting || isLoading}
+                      maxLength={14}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {t("modals.createStaff.hints.cpfFormat")}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Campo: Email (Opcional) */}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t("modals.createStaff.fields.email")}{" "}
+                    <span className="text-xs text-neutral-500">
+                      ({t("modals.createStaff.optional")})
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder={t("modals.createStaff.placeholders.email")}
+                      disabled={isSubmitting || isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {t("modals.createStaff.hints.email")}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Footer com botões */}
+            <DialogFooter className="flex gap-2 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={isSubmitting || isLoading}
+              >
+                <ProhibitIcon className="mr-2 h-4 w-4" />
+                {t("actions.cancel")}
+              </Button>
+              <Button
+                type="submit"
+                disabled={!isValid || isSubmitting || isLoading}
+                className="min-w-[120px]"
+              >
+                {isLoading || isSubmitting ? (
+                  <>
+                    <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    {t("actions.creating")}
+                  </>
+                ) : (
+                  <>
+                    <PlusCircleIcon className="mr-2 h-4 w-4" />
+                    {t("actions.create")}
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

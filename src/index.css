@@ -53,7 +53,7 @@
   --popover-foreground: #171717;
 
   /* 🟡 Primary mantido como amarelo */
-  --primary: #facc15;
+  --primary: #fac82b;
   --primary-foreground: #171717;
 
   /* ⚪ Secondary baseado em neutral */
@@ -74,7 +74,7 @@
   /* 🔲 Border baseado em neutral */
   --border: #e5e5e5;
   --input: #e5e5e5;
-  --ring: #facc15;
+  --ring: #fac82b;
 
   /* 📊 Chart colors baseados em neutral */
   --chart-1: #737373;
@@ -104,7 +104,7 @@
   --popover-foreground: #fafafa;
 
   /* 🟡 Primary mantido como amarelo */
-  --primary: #facc15;
+  --primary: #fac82b;
   --primary-foreground: #171717;
 
   /* ⚫ Secondary baseado em neutral */
@@ -125,7 +125,7 @@
   /* 🔲 Border baseado em neutral */
   --border: rgba(255, 255, 255, 0.1);
   --input: rgba(255, 255, 255, 0.15);
-  --ring: #facc15;
+  --ring: #fac82b;
 
   /* 📊 Chart colors baseados em neutral */
   --chart-1: #a3a3a3;
@@ -149,12 +149,12 @@
   * {
     @apply border-border outline-ring/50;
   }
-  
+
   html {
     height: 100%;
     overflow: hidden;
   }
-  
+
   body {
     @apply bg-background text-foreground;
     height: 100%;
@@ -176,7 +176,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   #root {
     height: 100%;
     overflow: hidden;

@@ -1,12 +1,12 @@
-import { useState, useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { StaffFilters } from "../schemas/barbershop-staff.schemas";
 
 // 🎯 Default filters configuration
 const DEFAULT_FILTERS: StaffFilters = {
   page: 1,
   limit: 10,
-  sort_by: "name",
-  sort_order: "asc",
+  sort_by: "created_at",
+  sort_order: "desc",
 };
 
 // 🎯 Staff filters management hook
@@ -32,7 +32,7 @@ export function useStaffFilters() {
     <K extends keyof StaffFilters>(key: K, value: StaffFilters[K]) => {
       updateFilters({ [key]: value });
     },
-    [updateFilters]
+    [updateFilters],
   );
 
   // 🔄 Reset pagination (useful after applying filters)

@@ -1,4 +1,4 @@
-import { SkeletonCircle, SkeletonLine } from "@shared/components/ui/skeleton";
+import { SkeletonLine } from "@shared/components/ui/skeleton";
 import { motion } from "framer-motion";
 
 // 🎯 Skeleton para tabela genérica com suporte a modo escuro
@@ -48,7 +48,7 @@ export function TableSkeleton({
               className="bg-neutral-200 dark:bg-neutral-800"
             />
           ))}
-          {hasActions && (
+          {/* {hasActions && (
             <div className="flex gap-2">
               <SkeletonCircle
                 size={24}
@@ -59,7 +59,7 @@ export function TableSkeleton({
                 className="bg-neutral-200 dark:bg-neutral-800"
               />
             </div>
-          )}
+          )} */}
         </motion.div>
       ))}
     </motion.div>

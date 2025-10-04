@@ -1,4 +1,9 @@
-import { DotsThreeOutlineIcon, Eye, Power, Trash } from "@phosphor-icons/react";
+import {
+  DotsThreeOutlineIcon,
+  EyeIcon,
+  PowerIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import { PencilSimpleLineIcon } from "@shared/components/icons";
 import { Button } from "@shared/components/ui/button";
 import {
@@ -44,15 +49,27 @@ const getAvailableActions = (
   t: (key: string, options?: { defaultValue?: string }) => string,
 ): ActionItem[] => {
   const isActive = staff.status === "ACTIVE";
+
+  // Construir nome do staff com fallback robusto
+  const firstName = staff.first_name || "";
+  const lastName = staff.last_name || "";
+  const displayName = staff.display_name || "";
   const staffName =
-    staff.display_name || `${staff.first_name} ${staff.last_name || ""}`.trim();
+    displayName || `${firstName} ${lastName}`.trim() || "este barbeiro";
+
+  // Construir labels ANTES de passar para t()
+  const deactivateLabel = `Inativar ${staffName}`;
+  const activateLabel = `Ativar ${staffName}`;
 
   // 🎯 Grupo 1: Ações de visualização e edição
   const viewEditActions: ActionItem[] = [
     {
       type: StaffActionType.VIEW,
       label: t("actions.view", { defaultValue: "Visualizar" }),
-      icon: Eye as React.ComponentType<{ className?: string; weight?: string }>,
+      icon: EyeIcon as React.ComponentType<{
+        className?: string;
+        weight?: string;
+      }>,
       isVisible: () => true,
       className: "text-white hover:bg-neutral-700/50",
       textClassName: "text-neutral-100 font-semibold",
@@ -79,14 +96,14 @@ const getAvailableActions = (
     {
       type: StaffActionType.TOGGLE_STATUS,
       label: isActive
-        ? t("actions.deactivate", { defaultValue: `Inativar ${staffName}` })
-        : t("actions.activate", { defaultValue: `Ativar ${staffName}` }),
+        ? t("actions.deactivate", { defaultValue: deactivateLabel })
+        : t("actions.activate", { defaultValue: activateLabel }),
       icon: isActive
-        ? (Trash as React.ComponentType<{
+        ? (TrashIcon as React.ComponentType<{
             className?: string;
             weight?: string;
           }>)
-        : (Power as React.ComponentType<{
+        : (PowerIcon as React.ComponentType<{
             className?: string;
             weight?: string;
           }>),
@@ -152,7 +169,7 @@ export const StaffActions = memo(
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="min-w-64 border-neutral-700 bg-neutral-800"
+          className="min-w-44 border-neutral-700 bg-neutral-800"
         >
           {/* 🎯 Grupo 1: Visualizar e Editar */}
           {availableActions

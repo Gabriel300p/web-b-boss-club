@@ -46,9 +46,17 @@ export function useBarbershopStaffCreate(
       return createStaff(payload as any);
     },
     onSuccess: async (response) => {
-      // Invalidate and immediately refetch staff list
-      await queryClient.invalidateQueries({ queryKey: ["barbershop-staff"] });
-      await queryClient.refetchQueries({ queryKey: ["barbershop-staff"] });
+      // Invalidate cache aggressively to ensure fresh data
+      await queryClient.invalidateQueries({
+        queryKey: ["barbershop-staff"],
+        refetchType: "all", // Force refetch of all matching queries
+      });
+
+      // Force immediate refetch to get updated list with new staff at top
+      await queryClient.refetchQueries({
+        queryKey: ["barbershop-staff"],
+        type: "all", // Refetch all matching queries
+      });
 
       // Show success toast (sem mostrar a senha)
       showToast({

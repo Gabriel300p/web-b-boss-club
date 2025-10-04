@@ -11,13 +11,24 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PaginationProps<TData> {
   table: Table<TData>;
+  totalItems?: number; // Server-side total
+  onPageChange?: (page: number) => void; // Server-side page change
+  onPageSizeChange?: (pageSize: number) => void; // Server-side page size change
 }
 
-export function Pagination<TData>({ table }: PaginationProps<TData>) {
+export function Pagination<TData>({
+  table,
+  totalItems: serverTotalItems,
+  onPageChange,
+  onPageSizeChange,
+}: PaginationProps<TData>) {
   const currentPage = table.getState().pagination.pageIndex + 1;
   const totalPages = table.getPageCount();
   const pageSize = table.getState().pagination.pageSize;
-  const totalItems = table.getFilteredRowModel().rows.length;
+
+  // Use server total if provided, otherwise use client-side
+  const totalItems =
+    serverTotalItems ?? table.getFilteredRowModel().rows.length;
 
   // Gerar array de páginas para mostrar na paginação
   const getVisiblePages = () => {
@@ -81,7 +92,12 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
             <Select
               value={`${pageSize}`}
               onValueChange={(value: string) => {
-                table.setPageSize(Number(value));
+                const newSize = Number(value);
+                if (onPageSizeChange) {
+                  onPageSizeChange(newSize);
+                } else {
+                  table.setPageSize(newSize);
+                }
               }}
             >
               <SelectTrigger className="py-1 text-xs sm:text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
@@ -114,7 +130,13 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.previousPage()}
+              onClick={() => {
+                if (onPageChange) {
+                  onPageChange(currentPage - 1);
+                } else {
+                  table.previousPage();
+                }
+              }}
               disabled={!table.getCanPreviousPage()}
               className="h-7 w-7 p-0 disabled:opacity-30 sm:h-8 sm:w-8 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
             >
@@ -144,7 +166,13 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
                     key={pageNum}
                     variant={isActive ? "default" : "outline"}
                     size="sm"
-                    onClick={() => table.setPageIndex(pageNum - 1)}
+                    onClick={() => {
+                      if (onPageChange) {
+                        onPageChange(pageNum);
+                      } else {
+                        table.setPageIndex(pageNum - 1);
+                      }
+                    }}
                     className={`h-7 w-7 p-0 text-xs sm:h-8 sm:w-8 sm:text-sm ${
                       isActive
                         ? "bg-primary dark:bg-primary text-white transition-opacity duration-300 hover:opacity-80 dark:text-black"
@@ -161,7 +189,13 @@ export function Pagination<TData>({ table }: PaginationProps<TData>) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => table.nextPage()}
+              onClick={() => {
+                if (onPageChange) {
+                  onPageChange(currentPage + 1);
+                } else {
+                  table.nextPage();
+                }
+              }}
               disabled={!table.getCanNextPage()}
               className="h-7 w-7 p-0 disabled:opacity-30 sm:h-8 sm:w-8 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
             >

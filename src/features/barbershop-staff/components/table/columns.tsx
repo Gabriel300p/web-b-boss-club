@@ -39,14 +39,10 @@ export const createColumns = ({
             ? staff.last_name
             : "";
         const fullName = `${staff.first_name} ${lastName}`.trim();
-        const displayName =
-          staff.display_name && typeof staff.display_name === "string"
-            ? staff.display_name
-            : fullName;
 
         return (
           <div className="ml-5 cursor-pointer font-medium text-neutral-100 hover:text-neutral-200">
-            {displayName}
+            {fullName}
           </div>
         );
       },
