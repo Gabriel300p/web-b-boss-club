@@ -1,243 +1,91 @@
 /**
- * 🆕 Create Staff Modal - Phase 1 (MVP)
- * Formulário minimalista para adicionar colaboradores
+ * 🆕 Create Staff Modal - Multi-step Wizard
+ * Modal com layout lado a lado (stepper + formulário)
  */
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusCircleIcon, ProhibitIcon } from "@shared/components/icons";
-import { Button } from "@shared/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@shared/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@shared/components/ui/form";
-import { Input } from "@shared/components/ui/input";
-import { maskCPF } from "@shared/utils/cpf.utils";
-import { memo, useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import { Dialog, DialogContent } from "@shared/components/ui/dialog";
+import { memo, useState } from "react";
 import { useBarbershopStaffCreate } from "../../hooks/useBarbershopStaffCreate";
-import {
-  createStaffMinimalFormSchema,
-  type CreateStaffMinimalFormData,
-} from "../../schemas/barbershop-staff.schemas";
+import type { CreateStaffMinimalFormData } from "../../schemas/barbershop-staff.schemas";
+import { CreateStaffForm } from "../form/CreateStaffForm";
+import { CreateStaffStepper } from "../form/CreateStaffStepper";
 
 interface CreateStaffModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const TOTAL_STEPS = 4;
+
 /**
- * Modal para criar novo colaborador (Fase 1 - Campos essenciais)
+ * Modal para criar novo colaborador com wizard multi-step
  */
 export const CreateStaffModal = memo(function CreateStaffModal({
   isOpen,
   onClose,
 }: CreateStaffModalProps) {
-  const { t } = useTranslation("barbershop-staff");
+  const [currentStep, setCurrentStep] = useState(1);
 
   // Hook com callback de sucesso que fecha a modal
   const { createStaff, isLoading } = useBarbershopStaffCreate({
     onSuccess: () => {
-      // Fechar modal apenas quando sucesso confirmado
+      // Fechar modal e resetar step
+      setCurrentStep(1);
       onClose();
     },
   });
 
-  // Form setup com validação Zod
-  const defaultValues = useMemo<CreateStaffMinimalFormData>(
-    () => ({
-      full_name: "",
-      cpf: "",
-      email: "",
-    }),
-    [],
-  );
-
-  const form = useForm<CreateStaffMinimalFormData>({
-    resolver: zodResolver(createStaffMinimalFormSchema),
-    mode: "onChange",
-    defaultValues,
-  });
-
-  const {
-    handleSubmit,
-    reset,
-    setValue,
-    watch,
-    formState: { isSubmitting, isValid },
-  } = form;
-
-  const watchedCpf = watch("cpf");
-
-  // Aplicar máscara de CPF
-  useEffect(() => {
-    if (watchedCpf) {
-      const masked = maskCPF(watchedCpf);
-      if (masked !== watchedCpf) {
-        setValue("cpf", masked, { shouldValidate: true });
-      }
-    }
-  }, [watchedCpf, setValue]);
-
-  // Reset form quando modal abre
-  useEffect(() => {
-    if (isOpen) {
-      reset(defaultValues);
-    }
-  }, [isOpen, reset, defaultValues]);
-
-  // Handler de submit
-  const onSubmit = async (data: CreateStaffMinimalFormData) => {
+  // Handler de submit do formulário
+  const handleFormSubmit = (data: CreateStaffMinimalFormData) => {
     // Split nome completo em first_name e last_name
     const nameParts = data.full_name.trim().split(" ");
     const first_name = nameParts[0];
     const last_name = nameParts.slice(1).join(" ") || undefined;
 
     // Criar staff com dados transformados
-    // Nota: não fechamos a modal aqui, ela será fechada no onSuccess do mutation
     createStaff({
       first_name,
       last_name,
       cpf: data.cpf,
       email: data.email?.trim() || undefined,
-      status: "ACTIVE",
+      phone: data.phone?.trim() || undefined,
+      status: data.status || "ACTIVE",
     });
   };
 
-  const modalTitle = useMemo(() => t("modals.createStaff.title"), [t]);
+  const handleCancel = () => {
+    setCurrentStep(1);
+    onClose();
+  };
+
+  const handleNext = () => {
+    if (currentStep < TOTAL_STEPS) {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="mb-2 flex items-center gap-3">
-            <PlusCircleIcon className="h-5 w-5" />
-            {modalTitle}
-          </DialogTitle>
-        </DialogHeader>
-
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Campo: Nome Completo */}
-            <FormField
-              control={form.control}
-              name="full_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t("modals.createStaff.fields.fullName")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={t(
-                        "modals.createStaff.placeholders.fullName",
-                      )}
-                      disabled={isSubmitting || isLoading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+    <Dialog open={isOpen} onOpenChange={handleCancel}>
+      <DialogContent className="h-[85vh] !w-[50vw] !max-w-[1400px] gap-0 overflow-hidden border-0 bg-transparent p-0 shadow-none">
+        <div className="flex h-full w-full overflow-hidden rounded-xl bg-neutral-900 shadow-2xl">
+          {/* Sidebar - Navegação (Stepper) */}
+          <div className="w-[280px] flex-shrink-0 border-r border-neutral-800">
+            <CreateStaffStepper
+              currentStep={currentStep}
+              totalSteps={TOTAL_STEPS}
             />
+          </div>
 
-            {/* Campo: CPF */}
-            <FormField
-              control={form.control}
-              name="cpf"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t("modals.createStaff.fields.cpf")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={t("modals.createStaff.placeholders.cpf")}
-                      disabled={isSubmitting || isLoading}
-                      maxLength={14}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    {t("modals.createStaff.hints.cpfFormat")}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+          {/* Conteúdo - Formulário */}
+          <div className="flex-1 overflow-hidden">
+            <CreateStaffForm
+              currentStep={currentStep}
+              onSubmit={handleFormSubmit}
+              onCancel={handleCancel}
+              onNext={handleNext}
+              isLoading={isLoading}
             />
-
-            {/* Campo: Email (Opcional) */}
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {t("modals.createStaff.fields.email")}{" "}
-                    <span className="text-xs text-neutral-500">
-                      ({t("modals.createStaff.optional")})
-                    </span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder={t("modals.createStaff.placeholders.email")}
-                      disabled={isSubmitting || isLoading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    {t("modals.createStaff.hints.email")}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Footer com botões */}
-            <DialogFooter className="flex gap-2 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                disabled={isSubmitting || isLoading}
-              >
-                <ProhibitIcon className="mr-2 h-4 w-4" />
-                {t("actions.cancel")}
-              </Button>
-              <Button
-                type="submit"
-                disabled={!isValid || isSubmitting || isLoading}
-                className="min-w-[120px]"
-              >
-                {isLoading || isSubmitting ? (
-                  <>
-                    <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    {t("actions.creating")}
-                  </>
-                ) : (
-                  <>
-                    <PlusCircleIcon className="mr-2 h-4 w-4" />
-                    {t("actions.create")}
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

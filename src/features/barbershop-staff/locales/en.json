@@ -62,6 +62,40 @@
       "optional": "optional"
     }
   },
+  "wizard": {
+    "title": "Add new barber",
+    "subtitle": "Creating a new barber, clients in the app will be able to see them.",
+    "steps": {
+      "basicData": "Basic data",
+      "admissionInfo": "Admission information",
+      "workSchedule": "Work schedule",
+      "userAccess": "User access"
+    },
+    "fields": {
+      "name": "Name",
+      "cpf": "CPF",
+      "phone": "Phone",
+      "status": "Status",
+      "description": "Description"
+    },
+    "placeholders": {
+      "name": "Enter the barber's name",
+      "cpf": "XXX.XXX.XXX-XX",
+      "phone": "(XX) XXXXX-XXXX",
+      "status": "Active",
+      "description": "Enter additional information..."
+    },
+    "hints": {
+      "description": "Additional information about the staff member (optional)"
+    },
+    "actions": {
+      "continue": "Continue"
+    },
+    "progress": {
+      "label": "Step",
+      "step": "{{current}} of {{total}}"
+    }
+  },
   "empty": {
     "noData": {
       "title": "No results available",

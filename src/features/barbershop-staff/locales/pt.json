@@ -62,6 +62,42 @@
       "optional": "opcional"
     }
   },
+  "wizard": {
+    "title": "Adicionar novo barbeiro",
+    "subtitle": "Criando um novo barbeiro, os clientes no aplicativo vão conseguir visualizar.",
+    "steps": {
+      "basicData": "Dados cadastrais",
+      "admissionInfo": "Informações admissionais",
+      "workSchedule": "Horário de trabalho",
+      "userAccess": "Acesso do usuário"
+    },
+    "fields": {
+      "name": "Nome",
+      "cpf": "CPF",
+      "phone": "Telefone",
+      "email": "Email",
+      "status": "Status",
+      "description": "Descrição"
+    },
+    "placeholders": {
+      "name": "Digite o nome do barbeiro",
+      "cpf": "XXX.XXX.XXX-XX",
+      "phone": "(XX) XXXXX-XXXX",
+      "email": "email@exemplo.com",
+      "status": "Ativo",
+      "description": "Digite alguma informação adicional..."
+    },
+    "hints": {
+      "description": "Informações adicionais sobre o colaborador (opcional)"
+    },
+    "actions": {
+      "continue": "Continuar"
+    },
+    "progress": {
+      "label": "Passo",
+      "step": "{{current}} de {{total}}"
+    }
+  },
   "empty": {
     "noData": {
       "title": "Nenhum resultado disponível",
