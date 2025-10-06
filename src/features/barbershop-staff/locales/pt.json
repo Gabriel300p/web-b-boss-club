@@ -40,7 +40,13 @@
     "clearFilters": "Limpar Filtros",
     "cancel": "Cancelar",
     "create": "Adicionar",
-    "creating": "Adicionando..."
+    "creating": "Adicionando...",
+    "save": "Salvar alterações",
+    "saving": "Salvando...",
+    "close": "Fechar",
+    "view": "Visualizar",
+    "activate": "Ativar",
+    "deactivate": "Inativar"
   },
   "modals": {
     "createStaff": {
@@ -60,7 +66,17 @@
         "email": "Se preenchido, será criado um usuário com senha automática."
       },
       "optional": "opcional"
+    },
+    "staffModal": {
+      "viewTitle": "Visualizar Colaborador",
+      "viewSubtitle": "Informações detalhadas do colaborador",
+      "editTitle": "Editar Colaborador",
+      "editSubtitle": "Atualize as informações do colaborador"
     }
+  },
+  "sidebar": {
+    "staffInfo": "Informações",
+    "editWarning": "CPF e email não podem ser alterados por questões de segurança."
   },
   "wizard": {
     "title": "Adicionar novo barbeiro",
@@ -77,7 +93,8 @@
       "phone": "Telefone",
       "email": "Email",
       "status": "Status",
-      "description": "Descrição"
+      "description": "Descrição",
+      "internalNotes": "Notas Internas"
     },
     "placeholders": {
       "name": "Digite o nome do barbeiro",
@@ -85,10 +102,17 @@
       "phone": "(XX) XXXXX-XXXX",
       "email": "email@exemplo.com",
       "status": "Ativo",
-      "description": "Digite alguma informação adicional..."
+      "description": "Digite alguma informação adicional...",
+      "internalNotes": "Adicione observações internas..."
     },
     "hints": {
-      "description": "Informações adicionais sobre o colaborador (opcional)"
+      "description": "Informações adicionais sobre o colaborador (opcional)",
+      "cpfNotEditable": "CPF não pode ser alterado",
+      "emailNotEditable": "Email não pode ser alterado"
+    },
+    "modes": {
+      "viewTitle": "Visualizar Colaborador",
+      "editTitle": "Editar Colaborador"
     },
     "actions": {
       "continue": "Continuar"

@@ -1,7 +1,7 @@
 import { Divider } from "@/shared/components/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { CreateStaffModal } from "../components/dialogs/CreateStaffModal";
+import { StaffModal } from "../components/dialogs/StaffModal";
 import { ToggleStaffStatusModal } from "../components/dialogs/ToggleStaffStatusModal";
 import { useBarbershopStaff } from "../hooks/useBarbershopStaff";
 import { useStableStaffManagement } from "../hooks/useStableStaffManagement";
@@ -11,7 +11,11 @@ import { BarbershopStaffPageHeader } from "./sections/BarbershopStaffPageHeader"
 
 export function BarbershopStaffPage() {
   // 🎯 Modal states
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
+  const [staffModalMode, setStaffModalMode] = useState<
+    "create" | "view" | "edit"
+  >("create");
+  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
   const [isToggleStatusModalOpen, setIsToggleStatusModalOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState<BarbershopStaff | null>(
     null,
@@ -35,6 +39,24 @@ export function BarbershopStaffPage() {
   const { toggleStaffStatus } = useBarbershopStaff(filters);
 
   // 🎯 Handlers para ações
+  const handleCreate = useCallback(() => {
+    setStaffModalMode("create");
+    setSelectedStaffId(null);
+    setIsStaffModalOpen(true);
+  }, []);
+
+  const handleView = useCallback((staff: BarbershopStaff) => {
+    setStaffModalMode("view");
+    setSelectedStaffId(staff.id);
+    setIsStaffModalOpen(true);
+  }, []);
+
+  const handleEdit = useCallback((staff: BarbershopStaff) => {
+    setStaffModalMode("edit");
+    setSelectedStaffId(staff.id);
+    setIsStaffModalOpen(true);
+  }, []);
+
   const handleToggleStatus = useCallback((staff: BarbershopStaff) => {
     setSelectedStaff(staff);
     setIsToggleStatusModalOpen(true);
@@ -79,7 +101,7 @@ export function BarbershopStaffPage() {
           totalCount={pagination?.total || 0}
           statistics={statistics}
           lastUpdated={lastUpdated}
-          onCreateClick={() => setIsCreateModalOpen(true)}
+          onCreateClick={handleCreate}
         />
         <Divider className="my-1" />
         <BarbershopStaffPageContent
@@ -93,14 +115,21 @@ export function BarbershopStaffPage() {
           refetch={refetch}
           onTableSettingsChange={onTableSettingsChange}
           tableSettings={tableSettings}
+          onView={handleView}
+          onEdit={handleEdit}
           onToggleStatus={handleToggleStatus}
         />
       </div>
 
-      {/* Modal de criação de colaborador */}
-      <CreateStaffModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
+      {/* Modal unificada para criar/visualizar/editar colaborador */}
+      <StaffModal
+        isOpen={isStaffModalOpen}
+        onClose={() => {
+          setIsStaffModalOpen(false);
+          setSelectedStaffId(null);
+        }}
+        mode={staffModalMode}
+        staffId={selectedStaffId}
       />
 
       {/* Modal de confirmação para inativar/ativar colaborador */}

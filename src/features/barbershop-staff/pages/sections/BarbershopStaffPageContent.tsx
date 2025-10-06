@@ -32,6 +32,8 @@ interface BarbershopStaffPageContentProps {
   refetch: (options?: RefetchOptions) => Promise<QueryObserverResult>;
   onTableSettingsChange?: (settings: TableSettingsConfig) => void;
   tableSettings?: TableSettingsConfig;
+  onView: (staff: BarbershopStaff) => void;
+  onEdit: (staff: BarbershopStaff) => void;
   onToggleStatus: (staff: BarbershopStaff) => void;
 }
 
@@ -45,6 +47,8 @@ export function BarbershopStaffPageContent({
   hasActiveFilters,
   refetch,
   onTableSettingsChange,
+  onView,
+  onEdit,
   onToggleStatus,
   // tableSettings,
 }: BarbershopStaffPageContentProps) {
@@ -64,14 +68,8 @@ export function BarbershopStaffPageContent({
 
   // 📋 Table columns
   const columns = createColumns({
-    onView: (staff) => {
-      // TODO: Implementar modal de visualização
-      console.log("View staff:", staff);
-    },
-    onEdit: (staff) => {
-      // TODO: Implementar navegação para edição
-      console.log("Edit staff:", staff);
-    },
+    onView,
+    onEdit,
     onToggleStatus,
   });
 

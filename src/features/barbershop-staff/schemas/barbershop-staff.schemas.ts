@@ -92,6 +92,13 @@ export const barbershopStaffSchema = z.object({
     id: z.string(),
     email: z.string(),
     role: userRoleEnum,
+    cpf: z
+      .union([z.string(), z.null(), z.object({})])
+      .transform((val) =>
+        val && typeof val === "object" && Object.keys(val).length === 0
+          ? null
+          : val,
+      ),
   }),
   barbershop: z.object({
     id: z.string(),

@@ -40,7 +40,13 @@
     "clearFilters": "Clear Filters",
     "cancel": "Cancel",
     "create": "Add",
-    "creating": "Adding..."
+    "creating": "Adding...",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "close": "Close",
+    "view": "View",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
   },
   "modals": {
     "createStaff": {
@@ -60,11 +66,26 @@
         "email": "If filled, a user will be created with auto-generated password."
       },
       "optional": "optional"
+    },
+    "staffModal": {
+      "viewTitle": "View Staff Member",
+      "viewSubtitle": "Detailed staff member information",
+      "editTitle": "Edit Staff Member",
+      "editSubtitle": "Update staff member information"
     }
+  },
+  "sidebar": {
+    "staffInfo": "Information",
+    "editWarning": "CPF and email cannot be changed for security reasons."
   },
   "wizard": {
     "title": "Add new barber",
     "subtitle": "Creating a new barber, clients in the app will be able to see them.",
+    "modes": {
+      "create": "Create",
+      "view": "View",
+      "edit": "Edit"
+    },
     "steps": {
       "basicData": "Basic data",
       "admissionInfo": "Admission information",
@@ -76,17 +97,21 @@
       "cpf": "CPF",
       "phone": "Phone",
       "status": "Status",
-      "description": "Description"
+      "description": "Description",
+      "internalNotes": "Internal Notes"
     },
     "placeholders": {
       "name": "Enter the barber's name",
       "cpf": "XXX.XXX.XXX-XX",
       "phone": "(XX) XXXXX-XXXX",
       "status": "Active",
-      "description": "Enter additional information..."
+      "description": "Enter additional information...",
+      "internalNotes": "Internal notes for management..."
     },
     "hints": {
-      "description": "Additional information about the staff member (optional)"
+      "description": "Additional information about the staff member (optional)",
+      "cpfNotEditable": "CPF cannot be changed for security reasons",
+      "emailNotEditable": "Email cannot be changed for security reasons"
     },
     "actions": {
       "continue": "Continue"
