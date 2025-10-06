@@ -72,7 +72,8 @@ export const StaffForm = memo(function StaffForm({
 
       return {
         full_name: fullName,
-        cpf: typeof initialData.user?.cpf === "string" ? initialData.user.cpf : "", // CPF virá do user
+        cpf:
+          typeof initialData.user?.cpf === "string" ? initialData.user.cpf : "", // CPF virá do user
         email: initialData.user?.email || "",
         phone: typeof initialData.phone === "string" ? initialData.phone : "",
         status: initialData.status,
@@ -226,7 +227,9 @@ export const StaffForm = memo(function StaffForm({
                   <FormControl>
                     <Input
                       placeholder={t("wizard.placeholders.cpf")}
-                      disabled={isViewMode || isEditMode || isSubmitting || isLoading}
+                      disabled={
+                        isViewMode || isEditMode || isSubmitting || isLoading
+                      }
                       maxLength={14}
                       variant="form"
                       className="bg-neutral-800/50 text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
