@@ -1,7 +1,6 @@
 /**
  * Form Components - Barrel Export
  */
-export { CreateStaffForm } from "./CreateStaffForm";
-export { CreateStaffStepper } from "./CreateStaffStepper";
+// 🆕 Formulário unificado para criar/visualizar/editar
 export { StaffForm } from "./StaffForm";
 export type { StaffFormMode } from "./StaffForm";

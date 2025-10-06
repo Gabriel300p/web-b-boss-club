@@ -100,7 +100,7 @@ export async function updateStaff(
   id: string,
   data: UpdateStaffFormData,
 ): Promise<BarbershopStaff> {
-  const response = await apiService.put<BarbershopStaff>(
+  const response = await apiService.patch<BarbershopStaff>(
     `/barbershop-staff/${id}`,
     data,
   );
