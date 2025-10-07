@@ -22,13 +22,13 @@ import {
   type BarbershopStaff,
   type CreateStaffMinimalFormData,
 } from "../../schemas/barbershop-staff.schemas";
+import { getTotalSteps, STAFF_FORM_STEPS } from "./staff-form.config";
 import {
   AdmissionInfoStep,
   BasicDataStep,
   UserAccessStep,
   WorkScheduleStep,
 } from "./steps";
-import { getTotalSteps, STAFF_FORM_STEPS } from "./staff-form.config";
 
 //  Tipos de modo do formulário
 export type StaffFormMode = "create" | "view" | "edit";
@@ -153,15 +153,15 @@ export const StaffForm = memo(function StaffForm({
     // Valida cada campo obrigatório
     return fields.every((field) => {
       const value = values[field as keyof CreateStaffMinimalFormData];
-      
+
       // Caso especial: CPF só obrigatório em create mode
-      if (field === 'cpf' && isEditMode) return true;
-      
+      if (field === "cpf" && isEditMode) return true;
+
       // Validação genérica: campo preenchido
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         return value.trim().length > 0;
       }
-      
+
       return !!value;
     });
   };

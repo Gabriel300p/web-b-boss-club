@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { hasRequiredFields } from "../form/staff-form.config";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
+import { hasRequiredFields } from "../form/staff-form.config";
 
 interface Step {
   id: number;
@@ -140,7 +140,7 @@ export const StaffSidebar = memo(function StaffSidebar({
           {steps.map((step) => {
             const Icon = step.icon;
             const isActive = step.id === currentStep;
-            
+
             // 🎯 Lógica de validação visual (dinâmica via configuração)
             const hasRequired = hasRequiredFields(step.id);
             const isVisited = visitedSteps.has(step.id);
@@ -150,7 +150,7 @@ export const StaffSidebar = memo(function StaffSidebar({
             // Verde: (tem campos obrigatórios && válido) OU (sem campos obrigatórios && visitado)
             // Vermelho: tem campos obrigatórios && inválido && visitado
             // Cinza: não visitado
-            const isGreen = hasRequired ? (isValid && isVisited) : isVisited;
+            const isGreen = hasRequired ? isValid && isVisited : isVisited;
             const isRed = hasRequired && !isValid && isVisited;
             const isGray = !isVisited;
 
@@ -202,42 +202,43 @@ export const StaffSidebar = memo(function StaffSidebar({
         </nav>
 
         {/* Progress Indicator */}
-        {mode === "create" && (() => {
-          // 🎯 Calcular steps completos (válidos) dinamicamente
-          const completedSteps = steps.filter((s) => {
-            const hasRequired = hasRequiredFields(s.id);
-            const isValid = validationState[s.id] || false;
-            const isVisited = visitedSteps.has(s.id);
-            // Conta se: (tem obrigatórios && válido) OU (sem obrigatórios && visitado)
-            return hasRequired ? isValid : isVisited;
-          }).length;
+        {mode === "create" &&
+          (() => {
+            // 🎯 Calcular steps completos (válidos) dinamicamente
+            const completedSteps = steps.filter((s) => {
+              const hasRequired = hasRequiredFields(s.id);
+              const isValid = validationState[s.id] || false;
+              const isVisited = visitedSteps.has(s.id);
+              // Conta se: (tem obrigatórios && válido) OU (sem obrigatórios && visitado)
+              return hasRequired ? isValid : isVisited;
+            }).length;
 
-          return (
-            <div className="mt-8 space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-neutral-300">
-                  {t("wizard.progress.label", { defaultValue: "Progresso" })}
-                </span>
-                <span className="text-neutral-400">
-                  {t("wizard.progress.step", {
-                    current: completedSteps,
-                    total: totalSteps,
-                    defaultValue: `${completedSteps}/${totalSteps}`,
-                  })}
-                </span>
+            return (
+              <div className="mt-8 space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-neutral-300">
+                    {t("wizard.progress.label", { defaultValue: "Progresso" })}
+                  </span>
+                  <span className="text-neutral-400">
+                    {t("wizard.progress.step", {
+                      current: completedSteps,
+                      total: totalSteps,
+                      defaultValue: `${completedSteps}/${totalSteps}`,
+                    })}
+                  </span>
+                </div>
+                {/* Barra de Progresso */}
+                <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-800">
+                  <div
+                    className="h-full bg-gradient-to-r from-[#FAC82B] to-[#f9b800] transition-all duration-300"
+                    style={{
+                      width: `${(completedSteps / totalSteps) * 100}%`,
+                    }}
+                  />
+                </div>
               </div>
-              {/* Barra de Progresso */}
-              <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-800">
-                <div
-                  className="h-full bg-gradient-to-r from-[#FAC82B] to-[#f9b800] transition-all duration-300"
-                  style={{
-                    width: `${(completedSteps / totalSteps) * 100}%`,
-                  }}
-                />
-              </div>
-            </div>
-          );
-        })()}
+            );
+          })()}
       </div>
     </div>
   );

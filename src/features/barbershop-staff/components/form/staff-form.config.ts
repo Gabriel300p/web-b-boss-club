@@ -11,7 +11,7 @@ export interface StepConfig {
 
 /**
  * 🎯 Configuração dos steps do formulário de Staff
- * 
+ *
  * Para adicionar/remover steps, basta modificar este array.
  * O sistema ajusta automaticamente validação, cores e progress bar.
  */
@@ -19,7 +19,7 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
   {
     id: 1,
     hasRequiredFields: true,
-    validationFields: ['full_name', 'cpf', 'status'],
+    validationFields: ["full_name", "cpf", "status"],
   },
   {
     id: 2,
@@ -34,7 +34,7 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
   {
     id: 4,
     hasRequiredFields: true,
-    validationFields: ['email'],
+    validationFields: ["email"],
   },
 ];
 
@@ -42,7 +42,9 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
  * 🔍 Helper: Verifica se um step tem campos obrigatórios
  */
 export const hasRequiredFields = (stepId: number): boolean => {
-  return STAFF_FORM_STEPS.find((s) => s.id === stepId)?.hasRequiredFields ?? false;
+  return (
+    STAFF_FORM_STEPS.find((s) => s.id === stepId)?.hasRequiredFields ?? false
+  );
 };
 
 /**
