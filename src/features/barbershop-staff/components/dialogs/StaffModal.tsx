@@ -117,6 +117,7 @@ export const StaffModal = memo(function StaffModal({
               totalSteps={TOTAL_STEPS}
               staffData={mode !== "create" ? staffData : null}
               isLoading={isLoadingStaff}
+              onStepChange={setCurrentStep}
             />
           </div>
 
@@ -129,6 +130,8 @@ export const StaffModal = memo(function StaffModal({
                 onSubmit={handleFormSubmit}
                 onCancel={handleCancel}
                 isLoading={isLoading}
+                currentStep={currentStep}
+                onStepChange={setCurrentStep}
               />
             )}
 

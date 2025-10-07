@@ -1,7 +1,3 @@
-/**
- * 🎯 Staff Sidebar - Sidebar adaptativa para StaffModal
- * Muda o conteúdo baseado no modo (create/view/edit)
- */
 import { cn } from "@shared/lib/utils";
 import {
   ClipboardListIcon,
@@ -24,11 +20,12 @@ interface Step {
 
 interface StaffSidebarProps {
   mode: "create" | "view" | "edit";
-  currentStep?: number; // Usado apenas no mode="create"
-  totalSteps?: number; // Usado apenas no mode="create"
-  staffData?: BarbershopStaff | null; // Usado no mode="view" e "edit"
+  currentStep?: number;
+  totalSteps?: number;
+  staffData?: BarbershopStaff | null;
   isLoading?: boolean;
   className?: string;
+  onStepChange?: (step: number) => void;
 }
 
 /**
@@ -41,6 +38,7 @@ export const StaffSidebar = memo(function StaffSidebar({
   // staffData,
   // isLoading = false,
   className,
+  onStepChange,
 }: StaffSidebarProps) {
   const { t } = useTranslation("barbershop-staff");
 
@@ -139,14 +137,25 @@ export const StaffSidebar = memo(function StaffSidebar({
             const isActive = step.id === currentStep;
             const isCompleted = step.id < currentStep;
 
+            const handleStepClick = () => {
+              if (mode === "create" && onStepChange) {
+                onStepChange(step.id);
+              }
+            };
+
             return (
-              <div
+              <button
+                type="button"
                 key={step.id}
+                onClick={handleStepClick}
+                disabled={mode !== "create"}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200",
+                  "flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left transition-all duration-200",
                   {
                     "bg-neutral-900": isActive,
-                    "hover:bg-neutral-900/50": !isActive,
+                    "cursor-pointer hover:bg-neutral-900/50":
+                      !isActive && mode === "create",
+                    "cursor-not-allowed opacity-50": mode !== "create",
                   },
                 )}
               >
@@ -168,7 +177,7 @@ export const StaffSidebar = memo(function StaffSidebar({
                 >
                   {step.label}
                 </span>
-              </div>
+              </button>
             );
           })}
         </nav>

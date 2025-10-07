@@ -22,7 +22,7 @@ export function BarbershopStaffPage() {
   const [selectedStaff, setSelectedStaff] = useState<BarbershopStaff | null>(
     null,
   );
-  // 🛡️ Use hook estável que NÃO causa re-renders desnecessários
+
   const {
     filters,
     updateFilter,

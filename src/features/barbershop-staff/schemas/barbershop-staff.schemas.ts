@@ -162,17 +162,8 @@ export const createStaffMinimalFormSchema = z.object({
     ),
   email: z
     .string()
-    .optional()
-    .refine(
-      (val) => {
-        // Se preenchido, deve ser um email válido
-        if (!val || val.trim() === "") return true;
-        return emailSchema.safeParse(val).success;
-      },
-      {
-        message: "Email deve ter um formato válido",
-      },
-    ),
+    .min(1, "E-mail é obrigatório")
+    .email("E-mail deve ter um formato válido"),
   phone: z.string().optional(),
   status: staffStatusEnum.optional(),
   description: z.string().optional(),
