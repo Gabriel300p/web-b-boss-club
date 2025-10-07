@@ -1,23 +1,9 @@
 import { cn } from "@shared/lib/utils";
-import {
-  ClipboardListIcon,
-  ClockIcon,
-  EyeIcon,
-  FileTextIcon,
-  PencilIcon,
-  PlusCircleIcon,
-  UserIcon,
-} from "lucide-react";
-import { memo } from "react";
+import { EyeIcon, PencilIcon, PlusCircleIcon } from "lucide-react";
+import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
-import { hasRequiredFields } from "../form/staff-form.config";
-
-interface Step {
-  id: number;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
+import { STAFF_FORM_STEPS } from "../form/staff-form.config";
 
 interface StaffSidebarProps {
   mode: "create" | "view" | "edit";
@@ -84,35 +70,17 @@ export const StaffSidebar = memo(function StaffSidebar({
   const headerContent = getHeaderContent();
   const HeaderIcon = headerContent.icon;
 
-  // 🎯 Steps para o modo create
-  const steps: Step[] = [
-    {
-      id: 1,
-      label: t("wizard.steps.basicData", { defaultValue: "Dados Básicos" }),
-      icon: ClipboardListIcon,
-    },
-    {
-      id: 2,
-      label: t("wizard.steps.admissionInfo", {
-        defaultValue: "Informações de Admissão",
-      }),
-      icon: FileTextIcon,
-    },
-    {
-      id: 3,
-      label: t("wizard.steps.workSchedule", {
-        defaultValue: "Horário de Trabalho",
-      }),
-      icon: ClockIcon,
-    },
-    {
-      id: 4,
-      label: t("wizard.steps.userAccess", {
-        defaultValue: "Acesso do Usuário",
-      }),
-      icon: UserIcon,
-    },
-  ];
+  // ✅ Steps dinâmicos da configuração com labels traduzidos
+  const steps = useMemo(
+    () =>
+      STAFF_FORM_STEPS.map((step) => ({
+        id: step.id,
+        label: t(step.labelKey, { defaultValue: step.defaultLabel }),
+        icon: step.icon,
+        hasRequiredFields: step.hasRequiredFields,
+      })),
+    [t],
+  );
 
   return (
     <div
@@ -141,8 +109,8 @@ export const StaffSidebar = memo(function StaffSidebar({
             const Icon = step.icon;
             const isActive = step.id === currentStep;
 
-            // 🎯 Lógica de validação visual (dinâmica via configuração)
-            const hasRequired = hasRequiredFields(step.id);
+            // ✅ Lógica de validação visual usando propriedade do step
+            const hasRequired = step.hasRequiredFields;
             const isVisited = visitedSteps.has(step.id);
             const isValid = validationState[step.id] || false;
 
@@ -204,9 +172,9 @@ export const StaffSidebar = memo(function StaffSidebar({
         {/* Progress Indicator */}
         {mode === "create" &&
           (() => {
-            // 🎯 Calcular steps completos (válidos) dinamicamente
+            // ✅ Calcular steps completos (válidos) dinamicamente
             const completedSteps = steps.filter((s) => {
-              const hasRequired = hasRequiredFields(s.id);
+              const hasRequired = s.hasRequiredFields;
               const isValid = validationState[s.id] || false;
               const isVisited = visitedSteps.has(s.id);
               // Conta se: (tem obrigatórios && válido) OU (sem obrigatórios && visitado)

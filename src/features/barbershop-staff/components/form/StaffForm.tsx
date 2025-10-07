@@ -1,6 +1,7 @@
 ﻿/**
- *  Staff Form - Formulário adaptativo para criar/visualizar/editar colaborador
+ * ✨ Staff Form - Formulário adaptativo para criar/visualizar/editar colaborador
  * Suporta navegação por tabs (steps) no modo create
+ * Renderização 100% dinâmica baseada em configuração
  */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@shared/components/ui/button";
@@ -14,21 +15,18 @@ import {
   PencilIcon,
   XCircleIcon,
 } from "lucide-react";
-import { memo, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import {
   createStaffMinimalFormSchema,
   type BarbershopStaff,
   type CreateStaffMinimalFormData,
 } from "../../schemas/barbershop-staff.schemas";
+
+import { useStepNavigation, useStepValidation } from "@/shared/hooks";
 import { getTotalSteps, STAFF_FORM_STEPS } from "./staff-form.config";
-import {
-  AdmissionInfoStep,
-  BasicDataStep,
-  UserAccessStep,
-  WorkScheduleStep,
-} from "./steps";
+import { BasicDataStep } from "./steps";
 
 //  Tipos de modo do formulário
 export type StaffFormMode = "create" | "view" | "edit";
@@ -58,15 +56,13 @@ export const StaffForm = memo(function StaffForm({
   const [internalCurrentStep, setInternalCurrentStep] = useState<number>(1);
 
   const currentStep = externalCurrentStep ?? internalCurrentStep;
-  const currentTab = `step-${currentStep}`;
 
-  const isViewMode = mode === "view";
-  const isEditMode = mode === "edit";
-  const isCreateMode = mode === "create";
+  // ✅ Memoiza cálculos de modo
+  const isViewMode = useMemo(() => mode === "view", [mode]);
+  const isEditMode = useMemo(() => mode === "edit", [mode]);
+  const isCreateMode = useMemo(() => mode === "create", [mode]);
 
-  const TOTAL_STEPS = getTotalSteps();
-  const isFirstStep = currentStep === 1;
-  const isLastStep = currentStep === TOTAL_STEPS;
+  const TOTAL_STEPS = useMemo(() => getTotalSteps(), []);
 
   const getDefaultValues = (): CreateStaffMinimalFormData => {
     if (initialData && (isViewMode || isEditMode)) {
@@ -109,70 +105,62 @@ export const StaffForm = memo(function StaffForm({
     formState: { isSubmitting, isValid, isDirty },
   } = form;
 
-  const handleFormSubmit = (data: CreateStaffMinimalFormData) => {
-    onSubmit(data);
-  };
+  // ✅ Hook de validação de steps
+  const isStepValid = useStepValidation(form, mode, STAFF_FORM_STEPS);
 
-  const handleStepChange = (step: number) => {
-    if (onStepChange) {
-      onStepChange(step);
-    } else {
-      setInternalCurrentStep(step);
-    }
-  };
-
-  const handleNextStep = () => {
-    if (!isLastStep) {
-      handleStepChange(currentStep + 1);
-    }
-  };
-
-  const handlePreviousStep = () => {
-    if (!isFirstStep) {
-      handleStepChange(currentStep - 1);
-    }
-  };
-
-  const handleTabChange = (value: string) => {
-    const step = Number.parseInt(value.split("-")[1]);
-    handleStepChange(step);
-  };
-
-  const isStepValid = (step: number): boolean => {
-    // 🎯 Busca configuração do step
-    const stepConfig = STAFF_FORM_STEPS.find((s) => s.id === step);
-    if (!stepConfig) return false;
-
-    // Steps sem campos obrigatórios são sempre válidos
-    if (!stepConfig.hasRequiredFields) return true;
-
-    // Steps com campos obrigatórios: valida campos
-    const values = form.getValues();
-    const fields = stepConfig.validationFields || [];
-
-    // Valida cada campo obrigatório
-    return fields.every((field) => {
-      const value = values[field as keyof CreateStaffMinimalFormData];
-
-      // Caso especial: CPF só obrigatório em create mode
-      if (field === "cpf" && isEditMode) return true;
-
-      // Validação genérica: campo preenchido
-      if (typeof value === "string") {
-        return value.trim().length > 0;
+  // ✅ Hook de navegação entre steps
+  const handleStepChange = useCallback(
+    (step: number) => {
+      if (onStepChange) {
+        onStepChange(step);
+      } else {
+        setInternalCurrentStep(step);
       }
+    },
+    [onStepChange],
+  );
 
-      return !!value;
+  const { goToNext, goToPrevious, goToStep, isFirstStep, isLastStep } =
+    useStepNavigation({
+      currentStep,
+      totalSteps: TOTAL_STEPS,
+      onStepChange: handleStepChange,
     });
-  };
 
+  // ✅ Memoiza handler do tab change
+  const handleTabChange = useCallback(
+    (value: string) => {
+      const step = Number.parseInt(value.split("-")[1]);
+      goToStep(step);
+    },
+    [goToStep],
+  );
+
+  // ✅ Memoiza handler de submit
+  const handleFormSubmit = useCallback(
+    (data: CreateStaffMinimalFormData) => {
+      onSubmit(data);
+    },
+    [onSubmit],
+  );
+
+  // ✅ Coleta todos os campos de validação de TODOS os steps dinamicamente
+  const allValidationFields = useMemo(() => {
+    const fields = new Set<string>();
+    STAFF_FORM_STEPS.forEach((step) => {
+      step.validationFields?.forEach((field) => fields.add(field));
+    });
+    return Array.from(fields);
+  }, []);
+
+  // ✅ useWatch otimizado para observar múltiplos campos sem infinite loop
+  const watchedValues = useWatch({
+    control: form.control,
+    name: allValidationFields as Array<keyof CreateStaffMinimalFormData>,
+  });
+
+  // ✅ Validação do step atual (recalcula quando qualquer campo muda)
   const canProceed = isStepValid(currentStep);
-
-  // 🎯 Watch individual validation fields to avoid infinite loop
-  const fullName = form.watch("full_name");
-  const cpf = form.watch("cpf");
-  const status = form.watch("status");
-  const email = form.watch("email");
 
   // 🎯 Emitir validação em tempo real para o Modal/Sidebar
   useEffect(() => {
@@ -185,9 +173,10 @@ export const StaffForm = memo(function StaffForm({
       onValidationChange(validationState);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fullName, cpf, status, email, onValidationChange, isCreateMode]);
+  }, [watchedValues, onValidationChange, isCreateMode]);
 
-  const getHeaderTitle = () => {
+  // ✅ Título dinâmico baseado na configuração
+  const headerTitle = useMemo(() => {
     if (!isCreateMode) {
       return mode === "view"
         ? t("wizard.modes.viewTitle", {
@@ -198,31 +187,21 @@ export const StaffForm = memo(function StaffForm({
           });
     }
 
-    switch (currentStep) {
-      case 1:
-        return t("wizard.steps.basicData", {
-          defaultValue: "Dados Cadastrais",
-        });
-      case 2:
-        return t("wizard.steps.admissionInfo", {
-          defaultValue: "Informações de Admissão",
-        });
-      case 3:
-        return t("wizard.steps.workSchedule", {
-          defaultValue: "Horário de Trabalho",
-        });
-      case 4:
-        return t("wizard.steps.userAccess", {
-          defaultValue: "Acesso do Usuário",
-        });
-      default:
-        return t("wizard.steps.basicData");
-    }
-  };
+    // 🎯 Busca título do step na configuração
+    const step = STAFF_FORM_STEPS.find((s) => s.id === currentStep);
+    if (!step) return t("wizard.steps.basicData");
 
-  const HeaderIcon = isViewMode ? EyeIcon : isEditMode ? PencilIcon : null;
+    return t(step.labelKey, { defaultValue: step.defaultLabel });
+  }, [isCreateMode, mode, currentStep, t]);
 
-  const getPrimaryButtonText = () => {
+  // ✅ Ícone dinâmico baseado no modo
+  const HeaderIcon = useMemo(
+    () => (isViewMode ? EyeIcon : isEditMode ? PencilIcon : null),
+    [isViewMode, isEditMode],
+  );
+
+  // ✅ Memoiza texto do botão primário
+  const primaryButtonText = useMemo(() => {
     if (isLoading || isSubmitting) {
       return isCreateMode
         ? t("actions.creating", { defaultValue: "Criando..." })
@@ -236,15 +215,19 @@ export const StaffForm = memo(function StaffForm({
     return isLastStep
       ? t("wizard.actions.finish", { defaultValue: "Finalizar" })
       : t("wizard.actions.continue", { defaultValue: "Continuar" });
-  };
+  }, [isLoading, isSubmitting, isCreateMode, isLastStep, t]);
 
-  const handlePrimaryAction = () => {
+  // ✅ Memoiza handler de ação primária
+  const handlePrimaryAction = useCallback(() => {
     if (isCreateMode && !isLastStep) {
-      handleNextStep();
+      goToNext();
     } else {
       handleSubmit(handleFormSubmit)();
     }
-  };
+  }, [isCreateMode, isLastStep, goToNext, handleSubmit, handleFormSubmit]);
+
+  // ✅ Memoiza valor do tab atual
+  const currentTab = useMemo(() => `step-${currentStep}`, [currentStep]);
 
   return (
     <div className="flex h-full w-full flex-col bg-neutral-900">
@@ -256,7 +239,7 @@ export const StaffForm = memo(function StaffForm({
             </div>
           )}
           <h3 className="text-lg font-semibold text-neutral-50">
-            {getHeaderTitle()}
+            {headerTitle}
           </h3>
         </div>
       </div>
@@ -273,37 +256,23 @@ export const StaffForm = memo(function StaffForm({
               className="flex min-h-0 flex-1 flex-col"
             >
               <div className="flex-1 overflow-y-auto px-8 py-6">
-                <TabsContent value="step-1" className="m-0">
-                  <BasicDataStep
-                    form={form}
-                    mode={mode}
-                    isLoading={isLoading}
-                  />
-                </TabsContent>
-
-                <TabsContent value="step-2" className="m-0">
-                  <AdmissionInfoStep
-                    form={form}
-                    mode={mode}
-                    isLoading={isLoading}
-                  />
-                </TabsContent>
-
-                <TabsContent value="step-3" className="m-0">
-                  <WorkScheduleStep
-                    form={form}
-                    mode={mode}
-                    isLoading={isLoading}
-                  />
-                </TabsContent>
-
-                <TabsContent value="step-4" className="m-0">
-                  <UserAccessStep
-                    form={form}
-                    mode={mode}
-                    isLoading={isLoading}
-                  />
-                </TabsContent>
+                {/* ✅ Renderização 100% dinâmica dos steps */}
+                {STAFF_FORM_STEPS.map((step) => {
+                  const StepComponent = step.component;
+                  return (
+                    <TabsContent
+                      key={step.id}
+                      value={`step-${step.id}`}
+                      className="m-0"
+                    >
+                      <StepComponent
+                        form={form}
+                        mode={mode}
+                        isLoading={isLoading}
+                      />
+                    </TabsContent>
+                  );
+                })}
               </div>
             </Tabs>
           ) : (
@@ -318,7 +287,7 @@ export const StaffForm = memo(function StaffForm({
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={handlePreviousStep}
+                  onClick={goToPrevious}
                   disabled={isSubmitting || isLoading}
                   className="text-neutral-300 hover:bg-neutral-800 hover:text-neutral-50"
                 >
@@ -362,7 +331,7 @@ export const StaffForm = memo(function StaffForm({
                   {isLoading || isSubmitting ? (
                     <>
                       <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-neutral-950 border-t-transparent" />
-                      {getPrimaryButtonText()}
+                      {primaryButtonText}
                     </>
                   ) : (
                     <>
@@ -371,7 +340,7 @@ export const StaffForm = memo(function StaffForm({
                       ) : (
                         <CheckIcon className="h-4 w-4" />
                       )}
-                      {getPrimaryButtonText()}
+                      {primaryButtonText}
                     </>
                   )}
                 </Button>
