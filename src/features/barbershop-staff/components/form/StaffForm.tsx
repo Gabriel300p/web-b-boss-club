@@ -1,9 +1,4 @@
-﻿/**
- * ✨ Staff Form - Formulário adaptativo para criar/visualizar/editar colaborador
- * Suporta navegação por tabs (steps) no modo create
- * Renderização 100% dinâmica baseada em configuração
- */
-import { zodResolver } from "@hookform/resolvers/zod";
+﻿import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@shared/components/ui/button";
 import { Form } from "@shared/components/ui/form";
 import { Tabs, TabsContent } from "@shared/components/ui/tabs";
@@ -26,7 +21,7 @@ import {
 
 import { useStepNavigation, useStepValidation } from "@/shared/hooks";
 import { getTotalSteps, STAFF_FORM_STEPS } from "./staff-form.config";
-import { BasicDataStep } from "./steps";
+import { BasicDataStep } from "./steps/_index";
 
 //  Tipos de modo do formulário
 export type StaffFormMode = "create" | "view" | "edit";
@@ -57,7 +52,6 @@ export const StaffForm = memo(function StaffForm({
 
   const currentStep = externalCurrentStep ?? internalCurrentStep;
 
-  // ✅ Memoiza cálculos de modo
   const isViewMode = useMemo(() => mode === "view", [mode]);
   const isEditMode = useMemo(() => mode === "edit", [mode]);
   const isCreateMode = useMemo(() => mode === "create", [mode]);
@@ -127,7 +121,6 @@ export const StaffForm = memo(function StaffForm({
       onStepChange: handleStepChange,
     });
 
-  // ✅ Memoiza handler do tab change
   const handleTabChange = useCallback(
     (value: string) => {
       const step = Number.parseInt(value.split("-")[1]);
@@ -136,7 +129,6 @@ export const StaffForm = memo(function StaffForm({
     [goToStep],
   );
 
-  // ✅ Memoiza handler de submit
   const handleFormSubmit = useCallback(
     (data: CreateStaffMinimalFormData) => {
       onSubmit(data);
@@ -200,7 +192,6 @@ export const StaffForm = memo(function StaffForm({
     [isViewMode, isEditMode],
   );
 
-  // ✅ Memoiza texto do botão primário
   const primaryButtonText = useMemo(() => {
     if (isLoading || isSubmitting) {
       return isCreateMode
@@ -217,7 +208,6 @@ export const StaffForm = memo(function StaffForm({
       : t("wizard.actions.continue", { defaultValue: "Continuar" });
   }, [isLoading, isSubmitting, isCreateMode, isLastStep, t]);
 
-  // ✅ Memoiza handler de ação primária
   const handlePrimaryAction = useCallback(() => {
     if (isCreateMode && !isLastStep) {
       goToNext();
@@ -226,7 +216,6 @@ export const StaffForm = memo(function StaffForm({
     }
   }, [isCreateMode, isLastStep, goToNext, handleSubmit, handleFormSubmit]);
 
-  // ✅ Memoiza valor do tab atual
   const currentTab = useMemo(() => `step-${currentStep}`, [currentStep]);
 
   return (

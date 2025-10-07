@@ -12,7 +12,7 @@ import {
   BasicDataStep,
   UserAccessStep,
   WorkScheduleStep,
-} from "./steps";
+} from "./steps/_index";
 
 export interface StepConfig {
   id: number;
