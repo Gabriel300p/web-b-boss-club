@@ -32,12 +32,33 @@ export const StaffModal = memo(function StaffModal({
   staffId,
 }: StaffModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([1]));
+  const [validationState, setValidationState] = useState<
+    Record<number, boolean>
+  >({
+    1: false,
+    2: true,
+    3: true,
+    4: false,
+  });
+
+  // 🎯 Reset state function
+  const resetModalState = () => {
+    setCurrentStep(1);
+    setVisitedSteps(new Set([1]));
+    setValidationState({
+      1: false,
+      2: true,
+      3: true,
+      4: false,
+    });
+  };
 
   // 🎯 Hook de criação (apenas para mode="create")
   const { createStaff: createStaffFn, isLoading: isCreating } =
     useBarbershopStaffCreate({
       onSuccess: () => {
-        setCurrentStep(1);
+        resetModalState();
         onClose();
       },
     });
@@ -97,8 +118,13 @@ export const StaffModal = memo(function StaffModal({
   };
 
   const handleCancel = () => {
-    setCurrentStep(1);
+    resetModalState();
     onClose();
+  };
+
+  const handleStepChange = (step: number) => {
+    setCurrentStep(step);
+    setVisitedSteps((prev) => new Set(prev).add(step));
   };
 
   // 🎯 Determinar estado de loading
@@ -117,7 +143,9 @@ export const StaffModal = memo(function StaffModal({
               totalSteps={TOTAL_STEPS}
               staffData={mode !== "create" ? staffData : null}
               isLoading={isLoadingStaff}
-              onStepChange={setCurrentStep}
+              onStepChange={handleStepChange}
+              visitedSteps={visitedSteps}
+              validationState={validationState}
             />
           </div>
 
@@ -131,7 +159,8 @@ export const StaffModal = memo(function StaffModal({
                 onCancel={handleCancel}
                 isLoading={isLoading}
                 currentStep={currentStep}
-                onStepChange={setCurrentStep}
+                onStepChange={handleStepChange}
+                onValidationChange={setValidationState}
               />
             )}
 

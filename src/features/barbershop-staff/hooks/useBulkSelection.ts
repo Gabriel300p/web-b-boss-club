@@ -49,15 +49,6 @@ export function useBulkSelection({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
 
-  // 🔍 DEBUG: Log state changes
-  useEffect(() => {
-    console.log("📊 rowSelection state:", rowSelection);
-    console.log(
-      "📊 Selected IDs:",
-      Object.keys(rowSelection).filter((id) => rowSelection[id]),
-    );
-  }, [rowSelection]);
-
   // 🎯 CRÍTICO: Wrapper para aceitar updater function do TanStack Table
   const handleRowSelectionChange = useCallback(
     (
@@ -65,7 +56,6 @@ export function useBulkSelection({
         | RowSelectionState
         | ((old: RowSelectionState) => RowSelectionState),
     ) => {
-      console.log("🔄 handleRowSelectionChange called with:", updater);
       setRowSelection(updater);
     },
     [],

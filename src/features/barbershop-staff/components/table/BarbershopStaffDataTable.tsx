@@ -53,19 +53,6 @@ function BarbershopStaffDataTableComponent<TData, TValue>({
 
   // 🔍 DEBUG: Prove component re-renders
   const finalRowSelection = externalRowSelection ?? internalRowSelection;
-  console.log(
-    "🏗️ DataTable RENDER | externalRowSelection:",
-    externalRowSelection,
-    "| finalRowSelection:",
-    finalRowSelection,
-  );
-  console.log(
-    "🏗️ DataTable RENDER | data length:",
-    data.length,
-    "| data reference:",
-    data,
-  );
-
   const table = useReactTable({
     data,
     columns,

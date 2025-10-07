@@ -14,7 +14,7 @@ import {
   PencilIcon,
   XCircleIcon,
 } from "lucide-react";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import {
@@ -28,6 +28,7 @@ import {
   UserAccessStep,
   WorkScheduleStep,
 } from "./steps";
+import { getTotalSteps, STAFF_FORM_STEPS } from "./staff-form.config";
 
 //  Tipos de modo do formulário
 export type StaffFormMode = "create" | "view" | "edit";
@@ -40,6 +41,7 @@ interface StaffFormProps {
   isLoading?: boolean;
   currentStep?: number;
   onStepChange?: (step: number) => void;
+  onValidationChange?: (validationState: Record<number, boolean>) => void;
 }
 
 export const StaffForm = memo(function StaffForm({
@@ -50,6 +52,7 @@ export const StaffForm = memo(function StaffForm({
   isLoading = false,
   currentStep: externalCurrentStep,
   onStepChange,
+  onValidationChange,
 }: StaffFormProps) {
   const { t } = useTranslation("barbershop-staff");
   const [internalCurrentStep, setInternalCurrentStep] = useState<number>(1);
@@ -61,7 +64,7 @@ export const StaffForm = memo(function StaffForm({
   const isEditMode = mode === "edit";
   const isCreateMode = mode === "create";
 
-  const TOTAL_STEPS = 4;
+  const TOTAL_STEPS = getTotalSteps();
   const isFirstStep = currentStep === 1;
   const isLastStep = currentStep === TOTAL_STEPS;
 
@@ -136,29 +139,53 @@ export const StaffForm = memo(function StaffForm({
   };
 
   const isStepValid = (step: number): boolean => {
-    switch (step) {
-      case 1: {
-        const values = form.getValues();
-        return !!(
-          values.full_name &&
-          (isEditMode || values.cpf) &&
-          values.status
-        );
+    // 🎯 Busca configuração do step
+    const stepConfig = STAFF_FORM_STEPS.find((s) => s.id === step);
+    if (!stepConfig) return false;
+
+    // Steps sem campos obrigatórios são sempre válidos
+    if (!stepConfig.hasRequiredFields) return true;
+
+    // Steps com campos obrigatórios: valida campos
+    const values = form.getValues();
+    const fields = stepConfig.validationFields || [];
+
+    // Valida cada campo obrigatório
+    return fields.every((field) => {
+      const value = values[field as keyof CreateStaffMinimalFormData];
+      
+      // Caso especial: CPF só obrigatório em create mode
+      if (field === 'cpf' && isEditMode) return true;
+      
+      // Validação genérica: campo preenchido
+      if (typeof value === 'string') {
+        return value.trim().length > 0;
       }
-      case 2:
-      case 3:
-        return true;
-      case 4: {
-        const values = form.getValues();
-        // Validação básica: email preenchido e formato válido
-        return !!(values.email && values.email.trim().length > 0);
-      }
-      default:
-        return false;
-    }
+      
+      return !!value;
+    });
   };
 
   const canProceed = isStepValid(currentStep);
+
+  // 🎯 Watch individual validation fields to avoid infinite loop
+  const fullName = form.watch("full_name");
+  const cpf = form.watch("cpf");
+  const status = form.watch("status");
+  const email = form.watch("email");
+
+  // 🎯 Emitir validação em tempo real para o Modal/Sidebar
+  useEffect(() => {
+    if (onValidationChange && isCreateMode) {
+      // Gera validationState dinamicamente para todos os steps
+      const validationState: Record<number, boolean> = {};
+      STAFF_FORM_STEPS.forEach((step) => {
+        validationState[step.id] = isStepValid(step.id);
+      });
+      onValidationChange(validationState);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullName, cpf, status, email, onValidationChange, isCreateMode]);
 
   const getHeaderTitle = () => {
     if (!isCreateMode) {

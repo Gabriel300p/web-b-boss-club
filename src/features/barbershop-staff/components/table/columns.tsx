@@ -46,38 +46,18 @@ export const createColumns = ({
         </div>
       ),
       cell: ({ row, table }) => {
-        const isSelected = row.getIsSelected();
-
         // 🔍 DEBUG: Check table state directly
         const tableState = table.getState().rowSelection;
         const isInTableState = tableState[row.id] === true;
-
-        console.log(
-          "🎨 CELL RENDER | Row ID:",
-          row.id,
-          "| row.getIsSelected():",
-          isSelected,
-          "| tableState[rowId]:",
-          isInTableState,
-        );
-
         return (
           <div className="flex items-center justify-center gap-2">
             <Checkbox
               checked={isInTableState}
               onCheckedChange={(value) => {
-                console.log("🔄 Toggle clicked:", row.id, "| value:", value);
                 row.toggleSelected(!!value);
               }}
               aria-label={t("bulkActions.selectRow")}
             />
-            {/* DEBUG: Visual indicator */}
-            {/* <div
-              className="text-xs font-bold"
-              style={{ color: isInTableState ? "lime" : "red" }}
-            >
-              {isInTableState ? "✓" : "✗"}
-            </div> */}
           </div>
         );
       },
