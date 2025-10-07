@@ -2,13 +2,10 @@
  * 🛡️ Stable Staff Hook - Versão que NÃO causa re-renders
  * Esta é uma versão robusta que elimina todos os problemas de re-render
  */
-import type { TableColumn } from "@shared/types/table.types";
 import { useMemo } from "react";
-import { createColumns } from "../components/table/columns";
 import type { StaffFilters } from "../schemas/barbershop-staff.schemas";
 import { useBarbershopStaff as useOriginalBarbershopStaff } from "./useBarbershopStaff";
 import { useStaffFilters as useOriginalStaffFilters } from "./useStaffFilters";
-import { useTableSettings } from "./useTableSettings";
 
 // 🎯 Hook estável para filtros que NÃO re-renderiza desnecessariamente
 export function useStableStaffFilters() {
@@ -63,52 +60,6 @@ export function useStableStaffManagement() {
   const filtersHook = useStableStaffFilters();
   const staffHook = useStableBarbershopStaff(filtersHook.filters);
 
-  // 🎯 Create table columns for settings
-  const tableColumns: TableColumn[] = useMemo(() => {
-    // Create columns with dummy handlers for conversion
-    // Handlers reais serão passados pela página
-    const columns = createColumns({
-      onView: () => {},
-      onEdit: () => {},
-      onToggleStatus: () => {},
-    });
-
-    return columns
-      .filter((column) => column.id !== "actions") // Exclude actions column from settings
-      .map((column) => {
-        // Get column ID - prefer 'id' over 'accessorKey'
-        const columnId =
-          column.id ||
-          ((column as { accessorKey?: string }).accessorKey as string);
-
-        // Get column label - handle both string and function headers
-        let columnLabel = "Coluna"; // Default fallback
-        if (typeof column.header === "string") {
-          columnLabel = column.header;
-        } else if (typeof column.header === "function") {
-          // For function headers, we'll use a mapping based on column ID
-          const labelMap: Record<string, string> = {
-            first_name: "Nome",
-            "user.email": "Email",
-            role_in_shop: "Função",
-            status: "Status",
-            is_available: "Disponibilidade",
-            hire_date: "Data de Contratação",
-          };
-          columnLabel = labelMap[columnId] || "Coluna";
-        }
-
-        return {
-          id: columnId,
-          label: columnLabel,
-          defaultVisible: true,
-          fixed: columnId === "first_name", // Fix name column
-        };
-      });
-  }, []);
-
-  const tableSettingsHook = useTableSettings(tableColumns);
-
   return {
     // Filters
     filters: filtersHook.filters,
@@ -122,10 +73,5 @@ export function useStableStaffManagement() {
     statistics: staffHook.statistics,
     isLoading: staffHook.isLoading,
     refetch: staffHook.refetch,
-
-    // Table settings
-    tableSettings: tableSettingsHook.settings,
-    onTableSettingsChange: tableSettingsHook.onTableSettingsChange,
-    resetTableSettings: tableSettingsHook.resetSettings,
   };
 }

@@ -17,6 +17,9 @@ import type {
   StaffListResponse,
 } from "../../schemas/barbershop-staff.schemas";
 
+// 🎯 Import bulk selection types
+import type { UseBulkSelectionReturn } from "../../hooks/useBulkSelection";
+
 // 🎯 Props interface for better type safety
 interface BarbershopStaffPageContentProps {
   staff: BarbershopStaff[];
@@ -35,6 +38,7 @@ interface BarbershopStaffPageContentProps {
   onView: (staff: BarbershopStaff) => void;
   onEdit: (staff: BarbershopStaff) => void;
   onToggleStatus: (staff: BarbershopStaff) => void;
+  bulkSelection: UseBulkSelectionReturn;
 }
 
 export function BarbershopStaffPageContent({
@@ -50,6 +54,7 @@ export function BarbershopStaffPageContent({
   onView,
   onEdit,
   onToggleStatus,
+  bulkSelection,
   // tableSettings,
 }: BarbershopStaffPageContentProps) {
   // 🎯 Hook de reload componentizado
@@ -66,11 +71,12 @@ export function BarbershopStaffPageContent({
     minLoadingTime: 200, // Minimum loading time for better UX
   });
 
-  // 📋 Table columns
+  // 📋 Table columns (com bulk selection na Fase 1)
   const columns = createColumns({
     onView,
     onEdit,
     onToggleStatus,
+    enableBulkSelection: true,
   });
 
   // 🎯 Separate loading states: filters should NEVER show skeleton during filtering
@@ -117,6 +123,9 @@ export function BarbershopStaffPageContent({
             updateFilter("limit", limit);
             updateFilter("page", 1); // Reset to first page when changing page size
           }}
+          rowSelection={bulkSelection.rowSelection}
+          onRowSelectionChange={bulkSelection.setRowSelection}
+          enableRowSelection={true}
         />
       )}
     </div>

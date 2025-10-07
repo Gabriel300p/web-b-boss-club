@@ -218,5 +218,19 @@
       "previous": "Previous",
       "next": "Next"
     }
+  },
+  "bulkActions": {
+    "selectAll": "Select all on page",
+    "selectRow": "Select row",
+    "itemsSelected": "{{count}} item selected",
+    "itemsSelected_other": "{{count}} items selected",
+    "limitReached": "Limit of {{limit}} selections reached",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "downloadCSV": "Download CSV",
+    "clearSelection": "Clear selection",
+    "comingSoon": "Coming soon (Phase 2/3)",
+    "selectAllPages": "Select all from all pages ({{total}} items)",
+    "loadingAllPages": "Loading all items..."
   }
 }

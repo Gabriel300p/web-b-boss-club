@@ -17,7 +17,7 @@ import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
 
-interface ToggleStaffStatusModalProps {
+interface StaffStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => Promise<void>;
@@ -27,12 +27,12 @@ interface ToggleStaffStatusModalProps {
 /**
  * Modal de confirmação para alternar status do colaborador
  */
-export const ToggleStaffStatusModal = memo(function ToggleStaffStatusModal({
+export const StaffStatusModal = memo(function StaffStatusModal({
   isOpen,
   onClose,
   onConfirm,
   staff,
-}: ToggleStaffStatusModalProps) {
+}: StaffStatusModalProps) {
   const { t } = useTranslation("barbershop-staff");
   const { error } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -93,20 +93,18 @@ export const ToggleStaffStatusModal = memo(function ToggleStaffStatusModal({
             <AlertDialogTitle className="text-xl">
               {isActive
                 ? t("modals.toggleStatus.deactivateTitle", {
-                    defaultValue: `Deseja inativar esse colaborador ${staffName}?`,
+                    defaultValue: `Deseja inativar esse colaborador?`,
                   })
                 : t("modals.toggleStatus.activateTitle", {
-                    defaultValue: `Deseja ativar esse colaborador ${staffName}?`,
+                    defaultValue: `Deseja ativar esse colaborador?`,
                   })}
               <p className="mt-2 text-base font-normal text-neutral-400">
                 {isActive
                   ? t("modals.toggleStatus.deactivateDescription", {
-                      defaultValue:
-                        "Este colaborador irá alterar de status para inativo. Você poderá ativá-lo novamente, se necessário.",
+                      defaultValue: `O colaborador ${staffName} irá alterar de status para inativo. Você poderá ativá-lo novamente.`,
                     })
                   : t("modals.toggleStatus.activateDescription", {
-                      defaultValue:
-                        "Este colaborador irá alterar de status para ativo e poderá voltar a trabalhar normalmente.",
+                      defaultValue: `O colaborador ${staffName} irá alterar de status para ativo. Você poderá inativá-lo novamente.`,
                     })}
               </p>
             </AlertDialogTitle>
@@ -123,7 +121,7 @@ export const ToggleStaffStatusModal = memo(function ToggleStaffStatusModal({
             className={` ${
               isActive
                 ? "bg-red-600 text-white hover:bg-red-700 disabled:bg-red-800"
-                : "bg-green-600 text-white hover:bg-green-700 disabled:bg-green-800"
+                : "bg-green-700 text-white hover:bg-green-700 disabled:bg-green-800"
             }`}
           >
             {isLoading ? (

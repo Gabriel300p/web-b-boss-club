@@ -119,3 +119,18 @@ export async function toggleStaffStatus(id: string): Promise<BarbershopStaff> {
   );
   return response.data;
 }
+
+// 🎯 Fetch all staff IDs (for bulk selection)
+export async function fetchAllStaffIds(
+  filters: StaffFilters = {},
+): Promise<string[]> {
+  const params = buildQueryParams({
+    ...filters,
+    limit: 500, // Limite máximo
+    page: 1,
+  });
+  const response = await apiService.get<StaffListResponse>(
+    `/barbershop-staff?${params.toString()}`,
+  );
+  return response.data.data.map((staff) => staff.id);
+}

@@ -219,5 +219,19 @@
       "previous": "Anterior",
       "next": "Próximo"
     }
+  },
+  "bulkActions": {
+    "selectAll": "Selecionar todos da página",
+    "selectRow": "Selecionar linha",
+    "itemsSelected": "{{count}} item selecionado",
+    "itemsSelected_other": "{{count}} itens selecionados",
+    "limitReached": "Limite de {{limit}} seleções atingido",
+    "activate": "Ativar",
+    "deactivate": "Desativar",
+    "downloadCSV": "Baixar CSV",
+    "clearSelection": "Limpar seleção",
+    "comingSoon": "Em breve (Fase 2/3)",
+    "selectAllPages": "Selecionar todos de todas as páginas ({{total}} itens)",
+    "loadingAllPages": "Carregando todos os itens..."
   }
 }

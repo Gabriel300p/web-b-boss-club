@@ -1,5 +1,6 @@
 import i18n from "@/app/i18n/init";
 import { Badge } from "@shared/components/ui/badge";
+import { Checkbox } from "@shared/components/ui/checkbox";
 import TableSort from "@shared/components/ui/table-sort";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -13,17 +14,79 @@ import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
 import { StaffActions, type StaffActionHandlers } from "./columns-actions";
 
 // 🎯 Interface para props das colunas
-type StaffColumnsProps = StaffActionHandlers;
+type StaffColumnsProps = StaffActionHandlers & {
+  // Bulk selection props (optional - Fase 1)
+  enableBulkSelection?: boolean;
+};
 
 // 🚀 Optimized column creation for barbershop staff
 export const createColumns = ({
   onView,
   onEdit,
   onToggleStatus,
+  enableBulkSelection = false,
 }: StaffColumnsProps): ColumnDef<BarbershopStaff>[] => {
   const t = i18n.getFixedT(i18n.language, "barbershop-staff");
 
-  return [
+  const columns: ColumnDef<BarbershopStaff>[] = [];
+
+  // 🎯 Checkbox column (TanStack Table nativo)
+  if (enableBulkSelection) {
+    columns.push({
+      id: "select",
+      header: ({ table }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label={t("bulkActions.selectAll")}
+          />
+        </div>
+      ),
+      cell: ({ row, table }) => {
+        const isSelected = row.getIsSelected();
+
+        // 🔍 DEBUG: Check table state directly
+        const tableState = table.getState().rowSelection;
+        const isInTableState = tableState[row.id] === true;
+
+        console.log(
+          "🎨 CELL RENDER | Row ID:",
+          row.id,
+          "| row.getIsSelected():",
+          isSelected,
+          "| tableState[rowId]:",
+          isInTableState,
+        );
+
+        return (
+          <div className="flex items-center justify-center gap-2">
+            <Checkbox
+              checked={isInTableState}
+              onCheckedChange={(value) => {
+                console.log("🔄 Toggle clicked:", row.id, "| value:", value);
+                row.toggleSelected(!!value);
+              }}
+              aria-label={t("bulkActions.selectRow")}
+            />
+            {/* DEBUG: Visual indicator */}
+            {/* <div
+              className="text-xs font-bold"
+              style={{ color: isInTableState ? "lime" : "red" }}
+            >
+              {isInTableState ? "✓" : "✗"}
+            </div> */}
+          </div>
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    });
+  }
+
+  columns.push(
     {
       id: "first_name",
       accessorKey: "first_name",
@@ -176,5 +239,7 @@ export const createColumns = ({
         );
       },
     },
-  ];
+  );
+
+  return columns;
 };

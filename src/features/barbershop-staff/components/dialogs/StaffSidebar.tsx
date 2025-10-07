@@ -114,33 +114,26 @@ export const StaffSidebar = memo(function StaffSidebar({
   return (
     <div
       className={cn(
-        "flex h-full w-full flex-col bg-neutral-950 p-6",
+        "flex h-full w-full flex-col bg-neutral-950 p-5",
         className,
       )}
     >
       {/* Header */}
       <div className="mb-8">
         <div className="mb-2 flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FAC82B]/10">
-            <HeaderIcon className="h-5 w-5 text-[#FAC82B]" />
-          </div>
-          {mode === "create" && (
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FAC82B]/10">
-              <UserIcon className="h-5 w-5 text-[#FAC82B]" />
-            </div>
-          )}
+          <HeaderIcon className="h-4 w-4 text-neutral-400" />
+          <h2 className="text-base font-semibold text-neutral-50">
+            {headerContent.title}
+          </h2>
         </div>
-        <h2 className="text-xl font-bold text-neutral-50">
-          {headerContent.title}
-        </h2>
         <p className="mt-1 text-sm text-neutral-400">
           {headerContent.subtitle}
         </p>
       </div>
 
-      <div>
+      <div className="flex flex-1 flex-col justify-between">
         {/* Lista de Etapas (Stepper) */}
-        <nav className="flex-1 space-y-2">
+        <nav className="flex-1 space-y-3">
           {steps.map((step) => {
             const Icon = step.icon;
             const isActive = step.id === currentStep;
@@ -158,25 +151,13 @@ export const StaffSidebar = memo(function StaffSidebar({
                 )}
               >
                 {/* Ícone */}
-                <div
-                  className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-md transition-colors",
-                    {
-                      "bg-[#FAC82B]/10": isActive,
-                      "bg-neutral-800": !isActive && !isCompleted,
-                      "bg-green-500/10": isCompleted,
-                    },
-                  )}
-                >
-                  <Icon
-                    className={cn("h-4 w-4", {
-                      "text-[#FAC82B]": isActive,
-                      "text-neutral-500": !isActive && !isCompleted,
-                      "text-green-500": isCompleted,
-                    })}
-                  />
-                </div>
-
+                <Icon
+                  className={cn("h-5 w-5", {
+                    "text-primary": isActive,
+                    "text-neutral-500": !isActive && !isCompleted,
+                    "text-green-500": isCompleted,
+                  })}
+                />
                 {/* Label */}
                 <span
                   className={cn("text-sm font-medium transition-colors", {
@@ -219,18 +200,6 @@ export const StaffSidebar = memo(function StaffSidebar({
           </div>
         )}
       </div>
-
-      {/* Aviso para modo Edit */}
-      {mode === "edit" && (
-        <div className="rounded-lg border border-amber-800/30 bg-amber-950/20 p-4">
-          <p className="text-xs leading-relaxed text-amber-400">
-            {t("sidebar.editWarning", {
-              defaultValue:
-                "CPF e email não podem ser alterados por questões de segurança.",
-            })}
-          </p>
-        </div>
-      )}
     </div>
   );
 });

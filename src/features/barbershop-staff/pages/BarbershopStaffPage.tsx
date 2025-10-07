@@ -1,9 +1,11 @@
 import { Divider } from "@/shared/components/ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { BulkActionsBar } from "../components/common/BulkActionsBar";
 import { StaffModal } from "../components/dialogs/StaffModal";
-import { ToggleStaffStatusModal } from "../components/dialogs/ToggleStaffStatusModal";
+import { StaffStatusModal } from "../components/dialogs/StaffStatusModal";
 import { useBarbershopStaff } from "../hooks/useBarbershopStaff";
+import { useBulkSelection } from "../hooks/useBulkSelection";
 import { useStableStaffManagement } from "../hooks/useStableStaffManagement";
 import type { BarbershopStaff } from "../schemas/barbershop-staff.schemas";
 import { BarbershopStaffPageContent } from "./sections/BarbershopStaffPageContent";
@@ -31,12 +33,36 @@ export function BarbershopStaffPage() {
     statistics,
     isLoading,
     refetch,
-    onTableSettingsChange,
-    tableSettings,
   } = useStableStaffManagement();
 
   // 🎯 Hook com ações (toggle status, etc)
   const { toggleStaffStatus } = useBarbershopStaff(filters);
+
+  // 🎯 Bulk selection hook (Fase 1)
+  const bulkSelection = useBulkSelection({
+    data: staff,
+    totalRecords: pagination?.total,
+  });
+
+  // 🎯 Estado para loading de select all pages
+  const [isLoadingAllPages, setIsLoadingAllPages] = useState(false);
+
+  // 🎯 Handler para selecionar todas as páginas
+  const handleSelectAllPages = useCallback(async () => {
+    setIsLoadingAllPages(true);
+    try {
+      // Importar dinamicamente para evitar circular dependency
+      const { fetchAllStaffIds } = await import(
+        "../services/barbershop-staff.service"
+      );
+      const allIds = await fetchAllStaffIds(filters);
+      bulkSelection.selectAllPages(allIds);
+    } catch (error) {
+      console.error("Error fetching all staff IDs:", error);
+    } finally {
+      setIsLoadingAllPages(false);
+    }
+  }, [filters, bulkSelection]);
 
   // 🎯 Handlers para ações
   const handleCreate = useCallback(() => {
@@ -113,13 +139,24 @@ export function BarbershopStaffPage() {
           resetFilters={resetFilters}
           hasActiveFilters={hasActiveFilters}
           refetch={refetch}
-          onTableSettingsChange={onTableSettingsChange}
-          tableSettings={tableSettings}
           onView={handleView}
           onEdit={handleEdit}
           onToggleStatus={handleToggleStatus}
+          bulkSelection={bulkSelection}
         />
       </div>
+
+      {/* 🎯 Barra de ações em lote (Fase 1 - botões desabilitados) */}
+      <BulkActionsBar
+        selectedCount={bulkSelection.selectedCount}
+        onClearSelection={bulkSelection.clearSelection}
+        isLimitReached={bulkSelection.isLimitReached}
+        maxLimit={bulkSelection.maxLimit}
+        totalRecords={pagination?.total}
+        isAllPagesSelected={bulkSelection.isAllPagesSelected}
+        onToggleAllPages={handleSelectAllPages}
+        isLoadingAllPages={isLoadingAllPages}
+      />
 
       {/* Modal unificada para criar/visualizar/editar colaborador */}
       <StaffModal
@@ -133,7 +170,7 @@ export function BarbershopStaffPage() {
       />
 
       {/* Modal de confirmação para inativar/ativar colaborador */}
-      <ToggleStaffStatusModal
+      <StaffStatusModal
         isOpen={isToggleStatusModalOpen}
         onClose={() => {
           setIsToggleStatusModalOpen(false);

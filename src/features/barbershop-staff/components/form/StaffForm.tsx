@@ -1,14 +1,9 @@
-/**
- * 🆕 Staff Form - Formulário unificado para criar/visualizar/editar
- * Componente genérico que funciona em 3 modos diferentes
- */
 import { maskPhone } from "@/shared/utils/phone.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@shared/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -45,9 +40,6 @@ interface StaffFormProps {
   isLoading?: boolean;
 }
 
-/**
- * Formulário unificado para Staff (create/view/edit)
- */
 export const StaffForm = memo(function StaffForm({
   mode,
   initialData,
@@ -181,23 +173,20 @@ export const StaffForm = memo(function StaffForm({
           </h3>
         </div>
       </div>
-
       {/* Conteúdo do Formulário */}
       <Form {...form}>
         <form
           onSubmit={handleSubmit(handleFormSubmit)}
           className="flex min-h-0 flex-1 flex-col"
         >
-          {/* Campos do Formulário */}
           <div className="flex-1 space-y-5 overflow-y-auto px-8 py-6">
-            {/* Campo: Nome */}
             <FormField
               control={form.control}
               name="full_name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-neutral-200">
-                    {t("wizard.fields.name")}{" "}
+                    {t("wizard.fields.name")}
                     {!isViewMode && <span className="text-red-500">*</span>}
                   </FormLabel>
                   <FormControl>
@@ -205,7 +194,7 @@ export const StaffForm = memo(function StaffForm({
                       placeholder={t("wizard.placeholders.name")}
                       disabled={isViewMode || isSubmitting || isLoading}
                       variant="form"
-                      className="bg-neutral-800/50 text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
+                      className="text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
                       {...field}
                     />
                   </FormControl>
@@ -213,8 +202,6 @@ export const StaffForm = memo(function StaffForm({
                 </FormItem>
               )}
             />
-
-            {/* Campo: CPF (disabled em view/edit, editável em create) */}
             <FormField
               control={form.control}
               name="cpf"
@@ -232,23 +219,14 @@ export const StaffForm = memo(function StaffForm({
                       }
                       maxLength={14}
                       variant="form"
-                      className="bg-neutral-800/50 text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
+                      className="text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
                       {...field}
                     />
                   </FormControl>
-                  {isEditMode && (
-                    <FormDescription className="text-neutral-500">
-                      {t("wizard.hints.cpfNotEditable", {
-                        defaultValue: "CPF não pode ser alterado",
-                      })}
-                    </FormDescription>
-                  )}
                   <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
-
-            {/* Campo: Email (não editável em edit mode) */}
             <FormField
               control={form.control}
               name="email"
@@ -256,11 +234,6 @@ export const StaffForm = memo(function StaffForm({
                 <FormItem>
                   <FormLabel className="text-neutral-200">
                     {t("wizard.fields.email")}{" "}
-                    {isCreateMode && (
-                      <span className="text-xs text-neutral-500">
-                        ({t("modals.createStaff.optional")})
-                      </span>
-                    )}
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -270,24 +243,15 @@ export const StaffForm = memo(function StaffForm({
                         isViewMode || isEditMode || isSubmitting || isLoading
                       }
                       variant="form"
-                      className="bg-neutral-800/50 text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
+                      className="text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
                       {...field}
                       value={field.value || ""}
                     />
                   </FormControl>
-                  {isEditMode && (
-                    <FormDescription className="text-neutral-500">
-                      {t("wizard.hints.emailNotEditable", {
-                        defaultValue: "Email não pode ser alterado",
-                      })}
-                    </FormDescription>
-                  )}
                   <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
-
-            {/* Campo: Telefone */}
             <FormField
               control={form.control}
               name="phone"
@@ -302,7 +266,7 @@ export const StaffForm = memo(function StaffForm({
                       disabled={isViewMode || isSubmitting || isLoading}
                       maxLength={15}
                       variant="form"
-                      className="bg-neutral-800/50 text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
+                      className="text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
                       {...field}
                       value={field.value || ""}
                     />
@@ -311,8 +275,6 @@ export const StaffForm = memo(function StaffForm({
                 </FormItem>
               )}
             />
-
-            {/* Campo: Status */}
             <FormField
               control={form.control}
               name="status"
@@ -334,7 +296,7 @@ export const StaffForm = memo(function StaffForm({
                         />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="border-neutral-700 bg-neutral-800">
+                    <SelectContent className="border-neutral-700 bg-neutral-900">
                       <SelectItem value="ACTIVE" className="text-neutral-50">
                         {t("status.active")}
                       </SelectItem>
@@ -350,8 +312,6 @@ export const StaffForm = memo(function StaffForm({
                 </FormItem>
               )}
             />
-
-            {/* Campo: Descrição/Notas Internas (Opcional) */}
             <FormField
               control={form.control}
               name="description"
@@ -379,16 +339,11 @@ export const StaffForm = memo(function StaffForm({
                             })
                       }
                       disabled={isViewMode || isSubmitting || isLoading}
-                      className="min-h-[100px] resize-none border-neutral-700 bg-neutral-800/50 text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
+                      className="min-h-[100px] resize-none border-neutral-700/80 bg-neutral-800/20 text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
                       {...field}
                       value={field.value || ""}
                     />
                   </FormControl>
-                  {isCreateMode && (
-                    <FormDescription className="text-neutral-500">
-                      {t("wizard.hints.description")}
-                    </FormDescription>
-                  )}
                   <FormMessage className="text-red-400" />
                 </FormItem>
               )}
@@ -396,21 +351,19 @@ export const StaffForm = memo(function StaffForm({
           </div>
 
           {/* Footer com Botões */}
-          <div className="flex items-center justify-between border-t border-neutral-800 bg-neutral-900 px-8 py-5">
+          <div className="flex items-center justify-end gap-3 border-t border-neutral-800 bg-neutral-900 px-8 py-5">
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={onCancel}
               disabled={isSubmitting || isLoading}
-              className="h-11 px-6 text-neutral-300 hover:bg-neutral-800 hover:text-neutral-50"
+              className="text-neutral-300 transition-all duration-300 ease-in-out hover:bg-neutral-800 hover:text-neutral-50"
             >
-              <XCircleIcon className="mr-2 h-4 w-4" />
+              <XCircleIcon className="h-4 w-4" />
               {isViewMode
                 ? t("actions.close", { defaultValue: "Fechar" })
                 : t("actions.cancel")}
             </Button>
-
-            {/* Botão Submit - Não mostrar no modo view */}
             {!isViewMode && (
               <Button
                 type="submit"
@@ -420,18 +373,18 @@ export const StaffForm = memo(function StaffForm({
                   isLoading ||
                   (isEditMode && !isDirty)
                 }
-                className="h-11 min-w-[160px] bg-[#FAC82B] px-8 font-semibold text-neutral-950 hover:bg-[#FAC82B]/90 disabled:opacity-50"
+                className="bg-primary hover:bg-primary/90 font-semibold text-neutral-950 transition-all duration-300 ease-in-out disabled:opacity-50"
               >
                 {isLoading || isSubmitting ? (
                   <>
-                    <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-neutral-950 border-t-transparent" />
+                    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-neutral-950 border-t-transparent" />
                     {isCreateMode
                       ? t("actions.creating")
                       : t("actions.saving", { defaultValue: "Salvando..." })}
                   </>
                 ) : (
                   <>
-                    <CheckIcon className="mr-2 h-4 w-4" />
+                    <CheckIcon className="h-4 w-4" />
                     {getSubmitButtonText()}
                   </>
                 )}
