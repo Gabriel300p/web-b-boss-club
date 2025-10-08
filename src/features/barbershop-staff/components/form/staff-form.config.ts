@@ -1,13 +1,3 @@
-/**
- * @fileoverview Staff Form Configuration
- *
- * Configuração centralizada do formulário wizard de Staff (Colaboradores).
- * Este arquivo contém TODA a lógica de configuração, validação e transformação
- * de dados do formulário, servindo como Single Source of Truth.
- *
- * @module staff-form.config
- */
-
 import type { LucideIcon } from "lucide-react";
 import {
   BriefcaseIcon,
@@ -26,10 +16,6 @@ import {
   UserAccessStep,
   WorkScheduleStep,
 } from "./steps/_index";
-
-/* ============================================================================
- * TYPE DEFINITIONS
- * ========================================================================= */
 
 export interface SidebarHeaderConfig {
   icon: LucideIcon;
@@ -54,10 +40,6 @@ export interface StepConfig {
     mode: StaffFormMode,
   ) => boolean;
 }
-
-/* ============================================================================
- * SIDEBAR HEADER CONFIGURATION
- * ========================================================================= */
 
 export const SIDEBAR_HEADER_CONFIGS: Record<
   StaffFormMode,
@@ -86,15 +68,7 @@ export const SIDEBAR_HEADER_CONFIGS: Record<
   },
 };
 
-/* ============================================================================
- * WIZARD STEPS CONFIGURATION
- *
- * Para adicionar/remover steps, modifique este array.
- * O sistema ajusta automaticamente validação, UI e progress bar.
- * ========================================================================= */
-
 export const STAFF_FORM_STEPS: StepConfig[] = [
-  // Step 1: Dados Cadastrais (obrigatório)
   {
     id: 1,
     labelKey: "wizard.steps.basicData",
@@ -113,8 +87,6 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
       return !!(values.full_name && cpfValue && values.status);
     },
   },
-
-  // Step 2: Informações de Admissão (opcional)
   {
     id: 2,
     labelKey: "wizard.steps.admissionInfo",
@@ -124,8 +96,6 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
     hasRequiredFields: false,
     validationFields: [],
   },
-
-  // Step 3: Horário de Trabalho (opcional)
   {
     id: 3,
     labelKey: "wizard.steps.workSchedule",
@@ -135,8 +105,6 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
     hasRequiredFields: false,
     validationFields: [],
   },
-
-  // Step 4: Acesso do Usuário (obrigatório)
   {
     id: 4,
     labelKey: "wizard.steps.userAccess",
@@ -149,8 +117,141 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
 ];
 
 /* ============================================================================
- * VALIDATION HELPERS
+ * FIELD MAPPING CONFIGURATION (Single Source of Truth)
  * ========================================================================= */
+
+const FIELD_MAPPING = {
+  full_name: {
+    formField: "full_name",
+    defaultValue: "",
+    // API → Form: combina first_name + last_name
+    fromAPI: (data: Record<string, unknown>) => {
+      const firstName = data.first_name as string;
+      const lastName = data.last_name as string | null | undefined;
+      return [firstName, lastName].filter(Boolean).join(" ");
+    },
+    // Form → API: divide em first_name e last_name
+    toAPI: (value: unknown) => {
+      const trimmed = (value as string)?.trim() || "";
+      const parts = trimmed.split(" ");
+      return {
+        first_name: parts[0] || "",
+        last_name: parts.slice(1).join(" ") || undefined,
+      };
+    },
+  },
+  cpf: {
+    formField: "cpf",
+    defaultValue: "",
+    fromAPI: (data: Record<string, unknown>) => {
+      const user = data.user as Record<string, unknown> | undefined;
+      return typeof user?.cpf === "string" && user.cpf ? user.cpf : "";
+    },
+    toAPI: (value: unknown) => ({ cpf: value as string }),
+  },
+  email: {
+    formField: "email",
+    defaultValue: "",
+    fromAPI: (data: Record<string, unknown>) => {
+      const user = data.user as Record<string, unknown> | undefined;
+      return (user?.email as string | undefined) || "";
+    },
+    toAPI: (value: unknown, mode: "create" | "update") => {
+      // Email só é enviado no create
+      if (mode === "create") {
+        const str = (value as string | undefined)?.trim();
+        return { email: str || undefined };
+      }
+      return {};
+    },
+  },
+  phone: {
+    formField: "phone",
+    defaultValue: "",
+    fromAPI: (data: Record<string, unknown>) => {
+      return typeof data.phone === "string" && data.phone ? data.phone : "";
+    },
+    toAPI: (value: unknown) => {
+      const str = (value as string | undefined)?.trim();
+      return { phone: str || undefined };
+    },
+  },
+  status: {
+    formField: "status",
+    defaultValue: "ACTIVE",
+    fromAPI: (data: Record<string, unknown>) => data.status as string,
+    toAPI: (value: unknown) => ({ status: (value as string) || "ACTIVE" }),
+  },
+  description: {
+    formField: "description",
+    defaultValue: "",
+    fromAPI: (data: Record<string, unknown>) => {
+      return typeof data.internal_notes === "string" && data.internal_notes
+        ? data.internal_notes
+        : "";
+    },
+    toAPI: (value: unknown, mode: "create" | "update") => {
+      // Description só é enviado no update como internal_notes
+      if (mode === "update") {
+        const str = (value as string | undefined)?.trim();
+        return { internal_notes: str || undefined };
+      }
+      return {};
+    },
+  },
+} as const;
+
+export const transformStaffToFormData = (
+  staffData: Record<string, unknown> | null | undefined,
+): Record<string, unknown> => {
+  if (!staffData) {
+    // Return default values from mapping
+    return Object.keys(FIELD_MAPPING).reduce(
+      (acc, key) => {
+        const config = FIELD_MAPPING[key as keyof typeof FIELD_MAPPING];
+        acc[config.formField] = config.defaultValue;
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    );
+  }
+
+  // Transform using fromAPI functions
+  return Object.keys(FIELD_MAPPING).reduce(
+    (acc, key) => {
+      const config = FIELD_MAPPING[key as keyof typeof FIELD_MAPPING];
+      acc[config.formField] = config.fromAPI(staffData);
+      return acc;
+    },
+    {} as Record<string, unknown>,
+  );
+};
+
+export const transformFormDataToCreate = (data: Record<string, unknown>) => {
+  const result: Record<string, unknown> = {};
+
+  Object.keys(FIELD_MAPPING).forEach((key) => {
+    const config = FIELD_MAPPING[key as keyof typeof FIELD_MAPPING];
+    const formValue = data[config.formField];
+    const apiData = config.toAPI(formValue, "create");
+    Object.assign(result, apiData);
+  });
+
+  return result;
+};
+
+export const transformFormDataToUpdate = (data: Record<string, unknown>) => {
+  const result: Record<string, unknown> = {};
+
+  Object.keys(FIELD_MAPPING).forEach((key) => {
+    const config = FIELD_MAPPING[key as keyof typeof FIELD_MAPPING];
+    const formValue = data[config.formField];
+    const apiData = config.toAPI(formValue, "update");
+    Object.assign(result, apiData);
+  });
+
+  return result;
+};
 
 export const hasRequiredFields = (stepId: number): boolean => {
   return (
@@ -165,10 +266,6 @@ export const getTotalSteps = (): number => {
 export const getValidationFields = (stepId: number): string[] => {
   return STAFF_FORM_STEPS.find((s) => s.id === stepId)?.validationFields ?? [];
 };
-
-/* ============================================================================
- * PROGRESS CALCULATION
- * ========================================================================= */
 
 export const getCompletedStepsCount = (
   validationState: Record<number, boolean>,
@@ -189,114 +286,4 @@ export const getProgressPercentage = (
   const completed = getCompletedStepsCount(validationState, visitedSteps);
   const total = getTotalSteps();
   return total > 0 ? Math.round((completed / total) * 100) : 0;
-};
-
-/* ============================================================================
- * DATA TRANSFORMATION (API ↔ FORM)
- *
- * Funções responsáveis por converter dados entre formato da API e formulário.
- * - READ:   API → Form (transformStaffToFormData)
- * - CREATE: Form → API (transformFormDataToCreate)
- * - UPDATE: Form → API (transformFormDataToUpdate)
- * ========================================================================= */
-
-// Private Helpers (não exportados)
-// ---------------------------------
-
-const splitFullName = (fullName: string) => {
-  const trimmed = fullName?.trim() || "";
-  const parts = trimmed.split(" ");
-  return {
-    first_name: parts[0] || "",
-    last_name: parts.slice(1).join(" ") || undefined,
-  };
-};
-
-const cleanString = (value: unknown): string | undefined => {
-  const str = (value as string | undefined)?.trim();
-  return str || undefined;
-};
-
-// Public Transformers
-// -------------------
-
-/**
- * Converte dados da API para formato do formulário (READ)
- * @param staffData - Dados do staff vindos da API ou null para valores default
- * @returns Dados formatados para o formulário
- */
-export const transformStaffToFormData = (
-  staffData: Record<string, unknown> | null | undefined,
-): Record<string, unknown> => {
-  if (!staffData) {
-    return {
-      full_name: "",
-      cpf: "",
-      email: "",
-      phone: "",
-      status: "ACTIVE",
-      description: "",
-    };
-  }
-
-  const firstName = staffData.first_name as string;
-  const lastName = staffData.last_name as string | null | undefined;
-  const fullName = [firstName, lastName].filter(Boolean).join(" ");
-
-  const user = staffData.user as Record<string, unknown> | undefined;
-  const cpf = typeof user?.cpf === "string" && user.cpf ? user.cpf : "";
-  const email = (user?.email as string | undefined) || "";
-
-  const phone =
-    typeof staffData.phone === "string" && staffData.phone
-      ? staffData.phone
-      : "";
-  const description =
-    typeof staffData.internal_notes === "string" && staffData.internal_notes
-      ? staffData.internal_notes
-      : "";
-
-  return {
-    full_name: fullName,
-    cpf,
-    email,
-    phone,
-    status: staffData.status as string,
-    description,
-  };
-};
-
-/**
- * Converte dados do formulário para criação via API (CREATE)
- * @param data - Dados do formulário
- * @returns Payload formatado para criação
- */
-export const transformFormDataToCreate = (data: Record<string, unknown>) => {
-  const { first_name, last_name } = splitFullName(data.full_name as string);
-
-  return {
-    first_name,
-    last_name,
-    cpf: data.cpf as string,
-    email: cleanString(data.email),
-    phone: cleanString(data.phone),
-    status: (data.status as string) || "ACTIVE",
-  };
-};
-
-/**
- * Converte dados do formulário para atualização via API (UPDATE)
- * @param data - Dados do formulário
- * @returns Payload formatado para atualização
- */
-export const transformFormDataToUpdate = (data: Record<string, unknown>) => {
-  const { first_name, last_name } = splitFullName(data.full_name as string);
-
-  return {
-    first_name,
-    last_name,
-    phone: cleanString(data.phone),
-    status: data.status as string,
-    internal_notes: cleanString(data.description),
-  };
 };
