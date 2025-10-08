@@ -20,7 +20,11 @@ import {
 } from "../../schemas/barbershop-staff.schemas";
 
 import { useStepNavigation, useStepValidation } from "@/shared/hooks";
-import { getTotalSteps, STAFF_FORM_STEPS } from "./staff-form.config";
+import {
+  getTotalSteps,
+  STAFF_FORM_STEPS,
+  transformStaffToFormData,
+} from "./staff-form.config";
 import { BasicDataStep } from "./steps/_index";
 
 //  Tipos de modo do formulário
@@ -58,34 +62,12 @@ export const StaffForm = memo(function StaffForm({
 
   const TOTAL_STEPS = useMemo(() => getTotalSteps(), []);
 
+  // ✅ Usa transformer da config para converter dados da API → Form
   const getDefaultValues = (): CreateStaffMinimalFormData => {
-    if (initialData && (isViewMode || isEditMode)) {
-      const fullName = [initialData.first_name, initialData.last_name]
-        .filter(Boolean)
-        .join(" ");
-
-      return {
-        full_name: fullName,
-        cpf:
-          typeof initialData.user?.cpf === "string" ? initialData.user.cpf : "",
-        email: initialData.user?.email || "",
-        phone: typeof initialData.phone === "string" ? initialData.phone : "",
-        status: initialData.status,
-        description:
-          typeof initialData.internal_notes === "string"
-            ? initialData.internal_notes
-            : "",
-      };
-    }
-
-    return {
-      full_name: "",
-      cpf: "",
-      email: "",
-      phone: "",
-      status: "ACTIVE",
-      description: "",
-    };
+    const shouldLoadData = initialData && (isViewMode || isEditMode);
+    return transformStaffToFormData(
+      shouldLoadData ? initialData : null,
+    ) as CreateStaffMinimalFormData;
   };
 
   const form = useForm<CreateStaffMinimalFormData>({

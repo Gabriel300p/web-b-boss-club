@@ -1,14 +1,18 @@
 import { cn } from "@shared/lib/utils";
-import { EyeIcon, PencilIcon, PlusCircleIcon } from "lucide-react";
 import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
-import { STAFF_FORM_STEPS } from "../form/staff-form.config";
+import {
+  getCompletedStepsCount,
+  getProgressPercentage,
+  getTotalSteps,
+  SIDEBAR_HEADER_CONFIGS,
+  STAFF_FORM_STEPS,
+} from "../form/staff-form.config";
 
 interface StaffSidebarProps {
   mode: "create" | "view" | "edit";
   currentStep?: number;
-  totalSteps?: number;
   staffData?: BarbershopStaff | null;
   isLoading?: boolean;
   className?: string;
@@ -23,51 +27,28 @@ interface StaffSidebarProps {
 export const StaffSidebar = memo(function StaffSidebar({
   mode,
   currentStep = 1,
-  totalSteps = 4,
   // staffData,
   // isLoading = false,
   className,
   onStepChange,
   visitedSteps = new Set([1]),
-  validationState = { 1: false, 2: true, 3: true, 4: false },
+  validationState = {},
 }: StaffSidebarProps) {
   const { t } = useTranslation("barbershop-staff");
 
-  // 🎯 Definir conteúdo do header baseado no modo
-  const getHeaderContent = () => {
-    switch (mode) {
-      case "create":
-        return {
-          icon: PlusCircleIcon,
-          title: t("wizard.title", { defaultValue: "Adicionar novo barbeiro" }),
-          subtitle: t("wizard.subtitle", {
-            defaultValue: "Preencha os dados do novo colaborador",
-          }),
-        };
-      case "view":
-        return {
-          icon: EyeIcon,
-          title: t("modals.staffModal.viewTitle", {
-            defaultValue: "Visualizar Colaborador",
-          }),
-          subtitle: t("modals.staffModal.viewSubtitle", {
-            defaultValue: "Informações detalhadas do colaborador",
-          }),
-        };
-      case "edit":
-        return {
-          icon: PencilIcon,
-          title: t("modals.staffModal.editTitle", {
-            defaultValue: "Editar Colaborador",
-          }),
-          subtitle: t("modals.staffModal.editSubtitle", {
-            defaultValue: "Atualize as informações do colaborador",
-          }),
-        };
-    }
-  };
+  // ✅ Total de steps calculado dinamicamente da config
+  const totalSteps = useMemo(() => getTotalSteps(), []);
 
-  const headerContent = getHeaderContent();
+  // 🎯 Configuração do header por modo (da config centralizada)
+  const headerContent = useMemo(() => {
+    const config = SIDEBAR_HEADER_CONFIGS[mode];
+    return {
+      icon: config.icon,
+      title: t(config.titleKey, { defaultValue: config.titleDefault }),
+      subtitle: t(config.subtitleKey, { defaultValue: config.subtitleDefault }),
+    };
+  }, [mode, t]);
+
   const HeaderIcon = headerContent.icon;
 
   // ✅ Steps dinâmicos da configuração com labels traduzidos
@@ -170,43 +151,34 @@ export const StaffSidebar = memo(function StaffSidebar({
         </nav>
 
         {/* Progress Indicator */}
-        {mode === "create" &&
-          (() => {
-            // ✅ Calcular steps completos (válidos) dinamicamente
-            const completedSteps = steps.filter((s) => {
-              const hasRequired = s.hasRequiredFields;
-              const isValid = validationState[s.id] || false;
-              const isVisited = visitedSteps.has(s.id);
-              // Conta se: (tem obrigatórios && válido) OU (sem obrigatórios && visitado)
-              return hasRequired ? isValid : isVisited;
-            }).length;
-
-            return (
-              <div className="mt-8 space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-neutral-300">
-                    {t("wizard.progress.label", { defaultValue: "Progresso" })}
-                  </span>
-                  <span className="text-neutral-400">
-                    {t("wizard.progress.step", {
-                      current: completedSteps,
-                      total: totalSteps,
-                      defaultValue: `${completedSteps}/${totalSteps}`,
-                    })}
-                  </span>
-                </div>
-                {/* Barra de Progresso */}
-                <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-800">
-                  <div
-                    className="h-full bg-gradient-to-r from-[#FAC82B] to-[#f9b800] transition-all duration-300"
-                    style={{
-                      width: `${(completedSteps / totalSteps) * 100}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })()}
+        {mode === "create" && (
+          <div className="mt-8 space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium text-neutral-300">
+                {t("wizard.progress.label", { defaultValue: "Progresso" })}
+              </span>
+              <span className="text-neutral-400">
+                {t("wizard.progress.step", {
+                  current: getCompletedStepsCount(
+                    validationState,
+                    visitedSteps,
+                  ),
+                  total: totalSteps,
+                  defaultValue: `${getCompletedStepsCount(validationState, visitedSteps)}/${totalSteps}`,
+                })}
+              </span>
+            </div>
+            {/* Barra de Progresso */}
+            <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-800">
+              <div
+                className="h-full bg-gradient-to-r from-[#FAC82B] to-[#f9b800] transition-all duration-300"
+                style={{
+                  width: `${getProgressPercentage(validationState, visitedSteps)}%`,
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
