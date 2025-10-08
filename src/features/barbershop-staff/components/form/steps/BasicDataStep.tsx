@@ -182,7 +182,7 @@ export const BasicDataStep = memo(function BasicDataStep({
 
       <FormField
         control={form.control}
-        name="description"
+        name="internal_notes"
         render={({ field }) => (
           <FormItem>
             <FormLabel className="text-neutral-200">

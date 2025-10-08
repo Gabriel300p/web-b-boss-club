@@ -36,10 +36,12 @@ export function useBarbershopStaffCreate(
           last_name: data.last_name || "",
           cpf: data.cpf,
           email: data.email || "", // Backend handles empty email
+          phone: data.phone || "", // Backend handles empty phone
         },
         role_in_shop: "BARBER" as const, // Default role
         status: data.status || "ACTIVE", // Default status
         is_available: true, // Default availability
+        internal_notes: data.internal_notes || undefined, // ✅ internal_notes no nível raiz
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

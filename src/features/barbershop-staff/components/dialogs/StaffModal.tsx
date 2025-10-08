@@ -179,6 +179,9 @@ export const StaffModal = memo(function StaffModal({
                     onSubmit={handleFormSubmit}
                     onCancel={handleCancel}
                     isLoading={isLoading}
+                    currentStep={currentStep}
+                    onStepChange={handleStepChange}
+                    onValidationChange={setValidationState}
                   />
                 )}
               </>

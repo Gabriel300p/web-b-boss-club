@@ -90,21 +90,25 @@ export const StaffSidebar = memo(function StaffSidebar({
             const Icon = step.icon;
             const isActive = step.id === currentStep;
 
-            // ✅ Lógica de validação visual usando propriedade do step
+            // ✅ Lógica de validação visual - apenas no modo create
+            const showColorValidation = mode === "create";
             const hasRequired = step.hasRequiredFields;
             const isVisited = visitedSteps.has(step.id);
             const isValid = validationState[step.id] || false;
 
-            // Estados visuais:
+            // Estados visuais (apenas no create):
             // Verde: (tem campos obrigatórios && válido) OU (sem campos obrigatórios && visitado)
             // Vermelho: tem campos obrigatórios && inválido && visitado
             // Cinza: não visitado
-            const isGreen = hasRequired ? isValid && isVisited : isVisited;
-            const isRed = hasRequired && !isValid && isVisited;
-            const isGray = !isVisited;
+            const isGreen =
+              showColorValidation &&
+              (hasRequired ? isValid && isVisited : isVisited);
+            const isRed =
+              showColorValidation && hasRequired && !isValid && isVisited;
+            const isGray = showColorValidation && !isVisited;
 
             const handleStepClick = () => {
-              if (mode === "create" && onStepChange) {
+              if (onStepChange) {
                 onStepChange(step.id);
               }
             };
@@ -114,14 +118,11 @@ export const StaffSidebar = memo(function StaffSidebar({
                 type="button"
                 key={step.id}
                 onClick={handleStepClick}
-                disabled={mode !== "create"}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left transition-all duration-200",
                   {
                     "bg-neutral-900": isActive,
-                    "cursor-pointer hover:bg-neutral-900/50":
-                      !isActive && mode === "create",
-                    "cursor-not-allowed opacity-50": mode !== "create",
+                    "cursor-pointer hover:bg-neutral-900/50": !isActive,
                   },
                 )}
               >
@@ -131,14 +132,18 @@ export const StaffSidebar = memo(function StaffSidebar({
                     "text-primary": isActive,
                     "text-green-500": isGreen && !isActive,
                     "text-red-500": isRed && !isActive,
-                    "text-neutral-500": isGray && !isActive,
+                    "text-neutral-500":
+                      (isGray && !isActive) ||
+                      (!showColorValidation && !isActive),
                   })}
                 />
                 {/* Label */}
                 <span
                   className={cn("text-sm font-medium transition-colors", {
                     "text-neutral-50": isActive,
-                    "text-neutral-300": isGreen && !isActive,
+                    "text-neutral-300":
+                      (isGreen && !isActive) ||
+                      (!showColorValidation && !isActive),
                     "text-red-300": isRed && !isActive,
                     "text-neutral-400": isGray && !isActive,
                   })}

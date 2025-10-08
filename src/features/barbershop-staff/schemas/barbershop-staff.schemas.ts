@@ -166,7 +166,7 @@ export const createStaffMinimalFormSchema = z.object({
     .email("E-mail deve ter um formato válido"),
   phone: z.string().optional(),
   status: staffStatusEnum.optional(),
-  description: z.string().optional(),
+  internal_notes: z.string().optional(),
 });
 
 // 📝 Form schema for updating staff
@@ -290,4 +290,5 @@ export type CreateStaffMinimalData = {
   email?: string;
   phone?: string;
   status?: StaffStatus;
+  internal_notes?: string;
 };

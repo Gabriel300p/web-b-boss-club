@@ -6,8 +6,6 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
   CheckIcon,
-  EyeIcon,
-  PencilIcon,
   XCircleIcon,
 } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -25,7 +23,6 @@ import {
   STAFF_FORM_STEPS,
   transformStaffToFormData,
 } from "./staff-form.config";
-import { BasicDataStep } from "./steps/_index";
 
 //  Tipos de modo do formulário
 export type StaffFormMode = "create" | "view" | "edit";
@@ -168,12 +165,6 @@ export const StaffForm = memo(function StaffForm({
     return t(step.labelKey, { defaultValue: step.defaultLabel });
   }, [isCreateMode, mode, currentStep, t]);
 
-  // ✅ Ícone dinâmico baseado no modo
-  const HeaderIcon = useMemo(
-    () => (isViewMode ? EyeIcon : isEditMode ? PencilIcon : null),
-    [isViewMode, isEditMode],
-  );
-
   const primaryButtonText = useMemo(() => {
     if (isLoading || isSubmitting) {
       return isCreateMode
@@ -204,11 +195,6 @@ export const StaffForm = memo(function StaffForm({
     <div className="flex h-full w-full flex-col bg-neutral-900">
       <div className="flex items-center justify-between border-b border-neutral-800 px-6 py-4">
         <div className="flex items-center gap-3">
-          {HeaderIcon && (
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FAC82B]/10">
-              <HeaderIcon className="h-5 w-5 text-[#FAC82B]" />
-            </div>
-          )}
           <h3 className="text-lg font-semibold text-neutral-50">
             {headerTitle}
           </h3>
@@ -220,37 +206,31 @@ export const StaffForm = memo(function StaffForm({
           onSubmit={handleSubmit(handleFormSubmit)}
           className="flex min-h-0 flex-1 flex-col"
         >
-          {isCreateMode ? (
-            <Tabs
-              value={currentTab}
-              onValueChange={handleTabChange}
-              className="flex min-h-0 flex-1 flex-col"
-            >
-              <div className="flex-1 overflow-y-auto px-8 py-6">
-                {/* ✅ Renderização 100% dinâmica dos steps */}
-                {STAFF_FORM_STEPS.map((step) => {
-                  const StepComponent = step.component;
-                  return (
-                    <TabsContent
-                      key={step.id}
-                      value={`step-${step.id}`}
-                      className="m-0"
-                    >
-                      <StepComponent
-                        form={form}
-                        mode={mode}
-                        isLoading={isLoading}
-                      />
-                    </TabsContent>
-                  );
-                })}
-              </div>
-            </Tabs>
-          ) : (
+          <Tabs
+            value={currentTab}
+            onValueChange={handleTabChange}
+            className="flex min-h-0 flex-1 flex-col"
+          >
             <div className="flex-1 overflow-y-auto px-8 py-6">
-              <BasicDataStep form={form} mode={mode} isLoading={isLoading} />
+              {/* ✅ Renderização 100% dinâmica dos steps */}
+              {STAFF_FORM_STEPS.map((step) => {
+                const StepComponent = step.component;
+                return (
+                  <TabsContent
+                    key={step.id}
+                    value={`step-${step.id}`}
+                    className="m-0"
+                  >
+                    <StepComponent
+                      form={form}
+                      mode={mode}
+                      isLoading={isLoading}
+                    />
+                  </TabsContent>
+                );
+              })}
             </div>
-          )}
+          </Tabs>
 
           <div className="flex items-center justify-between border-t border-neutral-800 bg-neutral-900 px-8 py-5">
             <div>
