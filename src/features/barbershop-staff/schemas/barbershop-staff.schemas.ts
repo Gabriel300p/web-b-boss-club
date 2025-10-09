@@ -190,7 +190,45 @@ export const updateStaffFormSchema = z.object({
   internal_notes: z.string().optional(),
 });
 
-// 🔍 Filters schema for staff queries
+// � Schema inverso: API → Form (para edição/visualização)
+// Converte dados da API de volta para formato do formulário
+export const staffApiToFormSchema = z
+  .object({
+    first_name: z.string(),
+    last_name: z.string().nullable().optional(),
+    phone: z.string().nullable().optional(),
+    status: staffStatusEnum,
+    internal_notes: z.string().nullable().optional(),
+    user: z
+      .object({
+        cpf: z.string().optional(),
+        email: z.string().optional(),
+      })
+      .optional(),
+  })
+  .transform((data) => ({
+    full_name: [data.first_name, data.last_name].filter(Boolean).join(" "),
+    cpf: data.user?.cpf || "",
+    email: data.user?.email || "",
+    phone: data.phone || "",
+    status: data.status,
+    internal_notes: data.internal_notes || "",
+  }));
+
+// 📋 Schemas por step (para validação granular)
+export const basicDataStepSchema = createStaffFormInputSchema.pick({
+  full_name: true,
+  cpf: true,
+  status: true,
+  phone: true,
+  internal_notes: true,
+});
+
+export const userAccessStepSchema = createStaffFormInputSchema.pick({
+  email: true,
+});
+
+// �🔍 Filters schema for staff queries
 export const staffFiltersSchema = z.object({
   // Basic filters
   status: staffStatusEnum.optional(),
@@ -285,3 +323,16 @@ export type StaffListResponse = z.infer<typeof staffListResponseSchema>;
 export type StaffStatsResponse = z.infer<typeof staffStatsResponseSchema>;
 export type StaffStatus = z.infer<typeof staffStatusEnum>;
 export type UserRole = z.infer<typeof userRoleEnum>;
+
+// 🔧 Utility: Extrair defaults do schema automaticamente
+export const getStaffFormDefaults = (): Partial<CreateStaffFormInput> => {
+  // Retorna valores padrão sem validação (para formulário vazio)
+  return {
+    full_name: "",
+    cpf: "",
+    email: "",
+    phone: "",
+    status: "ACTIVE",
+    internal_notes: "",
+  };
+};

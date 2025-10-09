@@ -1,6 +1,11 @@
 import {
-  createStaffFormInputSchema,
+  basicDataStepSchema,
+  getStaffFormDefaults,
+  staffApiToFormSchema,
   updateStaffFormSchema,
+  userAccessStepSchema,
+  type BarbershopStaff,
+  type CreateStaffFormInput,
 } from "@features/barbershop-staff/schemas/barbershop-staff.schemas";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -78,140 +83,10 @@ export const SIDEBAR_HEADER_CONFIGS: Record<
   },
 };
 
-export const FIELDS = {
-  full_name: { defaultValue: "" },
-  cpf: { defaultValue: "" },
-  email: { defaultValue: "" },
-  phone: { defaultValue: "" },
-  status: { defaultValue: "ACTIVE" as const },
-  internal_notes: { defaultValue: "" },
-} as const;
-
-export type FormFieldName = keyof typeof FIELDS;
-
-export interface StaffAPIData {
-  first_name: string;
-  last_name: string | null | undefined;
-  phone: string | null | undefined;
-  status: string;
-  internal_notes: string | null | undefined;
-  user?: {
-    cpf?: string;
-    email?: string;
-  };
-}
-export interface StaffAPIPayload {
-  first_name?: string;
-  last_name?: string;
-  cpf?: string;
-  email?: string;
-  phone?: string;
-  status?: string;
-  internal_notes?: string;
-}
-
-const FieldTransformers = {
-  splitFullName: (
-    fullName: string,
-  ): Pick<StaffAPIPayload, "first_name" | "last_name"> => {
-    const trimmed = fullName.trim();
-    if (!trimmed) return { first_name: "", last_name: undefined };
-
-    const parts = trimmed.split(" ");
-    return {
-      first_name: parts[0] || "",
-      last_name: parts.slice(1).join(" ") || undefined,
-    };
-  },
-
-  joinFullName: (firstName: string, lastName?: string | null): string => {
-    return [firstName, lastName].filter(Boolean).join(" ");
-  },
-
-  extractUserField: <T>(
-    data: StaffAPIData,
-    field: keyof NonNullable<StaffAPIData["user"]>,
-  ): T | "" => {
-    const user = data.user;
-    const value = user?.[field];
-    return (value as T) || ("" as T);
-  },
-
-  cleanOptionalString: (value: unknown): string | undefined => {
-    const str = (value as string | undefined)?.trim();
-    return str || undefined;
-  },
-
-  getNullableString: (value: unknown): string => {
-    return typeof value === "string" && value ? value : "";
-  },
-} as const;
-
-interface FieldMappingConfig {
-  defaultValue: string;
-  fromAPI: (data: StaffAPIData) => string;
-  toAPI: (value: string, mode: "create" | "update") => Partial<StaffAPIPayload>;
-}
-
-const FIELD_MAPPING: Record<FormFieldName, FieldMappingConfig> = {
-  full_name: {
-    defaultValue: FIELDS.full_name.defaultValue,
-    fromAPI: (data) =>
-      FieldTransformers.joinFullName(data.first_name, data.last_name),
-    toAPI: (value) => FieldTransformers.splitFullName(value),
-  },
-
-  cpf: {
-    defaultValue: FIELDS.cpf.defaultValue,
-    fromAPI: (data) => FieldTransformers.extractUserField<string>(data, "cpf"),
-    toAPI: (value) => ({ cpf: value }),
-  },
-
-  email: {
-    defaultValue: FIELDS.email.defaultValue,
-    fromAPI: (data) =>
-      FieldTransformers.extractUserField<string>(data, "email"),
-    toAPI: (value, mode) => {
-      // Email só enviado no create
-      if (mode === "create") {
-        return { email: FieldTransformers.cleanOptionalString(value) };
-      }
-      return {};
-    },
-  },
-
-  phone: {
-    defaultValue: FIELDS.phone.defaultValue,
-    fromAPI: (data) => FieldTransformers.getNullableString(data.phone),
-    toAPI: (value) => ({ phone: FieldTransformers.cleanOptionalString(value) }),
-  },
-
-  status: {
-    defaultValue: FIELDS.status.defaultValue,
-    fromAPI: (data) => data.status,
-    toAPI: (value) => ({ status: value || "ACTIVE" }),
-  },
-
-  internal_notes: {
-    defaultValue: FIELDS.internal_notes.defaultValue,
-    fromAPI: (data) => FieldTransformers.getNullableString(data.internal_notes),
-    toAPI: (value) => ({
-      internal_notes: FieldTransformers.cleanOptionalString(value),
-    }),
-  },
-};
-
 const VALIDATION_FIELD_GROUPS = {
-  BASIC_DATA_CREATE: [
-    "full_name",
-    "cpf",
-    "status",
-  ] as const satisfies ReadonlyArray<FormFieldName>,
-  BASIC_DATA_EDIT: [
-    "full_name",
-    "status",
-  ] as const satisfies ReadonlyArray<FormFieldName>,
-  USER_ACCESS: ["email"] as const satisfies ReadonlyArray<FormFieldName>,
+  BASIC_DATA_CREATE: ["full_name", "cpf", "status"] as const,
+  BASIC_DATA_EDIT: ["full_name", "status"] as const,
+  USER_ACCESS: ["email"] as const,
 } as const;
 
 export const STAFF_FORM_STEPS: StepConfig[] = [
@@ -224,11 +99,7 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
     hasRequiredFields: true,
     validationFields: [...VALIDATION_FIELD_GROUPS.BASIC_DATA_CREATE],
     validationSchema: {
-      create: createStaffFormInputSchema.pick({
-        full_name: true,
-        cpf: true,
-        status: true,
-      }),
+      create: basicDataStepSchema, // ✅ Usando schema do arquivo de schemas
       edit: updateStaffFormSchema.pick({
         first_name: true,
         status: true,
@@ -262,43 +133,26 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
     hasRequiredFields: true,
     validationFields: [...VALIDATION_FIELD_GROUPS.USER_ACCESS],
     validationSchema: {
-      create: createStaffFormInputSchema.pick({ email: true }),
+      create: userAccessStepSchema, // ✅ Usando schema do arquivo de schemas
       edit: z.object({}), // No validation on edit
     },
   },
 ];
 
-// 🔄 Transformação para API será feita pelo Zod schema automaticamente
-// Mantemos apenas transformer de API → Form Data (para edição/visualização)
 export const transformStaffToFormData = (
-  staffData: Record<string, unknown> | null | undefined,
-): Record<string, unknown> => {
+  staffData: BarbershopStaff | null | undefined,
+): Partial<CreateStaffFormInput> => {
   if (!staffData) {
-    return Object.keys(FIELD_MAPPING).reduce(
-      (acc, key) => {
-        const fieldName = key as FormFieldName;
-        const config = FIELD_MAPPING[fieldName];
-        acc[fieldName] = config.defaultValue;
-        return acc;
-      },
-      {} as Record<string, unknown>,
-    );
+    return getStaffFormDefaults();
   }
-
-  return Object.keys(FIELD_MAPPING).reduce(
-    (acc, key) => {
-      const fieldName = key as FormFieldName;
-      const config = FIELD_MAPPING[fieldName];
-      acc[fieldName] = config.fromAPI(staffData as unknown as StaffAPIData);
-      return acc;
-    },
-    {} as Record<string, unknown>,
-  );
+  try {
+    return staffApiToFormSchema.parse(staffData);
+  } catch (error) {
+    // Fallback: se o parse falhar, retorna defaults
+    console.warn("Failed to transform staff data, using defaults:", error);
+    return getStaffFormDefaults();
+  }
 };
-
-// ❌ REMOVIDO: transformFormDataToCreate e transformFormDataToUpdate
-// ✅ O Zod schema (createStaffFormSchema) agora faz essa transformação automaticamente
-// Para update, continua usando os transformers de campo individuais se necessário
 
 export const validateStep = (
   stepId: number,

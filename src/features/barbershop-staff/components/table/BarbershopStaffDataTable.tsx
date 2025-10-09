@@ -60,7 +60,6 @@ function BarbershopStaffDataTableComponent<TData, TValue>({
     getRowId: (row: TData) => {
       const record = row as Record<string, unknown>;
       const id = String(record.id);
-      console.log("🆔 getRowId called for:", id);
       return id;
     },
     onSortingChange: setSorting,
@@ -86,13 +85,6 @@ function BarbershopStaffDataTableComponent<TData, TValue>({
       },
     },
   });
-
-  // 🔍 DEBUG: Check table internal state
-  console.log("🔍 Table state.rowSelection:", table.getState().rowSelection);
-  console.log(
-    "🔍 Table selected rows:",
-    table.getSelectedRowModel().rows.map((r) => r.id),
-  );
 
   return (
     <div className="w-full space-y-4">
