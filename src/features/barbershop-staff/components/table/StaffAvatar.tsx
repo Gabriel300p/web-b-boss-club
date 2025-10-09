@@ -47,16 +47,16 @@ const StaffAvatar: FC<StaffAvatarProps> = ({
     // Paleta de cores pastéis escuras/dessaturadas para modo escuro
     // Cores suaves, não muito vibrantes, que ficam elegantes no fundo escuro
     const pastelColors = [
-      { bg: "bg-amber-900/60", text: "text-amber-200" }, // Âmbar suave
-      { bg: "bg-emerald-900/60", text: "text-emerald-200" }, // Verde esmeralda
-      { bg: "bg-sky-900/60", text: "text-sky-200" }, // Azul céu
-      { bg: "bg-violet-900/60", text: "text-violet-200" }, // Violeta
-      { bg: "bg-rose-900/60", text: "text-rose-200" }, // Rosa
-      { bg: "bg-cyan-900/60", text: "text-cyan-200" }, // Ciano
-      { bg: "bg-orange-900/60", text: "text-orange-200" }, // Laranja
-      { bg: "bg-teal-900/60", text: "text-teal-200" }, // Teal
-      { bg: "bg-indigo-900/60", text: "text-indigo-200" }, // Índigo
-      { bg: "bg-fuchsia-900/60", text: "text-fuchsia-200" }, // Fúcsia
+      { bg: "bg-amber-900/50", text: "text-amber-200/80" }, // Âmbar suave
+      { bg: "bg-emerald-900/50", text: "text-emerald-200/80" }, // Verde esmeralda
+      { bg: "bg-sky-900/50", text: "text-sky-200/80" }, // Azul céu
+      { bg: "bg-violet-900/50", text: "text-violet-200/80" }, // Violeta
+      { bg: "bg-rose-900/50", text: "text-rose-200/80" }, // Rosa
+      { bg: "bg-cyan-900/50", text: "text-cyan-200/80" }, // Ciano
+      { bg: "bg-orange-900/50", text: "text-orange-200/80" }, // Laranja
+      { bg: "bg-teal-900/50", text: "text-teal-200/80" }, // Teal
+      { bg: "bg-indigo-900/50", text: "text-indigo-200/80" }, // Índigo
+      { bg: "bg-fuchsia-900/50", text: "text-fuchsia-200/80" }, // Fúcsia
     ];
 
     const index = Math.abs(hash) % pastelColors.length;
@@ -67,8 +67,8 @@ const StaffAvatar: FC<StaffAvatarProps> = ({
 
   // Tamanhos do avatar
   const sizeClasses = {
-    sm: "size-8 text-sm",
-    md: "size-10 text-base",
+    sm: "size- text-sm",
+    md: "size-11 text-base",
     lg: "size-12 text-lg",
   };
 

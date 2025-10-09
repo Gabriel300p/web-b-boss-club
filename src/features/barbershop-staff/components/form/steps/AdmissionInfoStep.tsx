@@ -173,10 +173,7 @@ export const AdmissionInfoStep = memo(function AdmissionInfoStep({
         render={({ field }) => (
           <FormItem>
             <FormLabel className="text-neutral-200">
-              {t("wizard.fields.salary")}{" "}
-              <span className="text-xs text-neutral-500">
-                ({t("modals.createStaff.optional")})
-              </span>
+              {t("wizard.fields.salary")}
             </FormLabel>
             <FormControl>
               <Input
@@ -204,10 +201,7 @@ export const AdmissionInfoStep = memo(function AdmissionInfoStep({
         render={({ field }) => (
           <FormItem>
             <FormLabel className="text-neutral-200">
-              {t("wizard.fields.commission")}{" "}
-              <span className="text-xs text-neutral-500">
-                ({t("modals.createStaff.optional")})
-              </span>
+              {t("wizard.fields.commission")}
             </FormLabel>
             <FormControl>
               <Input

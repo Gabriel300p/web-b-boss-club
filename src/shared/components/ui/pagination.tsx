@@ -100,7 +100,7 @@ export function Pagination<TData>({
                 }
               }}
             >
-              <SelectTrigger className="py-1 text-xs sm:text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
+              <SelectTrigger className="text-xs sm:text-sm dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
                 <SelectValue placeholder={pageSize} />
               </SelectTrigger>
               <SelectContent
@@ -111,7 +111,7 @@ export function Pagination<TData>({
                   <SelectItem
                     key={size}
                     value={`${size}`}
-                    className="dark:data-[state=checked]:bg-primary dark:text-neutral-200 dark:data-[state=checked]:text-white"
+                    className="dark:data-[state=checked]:bg-primary font-semibold dark:text-neutral-200 dark:data-[state=checked]:text-black"
                   >
                     {size}
                   </SelectItem>

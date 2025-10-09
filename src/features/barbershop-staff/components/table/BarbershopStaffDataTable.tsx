@@ -89,7 +89,6 @@ function BarbershopStaffDataTableComponent<TData, TValue>({
   return (
     <div className="w-full space-y-4">
       <OptimizedTable table={table} enableAnimations={data.length <= 50} />
-
       <Pagination
         table={table}
         totalItems={pagination?.total}

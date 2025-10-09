@@ -4,7 +4,7 @@ import type { StaffFilters } from "../schemas/barbershop-staff.schemas";
 // 🎯 Default filters configuration
 const DEFAULT_FILTERS: StaffFilters = {
   page: 1,
-  limit: 10,
+  limit: 30,
   sort_by: "created_at",
   sort_order: "desc",
 };

@@ -129,16 +129,9 @@ export const BasicDataStep = memo(function BasicDataStep({
         render={({ field }) => (
           <FormItem>
             <FormLabel className="text-neutral-200">
-              {isCreateMode
-                ? t("wizard.fields.description")
-                : t("wizard.fields.internalNotes", {
-                    defaultValue: "Notas Internas",
-                  })}{" "}
-              {isCreateMode && (
-                <span className="text-xs text-neutral-500">
-                  ({t("modals.createStaff.optional")})
-                </span>
-              )}
+              {t("wizard.fields.internalNotes", {
+                defaultValue: "Notas Internas",
+              })}
             </FormLabel>
             <FormControl>
               <Textarea
