@@ -5,7 +5,7 @@
 import { useToast } from "@shared/hooks/useToast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type {
-  CreateStaffMinimalData,
+  CreateStaffFormData,
   CreateStaffResponse,
 } from "../schemas/barbershop-staff.schemas";
 import { createStaff } from "../services/barbershop-staff.service";
@@ -19,72 +19,58 @@ export function useBarbershopStaffCreate(
 ) {
   const { showToast } = useToast();
   const queryClient = useQueryClient();
-  const mutation = useMutation<
-    CreateStaffResponse,
-    Error,
-    CreateStaffMinimalData
-  >({
-    mutationFn: async (data: CreateStaffMinimalData) => {
-      // 🎯 Backend agora infere barbershop_id automaticamente do owner logado
-      // Não precisamos mais enviar barbershop_id no payload
+  const mutation = useMutation<CreateStaffResponse, Error, CreateStaffFormData>(
+    {
+      mutationFn: async (data: CreateStaffFormData) => {
+        // ✅ Data já vem validada e transformada pelo Zod schema!
+        // O schema createStaffFormSchema já:
+        // 1. Divide full_name em first_name + last_name
+        // 2. Monta o objeto user aninhado
+        // 3. Define defaults (role_in_shop, status, is_available)
+        // 4. Formata o payload exatamente como o backend espera
 
-      // Build payload matching backend expectations
-      const payload = {
-        // barbershop_id removido - backend infere automaticamente
-        user: {
-          first_name: data.first_name,
-          last_name: data.last_name || "",
-          cpf: data.cpf,
-          email: data.email || "", // Backend handles empty email
-          phone: data.phone || "", // Backend handles empty phone
-        },
-        role_in_shop: "BARBER" as const, // Default role
-        status: data.status || "ACTIVE", // Default status
-        is_available: true, // Default availability
-        internal_notes: data.internal_notes || undefined, // ✅ internal_notes no nível raiz
-      };
+        // Backend infere barbershop_id automaticamente do owner logado
+        return createStaff(data);
+      },
+      onSuccess: async (response) => {
+        // ✅ Estratégia otimizada: invalidar apenas listas (não detalhes)
+        // Usa predicate function para ser seletivo e evitar refetch de staff details
+        queryClient.invalidateQueries({
+          predicate: (query) => {
+            const queryKey = query.queryKey;
+            // Invalida apenas queries de lista e stats, não detalhes individuais
+            return (
+              Array.isArray(queryKey) &&
+              queryKey[0] === "barbershop-staff" &&
+              (queryKey.includes("list") || queryKey.includes("stats"))
+            );
+          },
+        });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return createStaff(payload as any);
+        // Show success toast (sem mostrar a senha)
+        showToast({
+          type: "success",
+          title: "Colaborador criado com sucesso!",
+          message: "O novo colaborador foi adicionado à equipe.",
+          duration: 5000,
+        });
+
+        // Call custom onSuccess callback if provided
+        options?.onSuccess?.(response);
+      },
+      onError: (error: Error) => {
+        // Handle different error types
+        const errorMessage = error.message || "Erro ao criar colaborador";
+
+        showToast({
+          type: "error",
+          title: "Erro ao criar colaborador",
+          message: errorMessage,
+          duration: 8000,
+        });
+      },
     },
-    onSuccess: async (response) => {
-      // ✅ Estratégia otimizada: invalidar apenas listas (não detalhes)
-      // Usa predicate function para ser seletivo e evitar refetch de staff details
-      queryClient.invalidateQueries({
-        predicate: (query) => {
-          const queryKey = query.queryKey;
-          // Invalida apenas queries de lista e stats, não detalhes individuais
-          return (
-            Array.isArray(queryKey) &&
-            queryKey[0] === "barbershop-staff" &&
-            (queryKey.includes("list") || queryKey.includes("stats"))
-          );
-        },
-      });
-
-      // Show success toast (sem mostrar a senha)
-      showToast({
-        type: "success",
-        title: "Colaborador criado com sucesso!",
-        message: "O novo colaborador foi adicionado à equipe.",
-        duration: 5000,
-      });
-
-      // Call custom onSuccess callback if provided
-      options?.onSuccess?.(response);
-    },
-    onError: (error: Error) => {
-      // Handle different error types
-      const errorMessage = error.message || "Erro ao criar colaborador";
-
-      showToast({
-        type: "error",
-        title: "Erro ao criar colaborador",
-        message: errorMessage,
-        duration: 8000,
-      });
-    },
-  });
+  );
 
   return {
     createStaff: mutation.mutate,

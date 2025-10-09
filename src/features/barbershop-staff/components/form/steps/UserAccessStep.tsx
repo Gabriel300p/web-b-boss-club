@@ -13,11 +13,11 @@ import { Input } from "@shared/components/ui/input";
 import { memo } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import type { CreateStaffMinimalFormData } from "../../../schemas/barbershop-staff.schemas";
+import type { CreateStaffFormInput } from "../../../schemas/barbershop-staff.schemas";
 import type { StaffFormMode } from "../StaffForm";
 
 interface UserAccessStepProps {
-  form: UseFormReturn<CreateStaffMinimalFormData>;
+  form: UseFormReturn<CreateStaffFormInput>;
   mode: StaffFormMode;
   isLoading?: boolean;
 }

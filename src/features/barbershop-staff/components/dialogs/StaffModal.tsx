@@ -9,12 +9,11 @@ import {
   useStaffDetail,
 } from "../../hooks/useBarbershopStaff";
 import { useBarbershopStaffCreate } from "../../hooks/useBarbershopStaffCreate";
-import type { CreateStaffMinimalFormData } from "../../schemas/barbershop-staff.schemas";
 import {
-  STAFF_FORM_STEPS,
-  transformFormDataToCreate,
-  transformFormDataToUpdate,
-} from "../form/staff-form.config";
+  createStaffFormSchema,
+  type CreateStaffFormInput,
+} from "../../schemas/barbershop-staff.schemas";
+import { STAFF_FORM_STEPS } from "../form/staff-form.config";
 import { StaffForm } from "../form/StaffForm";
 import { StaffSidebar } from "./StaffSidebar";
 
@@ -76,20 +75,25 @@ export const StaffModal = memo(function StaffModal({
   } = useStaffDetail(shouldFetchStaff ? staffId! : "");
 
   // 🎯 Handler de submit do formulário
-  const handleFormSubmit = async (data: CreateStaffMinimalFormData) => {
+  const handleFormSubmit = async (data: CreateStaffFormInput) => {
     if (mode === "create") {
-      // ✅ Criar novo staff usando transformer da config
-      const createData = transformFormDataToCreate(data);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      createStaffFn(createData as any); // TODO: Fix type mismatch between form and API
+      // ✅ Validar e transformar dados usando Zod schema
+      // O schema createStaffFormSchema já:
+      // 1. Valida os campos
+      // 2. Divide full_name em first_name + last_name
+      // 3. Monta objeto user aninhado
+      // 4. Define defaults (role_in_shop, status, is_available)
+      const transformedData = createStaffFormSchema.parse(data);
+      createStaffFn(transformedData);
     } else if (mode === "edit" && staffId) {
-      // ✅ Atualizar staff existente usando transformer da config
+      // ✅ Para update, continua usando a lógica existente
+      // TODO: Criar updateStaffFormSchema com transforms se necessário
       setIsUpdating(true);
 
       try {
-        const updateData = transformFormDataToUpdate(data);
+        // Para update, enviamos os campos diretamente (sem transformação por enquanto)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await updateStaff(staffId, updateData as any); // TODO: Fix type mismatch between form and API
+        await updateStaff(staffId, data as any);
         onClose();
       } catch (error) {
         console.error("Error updating staff:", error);

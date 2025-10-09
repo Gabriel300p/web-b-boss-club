@@ -1,5 +1,12 @@
 /**
- * 📝 Basic Data Step - Step 1: Dados Cadastrais
+ * 📝 Basic Data import { memo } from "react";
+import type { UseFormReturn } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import type { CreateStaffFormInput } from "../../../schemas/barbershop-staff.schemas";
+import type { StaffFormMode } from "../StaffForm";
+
+interface BasicDataStepProps {
+  form: UseFormReturn<CreateStaffFormInput>;tep 1: Dados Cadastrais
  * Nome, CPF, Telefone, Status, Descrição
  */
 import { maskPhone } from "@/shared/utils/phone.utils";
@@ -23,11 +30,11 @@ import { maskCPF } from "@shared/utils/cpf.utils";
 import { memo, useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import type { CreateStaffMinimalFormData } from "../../../schemas/barbershop-staff.schemas";
+import type { CreateStaffFormInput } from "../../../schemas/barbershop-staff.schemas";
 import type { StaffFormMode } from "../StaffForm";
 
 interface BasicDataStepProps {
-  form: UseFormReturn<CreateStaffMinimalFormData>;
+  form: UseFormReturn<CreateStaffFormInput>;
   mode: StaffFormMode;
   isLoading?: boolean;
 }

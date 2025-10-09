@@ -12,9 +12,9 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import {
-  createStaffMinimalFormSchema,
+  createStaffFormInputSchema,
   type BarbershopStaff,
-  type CreateStaffMinimalFormData,
+  type CreateStaffFormInput,
 } from "../../schemas/barbershop-staff.schemas";
 
 import { useStepNavigation, useStepValidation } from "@/shared/hooks";
@@ -30,7 +30,7 @@ export type StaffFormMode = "create" | "view" | "edit";
 interface StaffFormProps {
   mode: StaffFormMode;
   initialData?: BarbershopStaff | null;
-  onSubmit: (data: CreateStaffMinimalFormData) => void;
+  onSubmit: (data: CreateStaffFormInput) => void;
   onCancel: () => void;
   isLoading?: boolean;
   currentStep?: number;
@@ -60,15 +60,15 @@ export const StaffForm = memo(function StaffForm({
   const TOTAL_STEPS = useMemo(() => getTotalSteps(), []);
 
   // ✅ Usa transformer da config para converter dados da API → Form
-  const getDefaultValues = (): CreateStaffMinimalFormData => {
+  const getDefaultValues = (): CreateStaffFormInput => {
     const shouldLoadData = initialData && (isViewMode || isEditMode);
     return transformStaffToFormData(
       shouldLoadData ? initialData : null,
-    ) as CreateStaffMinimalFormData;
+    ) as CreateStaffFormInput;
   };
 
-  const form = useForm<CreateStaffMinimalFormData>({
-    resolver: zodResolver(createStaffMinimalFormSchema),
+  const form = useForm<CreateStaffFormInput>({
+    resolver: zodResolver(createStaffFormInputSchema),
     mode: "onChange",
     defaultValues: getDefaultValues(),
   });
@@ -109,7 +109,7 @@ export const StaffForm = memo(function StaffForm({
   );
 
   const handleFormSubmit = useCallback(
-    (data: CreateStaffMinimalFormData) => {
+    (data: CreateStaffFormInput) => {
       onSubmit(data);
     },
     [onSubmit],
@@ -127,7 +127,7 @@ export const StaffForm = memo(function StaffForm({
   // ✅ useWatch otimizado para observar múltiplos campos sem infinite loop
   const watchedValues = useWatch({
     control: form.control,
-    name: allValidationFields as Array<keyof CreateStaffMinimalFormData>,
+    name: allValidationFields as Array<keyof CreateStaffFormInput>,
   });
 
   // ✅ Validação do step atual (recalcula quando qualquer campo muda)

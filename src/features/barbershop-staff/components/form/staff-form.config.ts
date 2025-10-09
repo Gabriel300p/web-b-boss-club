@@ -1,5 +1,5 @@
 import {
-  createStaffMinimalFormSchema,
+  createStaffFormInputSchema,
   updateStaffFormSchema,
 } from "@features/barbershop-staff/schemas/barbershop-staff.schemas";
 import type { LucideIcon } from "lucide-react";
@@ -224,7 +224,7 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
     hasRequiredFields: true,
     validationFields: [...VALIDATION_FIELD_GROUPS.BASIC_DATA_CREATE],
     validationSchema: {
-      create: createStaffMinimalFormSchema.pick({
+      create: createStaffFormInputSchema.pick({
         full_name: true,
         cpf: true,
         status: true,
@@ -262,27 +262,14 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
     hasRequiredFields: true,
     validationFields: [...VALIDATION_FIELD_GROUPS.USER_ACCESS],
     validationSchema: {
-      create: createStaffMinimalFormSchema.pick({ email: true }),
+      create: createStaffFormInputSchema.pick({ email: true }),
       edit: z.object({}), // No validation on edit
     },
   },
 ];
 
-const createTransformer = (mode: "create" | "update") => {
-  return (data: Record<string, unknown>): Record<string, unknown> => {
-    return Object.keys(FIELD_MAPPING).reduce(
-      (result, key) => {
-        const fieldName = key as FormFieldName;
-        const config = FIELD_MAPPING[fieldName];
-        const formValue = data[fieldName] as string;
-        const apiData = config.toAPI(formValue, mode);
-        return { ...result, ...apiData };
-      },
-      {} as Record<string, unknown>,
-    );
-  };
-};
-
+// 🔄 Transformação para API será feita pelo Zod schema automaticamente
+// Mantemos apenas transformer de API → Form Data (para edição/visualização)
 export const transformStaffToFormData = (
   staffData: Record<string, unknown> | null | undefined,
 ): Record<string, unknown> => {
@@ -309,8 +296,9 @@ export const transformStaffToFormData = (
   );
 };
 
-export const transformFormDataToCreate = createTransformer("create");
-export const transformFormDataToUpdate = createTransformer("update");
+// ❌ REMOVIDO: transformFormDataToCreate e transformFormDataToUpdate
+// ✅ O Zod schema (createStaffFormSchema) agora faz essa transformação automaticamente
+// Para update, continua usando os transformers de campo individuais se necessário
 
 export const validateStep = (
   stepId: number,

@@ -2,11 +2,7 @@
  * 📝 Barbershop Staff Schema Definitions
  * Validation schemas for barbershop staff management
  */
-import {
-  emailSchema,
-  nameSchema,
-  passwordSchema,
-} from "@shared/schemas/common";
+import { emailSchema, nameSchema } from "@shared/schemas/common";
 import { cleanCPF, validateCPF } from "@shared/utils/cpf.utils";
 import { z } from "zod";
 
@@ -106,35 +102,9 @@ export const barbershopStaffSchema = z.object({
   }),
 });
 
-// 📝 Form schema for creating staff
-export const createStaffFormSchema = z.object({
-  barbershop_id: z.string().min(1, "ID da barbearia é obrigatório"),
-  user: z.object({
-    email: emailSchema,
-    password: passwordSchema.optional(),
-    first_name: nameSchema,
-    last_name: z.string().optional(),
-    display_name: z.string().optional(),
-    cpf: z.string().min(1, "CPF é obrigatório"),
-    phone: z.string().optional(),
-    is_foreigner: z.boolean().default(false).optional(),
-  }),
-  role_in_shop: userRoleEnum.default("BARBER"),
-  status: staffStatusEnum.default("ACTIVE").optional(),
-  salary: z.number().positive("Salário deve ser positivo").optional(),
-  commission_rate: z
-    .number()
-    .min(0)
-    .max(100, "Comissão deve estar entre 0 e 100%")
-    .optional(),
-  hire_date: z.string().datetime().optional(),
-  is_available: z.boolean().default(true).optional(),
-  internal_notes: z.string().optional(),
-});
-
-// 📝 MINIMAL form schema for creating staff (Phase 1 - MVP)
-// Only essential fields: full name, CPF, and optional email
-export const createStaffMinimalFormSchema = z.object({
+// 📝 Base form input schema (antes da transformação - para validação de formulário)
+export const createStaffFormInputSchema = z.object({
+  // 📋 Campos do formulário (user-friendly)
   full_name: z
     .string()
     .min(1, "Nome completo é obrigatório")
@@ -160,14 +130,50 @@ export const createStaffMinimalFormSchema = z.object({
         message: "CPF inválido. Verifique os dígitos digitados",
       },
     ),
-  email: z
-    .string()
-    .min(1, "E-mail é obrigatório")
-    .email("E-mail deve ter um formato válido"),
+  email: emailSchema,
   phone: z.string().optional(),
-  status: staffStatusEnum.optional(),
+  status: staffStatusEnum.default("ACTIVE").optional(),
   internal_notes: z.string().optional(),
+
+  // 📋 Campos opcionais avançados (para futuras expansões)
+  salary: z.number().positive("Salário deve ser positivo").optional(),
+  commission_rate: z
+    .number()
+    .min(0)
+    .max(100, "Comissão deve estar entre 0 e 100%")
+    .optional(),
+  hire_date: z.string().datetime().optional(),
 });
+
+// 📝 Form schema for creating staff (com transformação para formato do backend)
+// Aceita full_name e transforma automaticamente para o formato do backend
+export const createStaffFormSchema = createStaffFormInputSchema.transform(
+  (data) => {
+    // 🔄 Transformação 1: Dividir full_name em first_name e last_name
+    const nameParts = data.full_name.trim().split(/\s+/);
+    const first_name = nameParts[0];
+    const last_name = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+
+    // 🔄 Transformação 2: Montar payload no formato esperado pelo backend
+    return {
+      user: {
+        first_name,
+        last_name: last_name || undefined,
+        cpf: data.cpf,
+        email: data.email,
+        phone: data.phone || undefined,
+      },
+      role_in_shop: "BARBER" as const,
+      status: data.status || "ACTIVE",
+      is_available: true,
+      internal_notes: data.internal_notes || undefined,
+      // Campos opcionais avançados
+      salary: data.salary,
+      commission_rate: data.commission_rate,
+      hire_date: data.hire_date,
+    };
+  },
+);
 
 // 📝 Form schema for updating staff
 export const updateStaffFormSchema = z.object({
@@ -270,10 +276,8 @@ export const staffStatsResponseSchema = z.object({
 
 // 🔧 Type definitions
 export type BarbershopStaff = z.infer<typeof barbershopStaffSchema>;
+export type CreateStaffFormInput = z.infer<typeof createStaffFormInputSchema>;
 export type CreateStaffFormData = z.infer<typeof createStaffFormSchema>;
-export type CreateStaffMinimalFormData = z.infer<
-  typeof createStaffMinimalFormSchema
->;
 export type UpdateStaffFormData = z.infer<typeof updateStaffFormSchema>;
 export type StaffFilters = z.infer<typeof staffFiltersSchema>;
 export type CreateStaffResponse = z.infer<typeof createStaffResponseSchema>;
@@ -281,14 +285,3 @@ export type StaffListResponse = z.infer<typeof staffListResponseSchema>;
 export type StaffStatsResponse = z.infer<typeof staffStatsResponseSchema>;
 export type StaffStatus = z.infer<typeof staffStatusEnum>;
 export type UserRole = z.infer<typeof userRoleEnum>;
-
-// 🔧 Type for minimal staff creation data (used by hook)
-export type CreateStaffMinimalData = {
-  first_name: string;
-  last_name?: string;
-  cpf: string;
-  email?: string;
-  phone?: string;
-  status?: StaffStatus;
-  internal_notes?: string;
-};
