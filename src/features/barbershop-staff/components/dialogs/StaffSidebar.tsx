@@ -66,7 +66,7 @@ export const StaffSidebar = memo(function StaffSidebar({
   return (
     <div
       className={cn(
-        "flex h-full w-full flex-col bg-neutral-950 p-5",
+        "flex h-full w-full flex-col bg-neutral-950 p-2.5 md:p-5",
         className,
       )}
     >
@@ -74,18 +74,18 @@ export const StaffSidebar = memo(function StaffSidebar({
       <div className="mb-8">
         <div className="mb-2 flex items-center gap-2">
           <HeaderIcon className="h-4 w-4 text-neutral-400" />
-          <h2 className="text-base font-semibold text-neutral-50">
+          <h2 className="truncate text-sm font-semibold text-neutral-50 md:text-base">
             {headerContent.title}
           </h2>
         </div>
-        <p className="mt-1 text-sm text-neutral-400">
+        <p className="mt-1 text-xs text-neutral-400 md:text-sm">
           {headerContent.subtitle}
         </p>
       </div>
 
       <div className="flex flex-1 flex-col justify-between">
         {/* Lista de Etapas (Stepper) */}
-        <nav className="flex-1 space-y-3">
+        <nav className="flex-1 space-y-2 md:space-y-3">
           {steps.map((step) => {
             const Icon = step.icon;
             const isActive = step.id === currentStep;
@@ -119,7 +119,7 @@ export const StaffSidebar = memo(function StaffSidebar({
                 key={step.id}
                 onClick={handleStepClick}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left transition-all duration-200",
+                  "flex w-full items-center gap-3 rounded-lg px-2 py-3 text-left transition-all duration-200 md:px-4",
                   {
                     "bg-neutral-900": isActive,
                     "cursor-pointer hover:bg-neutral-900/50": !isActive,
@@ -139,14 +139,17 @@ export const StaffSidebar = memo(function StaffSidebar({
                 />
                 {/* Label */}
                 <span
-                  className={cn("text-sm font-medium transition-colors", {
-                    "text-neutral-50": isActive,
-                    "text-neutral-300":
-                      (isGreen && !isActive) ||
-                      (!showColorValidation && !isActive),
-                    "text-red-300": isRed && !isActive,
-                    "text-neutral-400": isGray && !isActive,
-                  })}
+                  className={cn(
+                    "truncate text-sm font-medium transition-colors",
+                    {
+                      "text-neutral-50": isActive,
+                      "text-neutral-300":
+                        (isGreen && !isActive) ||
+                        (!showColorValidation && !isActive),
+                      "text-red-300": isRed && !isActive,
+                      "text-neutral-400": isGray && !isActive,
+                    },
+                  )}
                 >
                   {step.label}
                 </span>

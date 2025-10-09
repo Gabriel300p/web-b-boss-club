@@ -119,10 +119,10 @@ export const StaffModal = memo(function StaffModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleCancel}>
-      <DialogContent className="h-[85vh] !max-w-[1400px] gap-0 overflow-hidden border-0 bg-transparent p-0 shadow-none md:!w-[75vw] xl:!w-[50vw]">
+      <DialogContent className="h-[90vh] !max-w-[1400px] gap-0 overflow-hidden border-0 bg-transparent p-2 shadow-none md:h-[85vh] md:!w-[75vw] md:p-0 xl:!w-[50vw]">
         <div className="flex h-full w-full overflow-hidden rounded-xl bg-neutral-950 shadow-2xl">
           {/* Sidebar - Adaptativa (Stepper ou Info) */}
-          <div className="w-[300px] flex-shrink-0 border-r border-neutral-800">
+          <div className="w-[38%] flex-shrink-0 border-r border-neutral-800 md:w-[300px]">
             <StaffSidebar
               mode={mode}
               currentStep={currentStep}

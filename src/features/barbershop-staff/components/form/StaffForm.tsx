@@ -24,7 +24,6 @@ import {
   transformStaffToFormData,
 } from "./staff-form.config";
 
-//  Tipos de modo do formulário
 export type StaffFormMode = "create" | "view" | "edit";
 
 interface StaffFormProps {
@@ -59,7 +58,6 @@ export const StaffForm = memo(function StaffForm({
 
   const TOTAL_STEPS = useMemo(() => getTotalSteps(), []);
 
-  // ✅ Usa transformer da config para converter dados da API → Form
   const getDefaultValues = (): CreateStaffFormInput => {
     const shouldLoadData = initialData && (isViewMode || isEditMode);
     return transformStaffToFormData(
@@ -78,10 +76,8 @@ export const StaffForm = memo(function StaffForm({
     formState: { isSubmitting, isDirty },
   } = form;
 
-  // ✅ Hook de validação de steps
   const isStepValid = useStepValidation(form, mode, STAFF_FORM_STEPS);
 
-  // ✅ Hook de navegação entre steps
   const handleStepChange = useCallback(
     (step: number) => {
       if (onStepChange) {
@@ -115,7 +111,6 @@ export const StaffForm = memo(function StaffForm({
     [onSubmit],
   );
 
-  // ✅ Coleta todos os campos de validação de TODOS os steps dinamicamente
   const allValidationFields = useMemo(() => {
     const fields = new Set<string>();
     STAFF_FORM_STEPS.forEach((step) => {
@@ -124,19 +119,15 @@ export const StaffForm = memo(function StaffForm({
     return Array.from(fields);
   }, []);
 
-  // ✅ useWatch otimizado para observar múltiplos campos sem infinite loop
   const watchedValues = useWatch({
     control: form.control,
     name: allValidationFields as Array<keyof CreateStaffFormInput>,
   });
 
-  // ✅ Validação do step atual (recalcula quando qualquer campo muda)
   const canProceed = isStepValid(currentStep);
 
-  // 🎯 Emitir validação em tempo real para o Modal/Sidebar
   useEffect(() => {
     if (onValidationChange && isCreateMode) {
-      // Gera validationState dinamicamente para todos os steps
       const validationState: Record<number, boolean> = {};
       STAFF_FORM_STEPS.forEach((step) => {
         validationState[step.id] = isStepValid(step.id);
@@ -146,7 +137,6 @@ export const StaffForm = memo(function StaffForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchedValues, onValidationChange, isCreateMode]);
 
-  // ✅ Título dinâmico baseado na configuração
   const headerTitle = useMemo(() => {
     if (!isCreateMode) {
       return mode === "view"
@@ -157,8 +147,6 @@ export const StaffForm = memo(function StaffForm({
             defaultValue: "Editar Colaborador",
           });
     }
-
-    // 🎯 Busca título do step na configuração
     const step = STAFF_FORM_STEPS.find((s) => s.id === currentStep);
     if (!step) return t("wizard.steps.basicData");
 
@@ -193,9 +181,9 @@ export const StaffForm = memo(function StaffForm({
 
   return (
     <div className="flex h-full w-full flex-col bg-neutral-900">
-      <div className="flex items-center justify-between border-b border-neutral-800 px-6 py-4">
+      <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-4 md:px-6">
         <div className="flex items-center gap-3">
-          <h3 className="text-lg font-semibold text-neutral-50">
+          <h3 className="text-base font-semibold text-neutral-50 md:text-lg">
             {headerTitle}
           </h3>
         </div>
@@ -211,7 +199,7 @@ export const StaffForm = memo(function StaffForm({
             onValueChange={handleTabChange}
             className="flex min-h-0 flex-1 flex-col"
           >
-            <div className="flex-1 overflow-y-auto px-8 py-6">
+            <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
               {/* ✅ Renderização 100% dinâmica dos steps */}
               {STAFF_FORM_STEPS.map((step) => {
                 const StepComponent = step.component;
@@ -232,7 +220,7 @@ export const StaffForm = memo(function StaffForm({
             </div>
           </Tabs>
 
-          <div className="flex items-center justify-between border-t border-neutral-800 bg-neutral-900 px-8 py-5">
+          <div className="flex items-center justify-between border-t border-neutral-800 bg-neutral-900 px-4 py-5 md:px-8">
             <div>
               {isCreateMode && !isFirstStep && (
                 <Button
@@ -243,7 +231,9 @@ export const StaffForm = memo(function StaffForm({
                   className="text-neutral-300 hover:bg-neutral-800 hover:text-neutral-50"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />
-                  {t("wizard.actions.previous", { defaultValue: "Anterior" })}
+                  <span className="hidden md:inline">
+                    {t("wizard.actions.previous", { defaultValue: "Anterior" })}
+                  </span>
                 </Button>
               )}
             </div>
@@ -257,9 +247,11 @@ export const StaffForm = memo(function StaffForm({
                 className="text-neutral-300 hover:bg-neutral-800 hover:text-neutral-50"
               >
                 <XCircleIcon className="h-4 w-4" />
-                {isViewMode
-                  ? t("actions.close", { defaultValue: "Fechar" })
-                  : t("actions.cancel")}
+                <span className="hidden md:inline">
+                  {isViewMode
+                    ? t("actions.close", { defaultValue: "Fechar" })
+                    : t("actions.cancel")}
+                </span>
               </Button>
 
               {!isViewMode && (

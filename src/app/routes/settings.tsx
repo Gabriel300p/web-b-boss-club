@@ -1,30 +1,48 @@
+import { MainLayout } from "@/shared/components/layout/MainLayout";
 import { AuthGuard } from "@features/auth/components/AuthGuard";
-import { MainLayout } from "@shared/components/layout/MainLayout";
+import { RouteSkeleton } from "@shared/components/skeletons/_index";
+import { useLoadingConfig } from "@shared/hooks/useLoadingConfig";
 import { createFileRoute } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
+
+import { SettingsPage as DirectSettingsPage } from "@features/settings/_index";
+
+const LazySettingsPage = lazy(() =>
+  import("@features/settings/_index.ts").then((module) => ({
+    default: module.SettingsPage,
+  })),
+);
+
+function SettingsPageLoader() {
+  const config = useLoadingConfig();
+
+  // Lazy loading com RouteSkeleton
+  if (config.useLazyLoading && config.useRouteSkeleton) {
+    return (
+      <Suspense fallback={<RouteSkeleton />}>
+        <LazySettingsPage />
+      </Suspense>
+    );
+  }
+
+  // Lazy loading sem skeleton (fallback transparente)
+  if (config.useLazyLoading && !config.useRouteSkeleton) {
+    return (
+      <Suspense fallback={<div />}>
+        <LazySettingsPage />
+      </Suspense>
+    );
+  }
+
+  // Loading direto sem lazy loading (importação estática)
+  return <DirectSettingsPage />;
+}
 
 export const Route = createFileRoute("/settings")({
   component: () => (
     <AuthGuard requireAuth={true}>
       <MainLayout>
-        <div className="flex min-h-[400px] flex-col items-center justify-center text-center">
-          <div className="mb-6">
-            <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-neutral-200 dark:bg-neutral-800">
-              <span className="text-4xl">⚙️</span>
-            </div>
-            <h1 className="mb-2 text-3xl font-bold text-neutral-900 dark:text-white">
-              Configurações
-            </h1>
-            <p className="text-neutral-600 dark:text-neutral-400">
-              Página em desenvolvimento
-            </p>
-          </div>
-          <div className="max-w-md rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-800 dark:bg-yellow-900/20">
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              Esta funcionalidade está sendo desenvolvida e estará disponível em
-              breve.
-            </p>
-          </div>
-        </div>
+        <SettingsPageLoader />
       </MainLayout>
     </AuthGuard>
   ),

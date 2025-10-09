@@ -65,7 +65,7 @@ export const UserAccessStep = memo(function UserAccessStep({
         <h3 className="mb-2 text-sm font-semibold text-neutral-50">
           Senha inicial
         </h3>
-        <p className="text-sm text-neutral-400">
+        <p className="text-xs text-neutral-400 md:text-sm">
           {isViewMode || isEditMode
             ? "A senha foi gerada automaticamente e enviada por e-mail para o colaborador."
             : "Uma senha aleatória será gerada automaticamente e enviada por e-mail para o colaborador. O usuário poderá alterar a senha depois do primeiro acesso."}
@@ -75,7 +75,7 @@ export const UserAccessStep = memo(function UserAccessStep({
       </div>
 
       <div className="rounded-lg border border-yellow-700/30 bg-yellow-900/10 p-4">
-        <p className="text-sm text-yellow-200/90">
+        <p className="text-xs text-yellow-200/90 md:text-sm">
           <strong>Atenção:</strong> Certifique-se de que o e-mail está correto.
           As credenciais de acesso serão enviadas para este endereço.
         </p>

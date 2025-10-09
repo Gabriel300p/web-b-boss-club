@@ -122,7 +122,7 @@ export function BarbershopStaffPage() {
 
   return (
     <>
-      <div className="flex flex-col gap-5 rounded-xl bg-neutral-900 p-6">
+      <div className="flex flex-col gap-5 rounded-xl bg-neutral-900 p-5 lg:p-6">
         <BarbershopStaffPageHeader
           totalCount={pagination?.total || 0}
           statistics={statistics}
