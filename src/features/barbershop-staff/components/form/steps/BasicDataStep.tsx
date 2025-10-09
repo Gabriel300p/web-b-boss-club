@@ -1,15 +1,7 @@
 /**
- * 📝 Basic Data import { memo } from "react";
-import type { UseFormReturn } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import type { CreateStaffFormInput } from "../../../schemas/barbershop-staff.schemas";
-import type { StaffFormMode } from "../StaffForm";
-
-interface BasicDataStepProps {
-  form: UseFormReturn<CreateStaffFormInput>;tep 1: Dados Cadastrais
+ * 📝 Basic Data Step 1: Dados Cadastrais
  * Nome, CPF, Telefone, Status, Descrição
  */
-import { maskPhone } from "@/shared/utils/phone.utils";
 import {
   FormControl,
   FormField,
@@ -26,8 +18,11 @@ import {
   SelectValue,
 } from "@shared/components/ui/select";
 import { Textarea } from "@shared/components/ui/textarea";
-import { maskCPF } from "@shared/utils/cpf.utils";
-import { memo, useEffect } from "react";
+import {
+  createFormattedOnChange,
+  inputFormatters,
+} from "@shared/utils/input-formatters";
+import { memo } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import type { CreateStaffFormInput } from "../../../schemas/barbershop-staff.schemas";
@@ -51,32 +46,8 @@ export const BasicDataStep = memo(function BasicDataStep({
   const isCreateMode = mode === "create";
 
   const {
-    setValue,
-    watch,
     formState: { isSubmitting },
   } = form;
-  const watchedCpf = watch("cpf");
-  const watchedPhone = watch("phone");
-
-  // Aplicar máscara de CPF (apenas no modo create)
-  useEffect(() => {
-    if (watchedCpf && isCreateMode) {
-      const masked = maskCPF(watchedCpf);
-      if (masked !== watchedCpf) {
-        setValue("cpf", masked, { shouldValidate: true });
-      }
-    }
-  }, [watchedCpf, setValue, isCreateMode]);
-
-  // Aplicar máscara de telefone
-  useEffect(() => {
-    if (watchedPhone && !isViewMode) {
-      const masked = maskPhone(watchedPhone);
-      if (masked !== watchedPhone) {
-        setValue("phone", masked, { shouldValidate: true });
-      }
-    }
-  }, [watchedPhone, setValue, isViewMode]);
 
   return (
     <div className="space-y-5">
@@ -120,6 +91,10 @@ export const BasicDataStep = memo(function BasicDataStep({
                 variant="form"
                 className="text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
                 {...field}
+                onChange={createFormattedOnChange(
+                  field.onChange,
+                  inputFormatters.cpf,
+                )}
               />
             </FormControl>
             <FormMessage className="text-red-400" />
@@ -144,6 +119,10 @@ export const BasicDataStep = memo(function BasicDataStep({
                 className="text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
                 {...field}
                 value={field.value || ""}
+                onChange={createFormattedOnChange(
+                  field.onChange,
+                  inputFormatters.phone,
+                )}
               />
             </FormControl>
             <FormMessage className="text-red-400" />

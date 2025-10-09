@@ -22,23 +22,106 @@ export const userRoleEnum = z.enum([
   "PENDING",
 ]);
 
-// 🎯 SCHEMA BASE - Define TODOS os campos UMA ÚNICA VEZ com validações completas
-// Todos os outros schemas derivam deste usando .pick(), .omit(), .extend(), .partial()
-const baseStaffFieldsSchema = z.object({
-  // 📋 Campos de identificação e nome
-  full_name: z
-    .string()
+// 📝 Base staff schema (for responses)
+export const barbershopStaffSchema = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  barbershop_id: z.string(),
+  first_name: z.string(),
+  last_name: z
+    .union([z.string(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  display_name: z
+    .union([z.string(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  phone: z
+    .union([z.string(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  role_in_shop: userRoleEnum,
+  status: staffStatusEnum,
+  salary: z
+    .union([z.number(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  commission_rate: z
+    .union([z.number(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  hire_date: z
+    .union([z.string(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  is_available: z.boolean(),
+  internal_notes: z
+    .union([z.string(), z.null(), z.object({})])
+    .transform((val) =>
+      val && typeof val === "object" && Object.keys(val).length === 0
+        ? null
+        : val,
+    ),
+  created_at: z.string(),
+  updated_at: z.string(),
+
+  // Related data
+  user: z.object({
+    id: z.string(),
+    email: z.string(),
+    role: userRoleEnum,
+    cpf: z
+      .union([z.string(), z.null(), z.object({})])
+      .transform((val) =>
+        val && typeof val === "object" && Object.keys(val).length === 0
+          ? null
+          : val,
+      ),
+  }),
+  barbershop: z.object({
+    id: z.string(),
+    name: z.string(),
+  }),
+});
+
+// � Schemas base compartilhados (DRY - Don't Repeat Yourself)
+// Define a estrutura dos campos uma única vez
+const formFieldsBase = {
+  full_name: z.string(),
+  cpf: z.string(),
+  email: z.string(),
+  phone: z.string(),
+  status: staffStatusEnum,
+  internal_notes: z.string(),
+} as const;
+
+// �📝 Base form input schema (antes da transformação - para validação de formulário)
+// Adiciona validações aos campos base
+export const createStaffFormInputSchema = z.object({
+  // 📋 Campos obrigatórios com validação
+  full_name: formFieldsBase.full_name
     .min(1, "Nome completo é obrigatório")
     .max(100, "Nome deve ter no máximo 100 caracteres")
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Nome deve conter apenas letras e espaços"),
-
-  first_name: nameSchema,
-  last_name: z.string(),
-  display_name: z.string(),
-
-  // 📋 Campos de contato e documentação
-  cpf: z
-    .string()
+  cpf: formFieldsBase.cpf
     .min(1, "CPF é obrigatório")
     .refine(
       (val) => {
@@ -57,83 +140,22 @@ const baseStaffFieldsSchema = z.object({
         message: "CPF inválido. Verifique os dígitos digitados",
       },
     ),
-
   email: emailSchema,
-  phone: z.string(),
 
-  // 📋 Campos de status e função
-  status: staffStatusEnum,
-  role_in_shop: userRoleEnum,
-  is_available: z.boolean(),
+  // 📋 Campos opcionais
+  phone: formFieldsBase.phone.optional(),
+  status: formFieldsBase.status.default("ACTIVE").optional(),
+  internal_notes: formFieldsBase.internal_notes.optional(),
 
-  // 📋 Campos financeiros
-  salary: z.number().positive("Salário deve ser positivo"),
+  // 📋 Campos opcionais avançados (para futuras expansões)
+  salary: z.number().positive("Salário deve ser positivo").optional(),
   commission_rate: z
     .number()
     .min(0)
-    .max(100, "Comissão deve estar entre 0 e 100%"),
-
-  // 📋 Campos de datas e notas
-  hire_date: z.string().datetime(),
-  internal_notes: z.string(),
+    .max(100, "Comissão deve estar entre 0 e 100%")
+    .optional(),
+  hire_date: z.string().datetime().optional(),
 });
-
-// 📝 Base staff schema (for API responses)
-// Usa campos do schema base onde possível
-export const barbershopStaffSchema = z.object({
-  id: z.string(),
-  user_id: z.string(),
-  barbershop_id: z.string(),
-  first_name: baseStaffFieldsSchema.shape.first_name,
-  last_name: baseStaffFieldsSchema.shape.last_name.nullable(),
-  display_name: baseStaffFieldsSchema.shape.display_name.nullable(),
-  phone: baseStaffFieldsSchema.shape.phone.nullable(),
-  role_in_shop: baseStaffFieldsSchema.shape.role_in_shop,
-  status: baseStaffFieldsSchema.shape.status,
-  salary: baseStaffFieldsSchema.shape.salary.nullable(),
-  commission_rate: baseStaffFieldsSchema.shape.commission_rate.nullable(),
-  hire_date: baseStaffFieldsSchema.shape.hire_date.nullable(),
-  is_available: baseStaffFieldsSchema.shape.is_available,
-  internal_notes: baseStaffFieldsSchema.shape.internal_notes.nullable(),
-  created_at: z.string(),
-  updated_at: z.string(),
-
-  // Related data
-  user: z.object({
-    id: z.string(),
-    email: baseStaffFieldsSchema.shape.email,
-    role: userRoleEnum,
-    cpf: baseStaffFieldsSchema.shape.cpf.nullable(),
-  }),
-  barbershop: z.object({
-    id: z.string(),
-    name: z.string(),
-  }),
-});
-
-// 📝 Schema para criação de staff (formulário)
-// Deriva do schema base, apenas selecionando campos necessários + ajustando opcionalidade
-export const createStaffFormInputSchema = baseStaffFieldsSchema
-  .pick({
-    full_name: true,
-    cpf: true,
-    email: true,
-    phone: true,
-    status: true,
-    internal_notes: true,
-    salary: true,
-    commission_rate: true,
-    hire_date: true,
-  })
-  .extend({
-    // Ajusta campos opcionais com defaults
-    phone: baseStaffFieldsSchema.shape.phone.optional(),
-    status: baseStaffFieldsSchema.shape.status.default("ACTIVE").optional(),
-    internal_notes: baseStaffFieldsSchema.shape.internal_notes.optional(),
-    salary: baseStaffFieldsSchema.shape.salary.optional(),
-    commission_rate: baseStaffFieldsSchema.shape.commission_rate.optional(),
-    hire_date: baseStaffFieldsSchema.shape.hire_date.optional(),
-  });
 
 // 📝 Form schema for creating staff (com transformação para formato do backend)
 // Aceita full_name e transforma automaticamente para o formato do backend
@@ -166,40 +188,33 @@ export const createStaffFormSchema = createStaffFormInputSchema.transform(
 );
 
 // 📝 Form schema for updating staff
-// NOTA: CPF e email são imutáveis (TODO: verificar com PO se essa regra está correta)
-// Deriva do schema base, selecionando apenas campos editáveis
-export const updateStaffFormSchema = baseStaffFieldsSchema
-  .pick({
-    first_name: true,
-    last_name: true,
-    display_name: true,
-    phone: true,
-    role_in_shop: true,
-    status: true,
-    salary: true,
-    commission_rate: true,
-    hire_date: true,
-    is_available: true,
-    internal_notes: true,
-  })
-  .partial(); // Todos os campos opcionais em update
+export const updateStaffFormSchema = z.object({
+  first_name: nameSchema.optional(),
+  last_name: z.string().optional(),
+  display_name: z.string().optional(),
+  phone: z.string().optional(),
+  role_in_shop: userRoleEnum.optional(),
+  status: staffStatusEnum.optional(),
+  salary: z.number().positive().optional(),
+  commission_rate: z.number().min(0).max(100).optional(),
+  hire_date: z.string().datetime().optional(),
+  is_available: z.boolean().optional(),
+  internal_notes: z.string().optional(),
+});
 
-// 📝 Schema inverso: API → Form (para edição/visualização)
+// � Schema inverso: API → Form (para edição/visualização)
 // Converte dados da API de volta para formato do formulário
-// Usa os mesmos tipos do schema base para garantir consistência
 export const staffApiToFormSchema = z
   .object({
-    first_name: baseStaffFieldsSchema.shape.first_name,
-    last_name: baseStaffFieldsSchema.shape.last_name.nullable().optional(),
-    phone: baseStaffFieldsSchema.shape.phone.nullable().optional(),
-    status: baseStaffFieldsSchema.shape.status,
-    internal_notes: baseStaffFieldsSchema.shape.internal_notes
-      .nullable()
-      .optional(),
+    first_name: z.string(),
+    last_name: z.string().nullable().optional(),
+    phone: z.string().nullable().optional(),
+    status: staffStatusEnum,
+    internal_notes: z.string().nullable().optional(),
     user: z
       .object({
-        cpf: baseStaffFieldsSchema.shape.cpf.optional(),
-        email: baseStaffFieldsSchema.shape.email.optional(),
+        cpf: z.string().optional(),
+        email: z.string().optional(),
       })
       .optional(),
   })
@@ -229,14 +244,13 @@ export const userAccessStepSchema = createStaffFormInputSchema.pick({
   email: true,
 });
 
-// 🔍 Filters schema for staff queries
-// Usa campos do schema base para filtros
+// �🔍 Filters schema for staff queries
 export const staffFiltersSchema = z.object({
   // Basic filters
-  status: baseStaffFieldsSchema.shape.status.optional(),
-  is_available: baseStaffFieldsSchema.shape.is_available.optional(),
+  status: staffStatusEnum.optional(),
+  is_available: z.boolean().optional(),
   barbershop_id: z.string().optional(),
-  role_in_shop: baseStaffFieldsSchema.shape.role_in_shop.optional(),
+  role_in_shop: userRoleEnum.optional(),
 
   // Advanced filters
   search: z.string().optional(),
