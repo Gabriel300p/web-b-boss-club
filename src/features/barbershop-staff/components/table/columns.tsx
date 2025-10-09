@@ -12,6 +12,7 @@ import {
 } from "../../helpers/column.helper";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
 import { StaffActions, type StaffActionHandlers } from "./columns-actions";
+import StaffAvatar from "./StaffAvatar";
 
 // 🎯 Interface para props das colunas
 type StaffColumnsProps = StaffActionHandlers & {
@@ -68,42 +69,35 @@ export const createColumns = ({
 
   columns.push(
     {
-      id: "first_name",
+      id: "staff_info",
       accessorKey: "first_name",
       header: ({ column }) => (
-        <TableSort column={column} className="ml-5">
-          {t("fields.name")}
+        <TableSort column={column}>
+          {t("fields.name")} / {t("fields.email")}
         </TableSort>
       ),
       cell: ({ row }) => {
         const staff = row.original;
-        const lastName =
-          staff.last_name && typeof staff.last_name === "string"
-            ? staff.last_name
-            : "";
-        const fullName = `${staff.first_name} ${lastName}`.trim();
+
+        // Usa display_name se existir, senão concatena first_name + last_name
+        const displayName =
+          staff.display_name ||
+          `${staff.first_name}${staff.last_name ? ` ${staff.last_name}` : ""}`.trim();
+
+        const email = staff.user?.email || "";
 
         return (
-          <div className="ml-5 cursor-pointer font-medium text-neutral-100 hover:text-neutral-200">
-            {fullName}
-          </div>
-        );
-      },
-    },
-    {
-      id: "user.email",
-      accessorKey: "user.email",
-      enableSorting: true,
-      header: ({ column }) => (
-        <TableSort column={column} align="center">
-          {t("fields.email")}
-        </TableSort>
-      ),
-      cell: ({ row }) => {
-        const staff = row.original;
-        return (
-          <div className="text-center font-medium text-neutral-400">
-            {staff.user.email}
+          <div className="flex items-center gap-3">
+            <StaffAvatar
+              firstName={staff.first_name}
+              lastName={staff.last_name}
+            />
+            <div className="flex flex-col">
+              <span className="font-medium text-neutral-100">
+                {displayName}
+              </span>
+              <span className="text-sm text-neutral-400">{email}</span>
+            </div>
           </div>
         );
       },
