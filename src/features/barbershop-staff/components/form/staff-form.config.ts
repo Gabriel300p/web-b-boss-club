@@ -195,8 +195,8 @@ const FIELD_MAPPING: Record<FormFieldName, FieldMappingConfig> = {
   internal_notes: {
     defaultValue: FIELDS.internal_notes.defaultValue,
     fromAPI: (data) => FieldTransformers.getNullableString(data.internal_notes),
-    toAPI: (value) => ({ 
-      internal_notes: FieldTransformers.cleanOptionalString(value) 
+    toAPI: (value) => ({
+      internal_notes: FieldTransformers.cleanOptionalString(value),
     }),
   },
 };
