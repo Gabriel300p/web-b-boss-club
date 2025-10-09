@@ -102,16 +102,26 @@ export const barbershopStaffSchema = z.object({
   }),
 });
 
-// 📝 Base form input schema (antes da transformação - para validação de formulário)
+// � Schemas base compartilhados (DRY - Don't Repeat Yourself)
+// Define a estrutura dos campos uma única vez
+const formFieldsBase = {
+  full_name: z.string(),
+  cpf: z.string(),
+  email: z.string(),
+  phone: z.string(),
+  status: staffStatusEnum,
+  internal_notes: z.string(),
+} as const;
+
+// �📝 Base form input schema (antes da transformação - para validação de formulário)
+// Adiciona validações aos campos base
 export const createStaffFormInputSchema = z.object({
-  // 📋 Campos do formulário (user-friendly)
-  full_name: z
-    .string()
+  // 📋 Campos obrigatórios com validação
+  full_name: formFieldsBase.full_name
     .min(1, "Nome completo é obrigatório")
     .max(100, "Nome deve ter no máximo 100 caracteres")
     .regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Nome deve conter apenas letras e espaços"),
-  cpf: z
-    .string()
+  cpf: formFieldsBase.cpf
     .min(1, "CPF é obrigatório")
     .refine(
       (val) => {
@@ -131,9 +141,11 @@ export const createStaffFormInputSchema = z.object({
       },
     ),
   email: emailSchema,
-  phone: z.string().optional(),
-  status: staffStatusEnum.default("ACTIVE").optional(),
-  internal_notes: z.string().optional(),
+  
+  // 📋 Campos opcionais
+  phone: formFieldsBase.phone.optional(),
+  status: formFieldsBase.status.default("ACTIVE").optional(),
+  internal_notes: formFieldsBase.internal_notes.optional(),
 
   // 📋 Campos opcionais avançados (para futuras expansões)
   salary: z.number().positive("Salário deve ser positivo").optional(),
@@ -206,7 +218,9 @@ export const staffApiToFormSchema = z
       })
       .optional(),
   })
-  .transform((data) => ({
+  .transform((data): Partial<z.infer<typeof createStaffFormInputSchema>> => ({
+    // ✅ Retorna no formato dos campos base (form format)
+    // Garante type-safety referenciando o schema de input
     full_name: [data.first_name, data.last_name].filter(Boolean).join(" "),
     cpf: data.user?.cpf || "",
     email: data.user?.email || "",
@@ -325,14 +339,16 @@ export type StaffStatus = z.infer<typeof staffStatusEnum>;
 export type UserRole = z.infer<typeof userRoleEnum>;
 
 // 🔧 Utility: Extrair defaults do schema automaticamente
+// ✅ Define valores padrão em um único lugar
 export const getStaffFormDefaults = (): Partial<CreateStaffFormInput> => {
   // Retorna valores padrão sem validação (para formulário vazio)
+  // Estrutura baseada nos campos do createStaffFormInputSchema
   return {
     full_name: "",
     cpf: "",
     email: "",
     phone: "",
-    status: "ACTIVE",
+    status: "ACTIVE", // Default do schema
     internal_notes: "",
-  };
+  } satisfies Partial<CreateStaffFormInput>; // ✅ Type-safe
 };

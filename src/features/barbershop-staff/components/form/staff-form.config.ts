@@ -99,7 +99,7 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
     hasRequiredFields: true,
     validationFields: [...VALIDATION_FIELD_GROUPS.BASIC_DATA_CREATE],
     validationSchema: {
-      create: basicDataStepSchema, // ✅ Usando schema do arquivo de schemas
+      create: basicDataStepSchema,
       edit: updateStaffFormSchema.pick({
         first_name: true,
         status: true,
@@ -133,8 +133,8 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
     hasRequiredFields: true,
     validationFields: [...VALIDATION_FIELD_GROUPS.USER_ACCESS],
     validationSchema: {
-      create: userAccessStepSchema, // ✅ Usando schema do arquivo de schemas
-      edit: z.object({}), // No validation on edit
+      create: userAccessStepSchema,
+      edit: z.object({}),
     },
   },
 ];
