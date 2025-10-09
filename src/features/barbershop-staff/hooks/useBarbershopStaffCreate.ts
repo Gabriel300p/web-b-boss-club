@@ -48,16 +48,18 @@ export function useBarbershopStaffCreate(
       return createStaff(payload as any);
     },
     onSuccess: async (response) => {
-      // Invalidate cache aggressively to ensure fresh data
-      await queryClient.invalidateQueries({
-        queryKey: ["barbershop-staff"],
-        refetchType: "all", // Force refetch of all matching queries
-      });
-
-      // Force immediate refetch to get updated list with new staff at top
-      await queryClient.refetchQueries({
-        queryKey: ["barbershop-staff"],
-        type: "all", // Refetch all matching queries
+      // ✅ Estratégia otimizada: invalidar apenas listas (não detalhes)
+      // Usa predicate function para ser seletivo e evitar refetch de staff details
+      queryClient.invalidateQueries({
+        predicate: (query) => {
+          const queryKey = query.queryKey;
+          // Invalida apenas queries de lista e stats, não detalhes individuais
+          return (
+            Array.isArray(queryKey) &&
+            queryKey[0] === "barbershop-staff" &&
+            (queryKey.includes("list") || queryKey.includes("stats"))
+          );
+        },
       });
 
       // Show success toast (sem mostrar a senha)
