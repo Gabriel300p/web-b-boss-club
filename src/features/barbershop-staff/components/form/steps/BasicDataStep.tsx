@@ -10,13 +10,6 @@ import {
   FormMessage,
 } from "@shared/components/ui/form";
 import { Input } from "@shared/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@shared/components/ui/select";
 import { Textarea } from "@shared/components/ui/textarea";
 import {
   createFormattedOnChange,
@@ -125,42 +118,6 @@ export const BasicDataStep = memo(function BasicDataStep({
                 )}
               />
             </FormControl>
-            <FormMessage className="text-red-400" />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
-        name="status"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-neutral-200">
-              {t("wizard.fields.status")}{" "}
-              {!isViewMode && <span className="text-red-500">*</span>}
-            </FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value || "ACTIVE"}
-              disabled={isViewMode || isSubmitting || isLoading}
-            >
-              <FormControl>
-                <SelectTrigger className="border-neutral-700 bg-neutral-800/50 text-neutral-50 hover:bg-neutral-800 disabled:opacity-60">
-                  <SelectValue placeholder={t("wizard.placeholders.status")} />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent className="border-neutral-700 bg-neutral-900">
-                <SelectItem value="ACTIVE" className="text-neutral-50">
-                  {t("status.active")}
-                </SelectItem>
-                <SelectItem value="INACTIVE" className="text-neutral-50">
-                  {t("status.inactive")}
-                </SelectItem>
-                <SelectItem value="SUSPENDED" className="text-neutral-50">
-                  {t("status.suspended")}
-                </SelectItem>
-              </SelectContent>
-            </Select>
             <FormMessage className="text-red-400" />
           </FormItem>
         )}

@@ -5,6 +5,9 @@
  */
 
 import { maskCPF } from "./cpf.utils";
+import { maskCurrency } from "./currency.utils";
+import { maskDate } from "./date.utils";
+import { maskPercentage } from "./percentage.utils";
 import { maskPhone } from "./phone.utils";
 
 /**
@@ -26,6 +29,30 @@ export const inputFormatters = {
    */
   phone: (value: string): string => {
     return maskPhone(value);
+  },
+
+  /**
+   * Formata moeda brasileira: R$ 1.234,56
+   * Limita automaticamente a R$ 999.999,99
+   */
+  currency: (value: string): string => {
+    return maskCurrency(value);
+  },
+
+  /**
+   * Formata porcentagem: 25,5%
+   * Limita automaticamente a 100% com 1 casa decimal
+   */
+  percentage: (value: string): string => {
+    return maskPercentage(value);
+  },
+
+  /**
+   * Formata data brasileira: DD/MM/YYYY
+   * Limita automaticamente a 8 dígitos
+   */
+  date: (value: string): string => {
+    return maskDate(value);
   },
 } as const;
 

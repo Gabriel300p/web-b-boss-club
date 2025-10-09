@@ -1,8 +1,9 @@
 import {
+  admissionInfoStepSchema,
   basicDataStepSchema,
   getStaffFormDefaults,
   staffApiToFormSchema,
-  updateStaffFormSchema,
+  updateStaffFormInputSchema,
   userAccessStepSchema,
   type BarbershopStaff,
   type CreateStaffFormInput,
@@ -84,8 +85,9 @@ export const SIDEBAR_HEADER_CONFIGS: Record<
 };
 
 const VALIDATION_FIELD_GROUPS = {
-  BASIC_DATA_CREATE: ["full_name", "cpf", "status"] as const,
-  BASIC_DATA_EDIT: ["full_name", "status"] as const,
+  BASIC_DATA_CREATE: ["full_name", "cpf"] as const,
+  BASIC_DATA_EDIT: ["full_name"] as const,
+  ADMISSION_INFO: ["status"] as const,
   USER_ACCESS: ["email"] as const,
 } as const;
 
@@ -100,9 +102,8 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
     validationFields: [...VALIDATION_FIELD_GROUPS.BASIC_DATA_CREATE],
     validationSchema: {
       create: basicDataStepSchema,
-      edit: updateStaffFormSchema.pick({
+      edit: updateStaffFormInputSchema.pick({
         first_name: true,
-        status: true,
       }),
     },
   },
@@ -112,8 +113,17 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
     defaultLabel: "Informações de Admissão",
     icon: BriefcaseIcon,
     component: AdmissionInfoStep,
-    hasRequiredFields: false,
-    validationFields: [],
+    hasRequiredFields: true,
+    validationFields: [...VALIDATION_FIELD_GROUPS.ADMISSION_INFO],
+    validationSchema: {
+      create: admissionInfoStepSchema,
+      edit: updateStaffFormInputSchema.pick({
+        status: true,
+        hire_date: true,
+        salary: true,
+        commission_rate: true,
+      }),
+    },
   },
   {
     id: 3,

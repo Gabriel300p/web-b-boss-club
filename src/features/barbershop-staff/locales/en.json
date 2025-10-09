@@ -98,7 +98,11 @@
       "phone": "Phone",
       "status": "Status",
       "description": "Description",
-      "internalNotes": "Internal Notes"
+      "internalNotes": "Internal Notes",
+      "hireDate": "Hire Date",
+      "terminatedDate": "Termination Date",
+      "salary": "Salary",
+      "commission": "Commission"
     },
     "placeholders": {
       "name": "Enter the barber's name",
@@ -106,7 +110,11 @@
       "phone": "(XX) XXXXX-XXXX",
       "status": "Active",
       "description": "Enter additional information...",
-      "internalNotes": "Internal notes for management..."
+      "internalNotes": "Internal notes for management...",
+      "hireDate": "DD/MM/YYYY",
+      "terminatedDate": "DD/MM/YYYY",
+      "salary": "R$ 0.00",
+      "commission": "0.0%"
     },
     "hints": {
       "description": "Additional information about the staff member (optional)",

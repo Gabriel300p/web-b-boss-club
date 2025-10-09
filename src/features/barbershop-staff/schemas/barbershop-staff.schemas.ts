@@ -4,6 +4,15 @@
  */
 import { emailSchema, nameSchema } from "@shared/schemas/common";
 import { cleanCPF, validateCPF } from "@shared/utils/cpf.utils";
+import {
+  currencyToNumber,
+  numberToCurrency,
+} from "@shared/utils/currency.utils";
+import { dateToISODatetime, isoToDate } from "@shared/utils/date.utils";
+import {
+  numberToPercentage,
+  percentageToNumber,
+} from "@shared/utils/percentage.utils";
 import { z } from "zod";
 
 // 🏷️ Enum definitions matching backend
@@ -75,6 +84,7 @@ const baseStaffFieldsSchema = z.object({
 
   // 📋 Campos de datas e notas
   hire_date: z.string().datetime(),
+  terminated_date: z.string().datetime(),
   internal_notes: z.string(),
 });
 
@@ -121,18 +131,22 @@ export const createStaffFormInputSchema = baseStaffFieldsSchema
     phone: true,
     status: true,
     internal_notes: true,
-    salary: true,
-    commission_rate: true,
-    hire_date: true,
+    // hire_date: true, // REMOVIDO TEMPORARIAMENTE - aceita string formatada DD/MM/YYYY
+    // terminated_date: true, // REMOVIDO TEMPORARIAMENTE
   })
   .extend({
     // Ajusta campos opcionais com defaults
     phone: baseStaffFieldsSchema.shape.phone.optional(),
     status: baseStaffFieldsSchema.shape.status.default("ACTIVE").optional(),
     internal_notes: baseStaffFieldsSchema.shape.internal_notes.optional(),
-    salary: baseStaffFieldsSchema.shape.salary.optional(),
-    commission_rate: baseStaffFieldsSchema.shape.commission_rate.optional(),
-    hire_date: baseStaffFieldsSchema.shape.hire_date.optional(),
+
+    // Campos de data aceitam string formatada (DD/MM/YYYY) em vez de datetime ISO
+    hire_date: z.string().optional(),
+    // terminated_date: z.string().optional(), // COMENTADO - será adicionado depois
+
+    // Campos formatados como string no frontend (serão convertidos para number no transform)
+    salary: z.string().optional(),
+    commission_rate: z.string().optional(),
   });
 
 // 📝 Form schema for creating staff (com transformação para formato do backend)
@@ -144,7 +158,27 @@ export const createStaffFormSchema = createStaffFormInputSchema.transform(
     const first_name = nameParts[0];
     const last_name = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
 
-    // 🔄 Transformação 2: Montar payload no formato esperado pelo backend
+    // 🔄 Transformação 2: Converter strings formatadas para números (apenas se não estiverem vazias)
+    const salary =
+      data.salary && data.salary.trim()
+        ? currencyToNumber(data.salary)
+        : undefined;
+    const commission_rate =
+      data.commission_rate && data.commission_rate.trim()
+        ? percentageToNumber(data.commission_rate)
+        : undefined;
+
+    // 🔄 Transformação 3: Converter datas DD/MM/YYYY para ISO datetime (YYYY-MM-DDTHH:mm:ss.sssZ) (apenas se não estiverem vazias)
+    const hire_date =
+      data.hire_date && data.hire_date.trim()
+        ? dateToISODatetime(data.hire_date) || undefined
+        : undefined;
+    // const terminated_date =
+    //   data.terminated_date && data.terminated_date.trim()
+    //     ? dateToISO(data.terminated_date) || undefined
+    //     : undefined;
+
+    // 🔄 Transformação 4: Montar payload no formato esperado pelo backend
     return {
       user: {
         first_name,
@@ -157,32 +191,81 @@ export const createStaffFormSchema = createStaffFormInputSchema.transform(
       status: data.status || "ACTIVE",
       is_available: true,
       internal_notes: data.internal_notes || undefined,
-      // Campos opcionais avançados
-      salary: data.salary,
-      commission_rate: data.commission_rate,
-      hire_date: data.hire_date,
+      // Campos opcionais avançados (convertidos)
+      salary,
+      commission_rate,
+      hire_date,
+      // terminated_date, // COMENTADO TEMPORARIAMENTE
     };
   },
 );
 
-// 📝 Form schema for updating staff
-// NOTA: CPF e email são imutáveis (TODO: verificar com PO se essa regra está correta)
-// Deriva do schema base, selecionando apenas campos editáveis
-export const updateStaffFormSchema = baseStaffFieldsSchema
-  .pick({
-    first_name: true,
-    last_name: true,
-    display_name: true,
-    phone: true,
-    role_in_shop: true,
-    status: true,
-    salary: true,
-    commission_rate: true,
-    hire_date: true,
-    is_available: true,
-    internal_notes: true,
+// 📝 Schema de entrada para UPDATE (aceita strings formatadas E full_name)
+export const updateStaffFormInputSchema = z
+  .object({
+    // Aceita full_name OU first_name/last_name separados
+    full_name: z.string().optional(),
+    first_name: baseStaffFieldsSchema.shape.first_name.optional(),
+    last_name: baseStaffFieldsSchema.shape.last_name.optional(),
+    display_name: baseStaffFieldsSchema.shape.display_name.optional(),
+    phone: baseStaffFieldsSchema.shape.phone.optional(),
+    role_in_shop: baseStaffFieldsSchema.shape.role_in_shop.optional(),
+    status: baseStaffFieldsSchema.shape.status.optional(),
+    is_available: baseStaffFieldsSchema.shape.is_available.optional(),
+    internal_notes: baseStaffFieldsSchema.shape.internal_notes.optional(),
+    // Campos formatados como string no frontend
+    salary: z.string().optional(),
+    commission_rate: z.string().optional(),
+    hire_date: z.string().optional(),
   })
-  .partial(); // Todos os campos opcionais em update
+  .partial();
+
+// 📝 Form schema for updating staff (com transformação)
+// NOTA: CPF e email são imutáveis
+export const updateStaffFormSchema = updateStaffFormInputSchema.transform(
+  (data) => {
+    // 🔄 Transformação 1: Dividir full_name em first_name e last_name (se full_name existir)
+    let first_name = data.first_name;
+    let last_name = data.last_name;
+
+    if (data.full_name) {
+      const nameParts = data.full_name.trim().split(/\s+/);
+      first_name = nameParts[0];
+      last_name = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+    }
+
+    // 🔄 Transformação 2: Converter strings formatadas para números (apenas se preenchidos)
+    const salary =
+      data.salary && data.salary.trim()
+        ? currencyToNumber(data.salary)
+        : undefined;
+    const commission_rate =
+      data.commission_rate && data.commission_rate.trim()
+        ? percentageToNumber(data.commission_rate)
+        : undefined;
+
+    // 🔄 Transformação 3: Converter data DD/MM/YYYY para ISO datetime
+    const hire_date =
+      data.hire_date && data.hire_date.trim()
+        ? dateToISODatetime(data.hire_date) || undefined
+        : undefined;
+
+    return {
+      first_name,
+      last_name,
+      display_name: data.display_name,
+      phone: data.phone,
+      role_in_shop: data.role_in_shop,
+      status: data.status,
+      is_available: data.is_available,
+      internal_notes: data.internal_notes,
+      // Campos convertidos
+      salary,
+      commission_rate,
+      hire_date,
+    };
+  },
+);
 
 // 📝 Schema inverso: API → Form (para edição/visualização)
 // Converte dados da API de volta para formato do formulário
@@ -196,6 +279,10 @@ export const staffApiToFormSchema = z
     internal_notes: baseStaffFieldsSchema.shape.internal_notes
       .nullable()
       .optional(),
+    // Campos financeiros e de data vêm como number/datetime do backend
+    salary: z.number().nullable().optional(),
+    commission_rate: z.number().nullable().optional(),
+    hire_date: z.string().datetime().nullable().optional(),
     user: z
       .object({
         cpf: baseStaffFieldsSchema.shape.cpf.optional(),
@@ -213,6 +300,13 @@ export const staffApiToFormSchema = z
       phone: data.phone || "",
       status: data.status,
       internal_notes: data.internal_notes || "",
+
+      // 🔄 Converte dados do backend (number/datetime) → frontend (string formatada)
+      salary: data.salary ? numberToCurrency(data.salary) : "",
+      commission_rate: data.commission_rate
+        ? numberToPercentage(data.commission_rate)
+        : "",
+      hire_date: data.hire_date ? isoToDate(data.hire_date) : "",
     }),
   );
 
@@ -220,10 +314,52 @@ export const staffApiToFormSchema = z
 export const basicDataStepSchema = createStaffFormInputSchema.pick({
   full_name: true,
   cpf: true,
-  status: true,
   phone: true,
   internal_notes: true,
 });
+
+export const admissionInfoStepSchema = createStaffFormInputSchema
+  .pick({
+    status: true,
+    hire_date: true,
+    // terminated_date: true, // TEMPORARIAMENTE COMENTADO
+    salary: true,
+    commission_rate: true,
+  })
+  .extend({
+    // Ajusta campos opcionais (salary e commission_rate já são strings no createStaffFormInputSchema)
+    hire_date: baseStaffFieldsSchema.shape.hire_date.optional(),
+    // terminated_date: baseStaffFieldsSchema.shape.terminated_date.optional(), // TEMPORARIAMENTE COMENTADO
+  });
+// VALIDAÇÕES TEMPORARIAMENTE COMENTADAS
+// .refine(
+//   (data) => {
+//     // Se status é TERMINATED, terminated_date é obrigatório
+//     if (data.status === "TERMINATED") {
+//       return !!data.terminated_date;
+//     }
+//     return true;
+//   },
+//   {
+//     message: "Data de demissão é obrigatória quando o status é 'Demitido'",
+//     path: ["terminated_date"],
+//   },
+// )
+// .refine(
+//   (data) => {
+//     // Se ambas as datas existem, terminated_date deve ser maior que hire_date
+//     if (data.hire_date && data.terminated_date) {
+//       const hireDate = new Date(data.hire_date);
+//       const terminatedDate = new Date(data.terminated_date);
+//       return terminatedDate > hireDate;
+//     }
+//     return true;
+//   },
+//   {
+//     message: "Data de demissão deve ser posterior à data de admissão",
+//     path: ["terminated_date"],
+//   },
+// );
 
 export const userAccessStepSchema = createStaffFormInputSchema.pick({
   email: true,

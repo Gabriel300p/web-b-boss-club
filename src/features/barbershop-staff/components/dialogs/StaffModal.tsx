@@ -11,6 +11,7 @@ import {
 import { useBarbershopStaffCreate } from "../../hooks/useBarbershopStaffCreate";
 import {
   createStaffFormSchema,
+  updateStaffFormSchema,
   type CreateStaffFormInput,
 } from "../../schemas/barbershop-staff.schemas";
 import { STAFF_FORM_STEPS } from "../form/staff-form.config";
@@ -86,14 +87,13 @@ export const StaffModal = memo(function StaffModal({
       const transformedData = createStaffFormSchema.parse(data);
       createStaffFn(transformedData);
     } else if (mode === "edit" && staffId) {
-      // ✅ Para update, continua usando a lógica existente
-      // TODO: Criar updateStaffFormSchema com transforms se necessário
+      // ✅ Validar e transformar dados usando updateStaffFormSchema
+      // O schema agora converte strings formatadas → números/datas
       setIsUpdating(true);
 
       try {
-        // Para update, enviamos os campos diretamente (sem transformação por enquanto)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await updateStaff(staffId, data as any);
+        const transformedData = updateStaffFormSchema.parse(data);
+        await updateStaff(staffId, transformedData);
         onClose();
       } catch (error) {
         console.error("Error updating staff:", error);

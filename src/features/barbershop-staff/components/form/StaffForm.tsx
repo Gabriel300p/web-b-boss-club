@@ -75,7 +75,7 @@ export const StaffForm = memo(function StaffForm({
 
   const {
     handleSubmit,
-    formState: { isSubmitting, isValid, isDirty },
+    formState: { isSubmitting, isDirty },
   } = form;
 
   // ✅ Hook de validação de steps
@@ -264,18 +264,13 @@ export const StaffForm = memo(function StaffForm({
 
               {!isViewMode && (
                 <Button
-                  type={isCreateMode && !isLastStep ? "button" : "submit"}
-                  onClick={
-                    isCreateMode && !isLastStep
-                      ? handlePrimaryAction
-                      : undefined
-                  }
+                  type="button"
+                  onClick={handlePrimaryAction}
                   disabled={
                     !canProceed ||
                     isSubmitting ||
                     isLoading ||
-                    (!isCreateMode && isEditMode && !isDirty) ||
-                    (isCreateMode && isLastStep && !isValid)
+                    (!isCreateMode && isEditMode && !isDirty)
                   }
                   className="bg-primary hover:bg-primary/90 font-semibold text-neutral-950 disabled:opacity-50"
                 >

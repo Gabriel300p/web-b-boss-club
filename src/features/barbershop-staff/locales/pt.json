@@ -94,7 +94,11 @@
       "email": "Email",
       "status": "Status",
       "description": "Descrição",
-      "internalNotes": "Notas Internas"
+      "internalNotes": "Notas Internas",
+      "hireDate": "Data de admissão",
+      "terminatedDate": "Data de demissão",
+      "salary": "Salário",
+      "commission": "Comissão"
     },
     "placeholders": {
       "name": "Digite o nome do barbeiro",
@@ -103,7 +107,11 @@
       "email": "email@exemplo.com",
       "status": "Ativo",
       "description": "Digite alguma informação adicional...",
-      "internalNotes": "Adicione observações internas..."
+      "internalNotes": "Adicione observações internas...",
+      "hireDate": "DD/MM/AAAA",
+      "terminatedDate": "DD/MM/AAAA",
+      "salary": "R$ 0,00",
+      "commission": "0,0%"
     },
     "hints": {
       "description": "Informações adicionais sobre o colaborador (opcional)",
