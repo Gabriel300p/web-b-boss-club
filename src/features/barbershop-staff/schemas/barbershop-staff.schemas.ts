@@ -141,7 +141,7 @@ export const createStaffFormInputSchema = z.object({
       },
     ),
   email: emailSchema,
-  
+
   // 📋 Campos opcionais
   phone: formFieldsBase.phone.optional(),
   status: formFieldsBase.status.default("ACTIVE").optional(),
@@ -218,16 +218,18 @@ export const staffApiToFormSchema = z
       })
       .optional(),
   })
-  .transform((data): Partial<z.infer<typeof createStaffFormInputSchema>> => ({
-    // ✅ Retorna no formato dos campos base (form format)
-    // Garante type-safety referenciando o schema de input
-    full_name: [data.first_name, data.last_name].filter(Boolean).join(" "),
-    cpf: data.user?.cpf || "",
-    email: data.user?.email || "",
-    phone: data.phone || "",
-    status: data.status,
-    internal_notes: data.internal_notes || "",
-  }));
+  .transform(
+    (data): Partial<z.infer<typeof createStaffFormInputSchema>> => ({
+      // ✅ Retorna no formato dos campos base (form format)
+      // Garante type-safety referenciando o schema de input
+      full_name: [data.first_name, data.last_name].filter(Boolean).join(" "),
+      cpf: data.user?.cpf || "",
+      email: data.user?.email || "",
+      phone: data.phone || "",
+      status: data.status,
+      internal_notes: data.internal_notes || "",
+    }),
+  );
 
 // 📋 Schemas por step (para validação granular)
 export const basicDataStepSchema = createStaffFormInputSchema.pick({
