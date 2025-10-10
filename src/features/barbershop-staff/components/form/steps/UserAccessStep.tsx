@@ -2,6 +2,8 @@
  * 📝 User Access Step - Step 4: Acesso do Usuário
  * E-mail, senha inicial, tipo de acesso
  */
+import { useToast } from "@/shared/hooks";
+import { AvatarUpload } from "@shared/components/form/AvatarUpload";
 import {
   FormControl,
   FormField,
@@ -28,6 +30,7 @@ export const UserAccessStep = memo(function UserAccessStep({
   isLoading = false,
 }: UserAccessStepProps) {
   const { t } = useTranslation("barbershop-staff");
+  const { showToast } = useToast();
 
   const isViewMode = mode === "view";
   const isEditMode = mode === "edit";
@@ -35,8 +38,46 @@ export const UserAccessStep = memo(function UserAccessStep({
     formState: { isSubmitting },
   } = form;
 
+  /**
+   * 📸 Handler para upload de avatar com sucesso
+   */
+  const handleAvatarUploadSuccess = (url: string) => {
+    form.setValue("avatar_url", url, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    showToast({
+      type: "success",
+      title: "Foto atualizada",
+      message: "A foto do colaborador foi atualizada com sucesso.",
+    });
+  };
+
+  /**
+   * ❌ Handler para erro no upload
+   */
+  const handleAvatarUploadError = (error: string) => {
+    showToast({
+      type: "error",
+      title: "Erro no upload",
+      message: error,
+    });
+  };
+
   return (
     <div className="space-y-5">
+      {/* 📸 Avatar Upload */}
+      <div className="flex flex-col items-center border-b border-neutral-800 pb-6">
+        <AvatarUpload
+          currentAvatarUrl={form.watch("avatar_url") || null}
+          fullName={form.watch("full_name") || ""}
+          onUploadSuccess={handleAvatarUploadSuccess}
+          onUploadError={handleAvatarUploadError}
+          disabled={isViewMode || isSubmitting || isLoading}
+          size="lg"
+        />
+      </div>
+
       <FormField
         control={form.control}
         name="email"

@@ -85,12 +85,14 @@ export const createColumns = ({
           `${staff.first_name}${staff.last_name ? ` ${staff.last_name}` : ""}`.trim();
 
         const email = staff.user?.email || "";
+        const avatarUrl = staff.user?.avatar_url || null;
 
         return (
           <div className="flex items-center gap-3">
             <StaffAvatar
               firstName={staff.first_name}
               lastName={staff.last_name}
+              avatarUrl={avatarUrl}
             />
             <div className="flex flex-col">
               <span className="font-medium text-neutral-100">

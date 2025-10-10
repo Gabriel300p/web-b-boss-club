@@ -70,6 +70,9 @@ const baseStaffFieldsSchema = z.object({
   email: emailSchema,
   phone: z.string(),
 
+  // 📸 Campo de avatar (opcional - aceita vazio ou URL válida)
+  avatar_url: z.union([z.string().url(), z.literal("")]).optional(),
+
   // 📋 Campos de status e função
   status: staffStatusEnum,
   role_in_shop: userRoleEnum,
@@ -114,6 +117,7 @@ export const barbershopStaffSchema = z.object({
     email: baseStaffFieldsSchema.shape.email,
     role: userRoleEnum,
     cpf: baseStaffFieldsSchema.shape.cpf.nullable(),
+    avatar_url: baseStaffFieldsSchema.shape.avatar_url.nullable(),
   }),
   barbershop: z.object({
     id: z.string(),
@@ -131,6 +135,7 @@ export const createStaffFormInputSchema = baseStaffFieldsSchema
     phone: true,
     status: true,
     internal_notes: true,
+    avatar_url: true, // 📸 Avatar URL
     // hire_date: true, // REMOVIDO TEMPORARIAMENTE - aceita string formatada DD/MM/YYYY
     // terminated_date: true, // REMOVIDO TEMPORARIAMENTE
   })
@@ -186,6 +191,7 @@ export const createStaffFormSchema = createStaffFormInputSchema.transform(
         cpf: data.cpf,
         email: data.email,
         phone: data.phone || undefined,
+        avatar_url: data.avatar_url || undefined, // 📸 Avatar URL
       },
       role_in_shop: "BARBER" as const,
       status: data.status || "ACTIVE",
@@ -209,6 +215,7 @@ export const updateStaffFormInputSchema = z
     last_name: baseStaffFieldsSchema.shape.last_name.optional(),
     display_name: baseStaffFieldsSchema.shape.display_name.optional(),
     phone: baseStaffFieldsSchema.shape.phone.optional(),
+    avatar_url: baseStaffFieldsSchema.shape.avatar_url.optional(), // 📸 Avatar URL
     role_in_shop: baseStaffFieldsSchema.shape.role_in_shop.optional(),
     status: baseStaffFieldsSchema.shape.status.optional(),
     is_available: baseStaffFieldsSchema.shape.is_available.optional(),
@@ -255,6 +262,7 @@ export const updateStaffFormSchema = updateStaffFormInputSchema.transform(
       last_name,
       display_name: data.display_name,
       phone: data.phone,
+      avatar_url: data.avatar_url, // 📸 Avatar URL
       role_in_shop: data.role_in_shop,
       status: data.status,
       is_available: data.is_available,
@@ -285,8 +293,11 @@ export const staffApiToFormSchema = z
     hire_date: z.string().datetime().nullable().optional(),
     user: z
       .object({
-        cpf: baseStaffFieldsSchema.shape.cpf.optional(),
+        cpf: baseStaffFieldsSchema.shape.cpf.nullable().optional(),
         email: baseStaffFieldsSchema.shape.email.optional(),
+        avatar_url: baseStaffFieldsSchema.shape.avatar_url
+          .nullable()
+          .optional(), // 📸 Avatar URL (aceita null da API)
       })
       .optional(),
   })
@@ -298,6 +309,7 @@ export const staffApiToFormSchema = z
       cpf: data.user?.cpf || "",
       email: data.user?.email || "",
       phone: data.phone || "",
+      avatar_url: data.user?.avatar_url || "", // 📸 Avatar URL
       status: data.status,
       internal_notes: data.internal_notes || "",
 
@@ -472,6 +484,7 @@ export const getStaffFormDefaults = (): Partial<CreateStaffFormInput> => {
     cpf: "",
     email: "",
     phone: "",
+    avatar_url: "", // 📸 Avatar URL (vazio por padrão)
     status: "ACTIVE", // Default do schema
     internal_notes: "",
   } satisfies Partial<CreateStaffFormInput>; // ✅ Type-safe
