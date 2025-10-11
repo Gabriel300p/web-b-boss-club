@@ -11,6 +11,8 @@ export interface UseSearchKeyboardOptions {
   onSelect: (result: SearchResult) => void;
   onClose: () => void;
   isOpen: boolean;
+  onClearQuery?: () => void; // ⌨️ FASE 5: Novo atalho
+  onClearHistory?: () => void; // ⌨️ FASE 5: Novo atalho
 }
 
 /**
@@ -19,9 +21,11 @@ export interface UseSearchKeyboardOptions {
  * Atalhos suportados:
  * - ↑/↓: Navegar pelos resultados
  * - Enter: Selecionar resultado destacado
- * - Esc: Fechar modal
+ * - Esc: Fechar modal (duplo Esc: limpar + fechar)
  * - Home: Ir para primeiro resultado
  * - End: Ir para último resultado
+ * - Ctrl+Backspace: Limpar busca ⌨️ FASE 5
+ * - Ctrl+H: Limpar histórico ⌨️ FASE 5
  *
  * @returns Índice selecionado e métodos de controle
  */
@@ -30,18 +34,27 @@ export function useSearchKeyboard({
   onSelect,
   onClose,
   isOpen,
+  onClearQuery,
+  onClearHistory,
 }: UseSearchKeyboardOptions) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
+  const lastEscPressTime = useRef<number>(0); // ⌨️ FASE 5: Controle de duplo Esc
 
   // Usar ref para manter valores atualizados sem causar re-renders
   const resultsRef = useRef(results);
   const onSelectRef = useRef(onSelect);
   const onCloseRef = useRef(onClose);
+  const onClearQueryRef = useRef(onClearQuery); // ⌨️ FASE 5
+  const onClearHistoryRef = useRef(onClearHistory); // ⌨️ FASE 5
 
   // Atualizar refs de forma síncrona (não em useEffect)
   // Isso evita um ciclo extra de renderização
   resultsRef.current = results;
+  onSelectRef.current = onSelect;
+  onCloseRef.current = onClose;
+  onClearQueryRef.current = onClearQuery; // ⌨️ FASE 5
+  onClearHistoryRef.current = onClearHistory; // ⌨️ FASE 5
   onSelectRef.current = onSelect;
   onCloseRef.current = onClose;
 
@@ -83,6 +96,39 @@ export function useSearchKeyboard({
 
     const handleKeyDown = (event: KeyboardEvent) => {
       const currentResults = resultsRef.current;
+
+      // ⌨️ FASE 5: Ctrl+Backspace - Limpar busca
+      if (event.ctrlKey && event.key === "Backspace") {
+        event.preventDefault();
+        onClearQueryRef.current?.();
+        return;
+      }
+
+      // ⌨️ FASE 5: Ctrl+H - Limpar histórico
+      if (event.ctrlKey && event.key === "h") {
+        event.preventDefault();
+        onClearHistoryRef.current?.();
+        return;
+      }
+
+      // ⌨️ FASE 5: Duplo Esc - Primeiro limpa, depois fecha
+      if (event.key === "Escape") {
+        event.preventDefault();
+        const now = Date.now();
+        const timeSinceLastEsc = now - lastEscPressTime.current;
+
+        if (timeSinceLastEsc < 500) {
+          // Duplo Esc em < 500ms = fechar
+          onCloseRef.current();
+          lastEscPressTime.current = 0;
+        } else {
+          // Primeiro Esc = limpar busca
+          onClearQueryRef.current?.();
+          lastEscPressTime.current = now;
+        }
+        return;
+      }
+
       if (currentResults.length === 0) return;
 
       switch (event.key) {
@@ -118,11 +164,6 @@ export function useSearchKeyboard({
             }
             return currentIndex;
           });
-          break;
-
-        case "Escape":
-          event.preventDefault();
-          onCloseRef.current();
           break;
 
         default:

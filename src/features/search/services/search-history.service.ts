@@ -1,34 +1,70 @@
 /**
  * 💾 Search History Service
  * Gerenciamento de histórico de buscas usando localStorage
+ * FASE 3: Salva apenas metadata serializável (sem ícones)
  */
 
-import type { SearchHistoryItem, SearchResult } from "../types/search.types";
+import type {
+  SearchResult,
+  SerializableSearchResult,
+} from "../types/search.types";
 import { SEARCH_LIMITS } from "../types/search.types";
+import { deserializeSearchResult } from "../utils/search-icon-resolver";
 
 const HISTORY_KEY = "b-boss-search-history";
 const MAX_HISTORY = SEARCH_LIMITS.MAX_HISTORY;
 
 /**
- * 📝 Serializa Date para string no localStorage
+ * � Converte SearchResult para formato serializável
+ * Remove ícone e adiciona metadata de histórico
  */
-function serializeHistoryItem(item: SearchHistoryItem): unknown {
-  return {
-    ...item,
-    searchedAt: item.searchedAt.toISOString(),
+function toSerializable(result: SearchResult): SerializableSearchResult {
+  const base = {
+    id: result.id,
+    type: result.type,
+    title: result.title,
+    description: result.description,
+    score: result.score,
+    searchedAt: Date.now(),
+    clickCount: 1,
+    metadata: result.metadata,
   };
+
+  // Adicionar campos específicos por tipo
+  if (result.type === "page") {
+    return {
+      ...base,
+      href: result.href,
+      shortcut: result.shortcut,
+      section: result.section,
+    };
+  }
+
+  if (result.type === "staff") {
+    return {
+      ...base,
+      status: result.status,
+      avatarUrl: result.avatarUrl,
+    };
+  }
+
+  return base;
 }
 
 /**
- * 📝 Deserializa string para Date do localStorage
+ * � Converte formato serializável de volta para SearchResult
+ * Reconstrói o ícone baseado no tipo
  */
-function deserializeHistoryItem(
-  data: Record<string, unknown>,
-): SearchHistoryItem {
+function fromSerializable(
+  data: SerializableSearchResult,
+): SearchResult & { searchedAt: Date; clickCount: number } {
+  const deserialized = deserializeSearchResult(data);
+
   return {
-    ...data,
-    searchedAt: new Date(data.searchedAt as string),
-  } as SearchHistoryItem;
+    ...deserialized,
+    searchedAt: new Date(data.searchedAt),
+    clickCount: data.clickCount,
+  } as SearchResult & { searchedAt: Date; clickCount: number };
 }
 
 /**
@@ -44,40 +80,34 @@ export const searchHistoryService = {
    */
   save(result: SearchResult): void {
     try {
-      const history = this.get();
+      const data = localStorage.getItem(HISTORY_KEY);
+      const history: SerializableSearchResult[] = data ? JSON.parse(data) : [];
+
       const existingIndex = history.findIndex((item) => item.id === result.id);
 
-      let updated: SearchHistoryItem[];
+      let updated: SerializableSearchResult[];
 
       if (existingIndex !== -1) {
         // Item já existe: incrementar clickCount e mover para o topo
         const existing = history[existingIndex];
         updated = [
           {
-            ...result,
-            searchedAt: new Date(),
+            ...toSerializable(result),
+            searchedAt: Date.now(),
             clickCount: existing.clickCount + 1,
           },
           ...history.filter((_, i) => i !== existingIndex),
         ];
       } else {
         // Novo item: adicionar no topo
-        updated = [
-          {
-            ...result,
-            searchedAt: new Date(),
-            clickCount: 1,
-          },
-          ...history,
-        ];
+        updated = [toSerializable(result), ...history];
       }
 
       // Limitar ao máximo permitido
       const limited = updated.slice(0, MAX_HISTORY);
 
       // Salvar no localStorage
-      const serialized = limited.map(serializeHistoryItem);
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(serialized));
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(limited));
     } catch (error) {
       console.error("Erro ao salvar histórico de busca:", error);
       // Falha silenciosa: não bloquear UX
@@ -88,13 +118,13 @@ export const searchHistoryService = {
    * 📖 Retorna histórico completo
    * Ordenado por data (mais recente primeiro)
    */
-  get(): SearchHistoryItem[] {
+  get(): (SearchResult & { searchedAt: Date; clickCount: number })[] {
     try {
       const data = localStorage.getItem(HISTORY_KEY);
       if (!data) return [];
 
-      const parsed = JSON.parse(data);
-      return parsed.map(deserializeHistoryItem);
+      const parsed: SerializableSearchResult[] = JSON.parse(data);
+      return parsed.map(fromSerializable);
     } catch (error) {
       console.error("Erro ao carregar histórico de busca:", error);
       return [];
@@ -104,14 +134,18 @@ export const searchHistoryService = {
   /**
    * 📖 Retorna histórico limitado (para UI)
    */
-  getRecent(limit: number = 5): SearchHistoryItem[] {
+  getRecent(
+    limit: number = 5,
+  ): (SearchResult & { searchedAt: Date; clickCount: number })[] {
     return this.get().slice(0, limit);
   },
 
   /**
    * 🔍 Busca no histórico por tipo
    */
-  getByType(type: SearchResult["type"]): SearchHistoryItem[] {
+  getByType(
+    type: SearchResult["type"],
+  ): (SearchResult & { searchedAt: Date; clickCount: number })[] {
     return this.get().filter((item) => item.type === type);
   },
 
@@ -120,10 +154,12 @@ export const searchHistoryService = {
    */
   remove(id: string): void {
     try {
-      const history = this.get();
+      const data = localStorage.getItem(HISTORY_KEY);
+      if (!data) return;
+
+      const history: SerializableSearchResult[] = JSON.parse(data);
       const updated = history.filter((item) => item.id !== id);
-      const serialized = updated.map(serializeHistoryItem);
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(serialized));
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
     } catch (error) {
       console.error("Erro ao remover do histórico:", error);
     }
@@ -146,7 +182,9 @@ export const searchHistoryService = {
   getStats(): {
     total: number;
     byType: Record<string, number>;
-    mostClicked: SearchHistoryItem | null;
+    mostClicked:
+      | (SearchResult & { searchedAt: Date; clickCount: number })
+      | null;
   } {
     const history = this.get();
     const byType: Record<string, number> = {};
@@ -157,7 +195,7 @@ export const searchHistoryService = {
 
     const mostClicked = history.reduce(
       (max, item) => (item.clickCount > (max?.clickCount || 0) ? item : max),
-      null as SearchHistoryItem | null,
+      null as (SearchResult & { searchedAt: Date; clickCount: number }) | null,
     );
 
     return {

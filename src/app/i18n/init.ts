@@ -13,6 +13,8 @@ import enUSBarbershopStaff from "@/features/barbershop-staff/locales/en.json";
 import ptBRBarbershopStaff from "@/features/barbershop-staff/locales/pt.json";
 import enUSBarbershop from "@/features/barbershop/locales/en.json";
 import ptBRBarbershop from "@/features/barbershop/locales/pt.json";
+import enUSSearch from "@/features/search/locales/en.json"; // 🌍 FASE 10
+import ptBRSearch from "@/features/search/locales/pt.json"; // 🌍 FASE 10
 
 export const DEFAULT_LOCALE = "pt-BR";
 export const FALLBACK_LOCALE = "en-US";
@@ -48,6 +50,7 @@ const resources = {
     auth: ptBRAuth,
     barbershop: ptBRBarbershop,
     "barbershop-staff": ptBRBarbershopStaff,
+    search: ptBRSearch, // 🌍 FASE 10
   },
   "en-US": {
     common: enUSCommon,
@@ -55,6 +58,7 @@ const resources = {
     auth: enUSAuth,
     barbershop: enUSBarbershop,
     "barbershop-staff": enUSBarbershopStaff,
+    search: enUSSearch, // 🌍 FASE 10
   },
 };
 
@@ -73,6 +77,7 @@ if (!i18n.isInitialized) {
         "auth",
         "barbershop",
         "barbershop-staff",
+        "search", // 🌍 FASE 10
       ],
       interpolation: { escapeValue: false },
       returnEmptyString: false,

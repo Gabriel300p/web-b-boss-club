@@ -122,6 +122,27 @@ export type SearchHistoryItem = SearchResult & {
 };
 
 /**
+ * 💾 Versão serializável do resultado de busca (sem ícone)
+ * Usado para salvar no localStorage sem problemas de serialização
+ */
+export interface SerializableSearchResult {
+  id: string;
+  type: SearchableEntity;
+  title: string;
+  description: string;
+  score: number;
+  searchedAt: number; // timestamp
+  clickCount: number;
+  // Campos específicos por tipo
+  href?: string; // Para pages
+  shortcut?: string; // Para pages
+  section?: "principal" | "outros"; // Para pages
+  status?: StaffStatus; // Para staff
+  avatarUrl?: string; // Para staff
+  metadata?: Record<string, unknown>;
+}
+
+/**
  * ⚙️ Configuração padrão da busca
  */
 export const DEFAULT_SEARCH_OPTIONS: Required<SearchOptions> = {

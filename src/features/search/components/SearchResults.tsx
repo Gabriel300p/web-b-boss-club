@@ -1,13 +1,17 @@
 /**
  * 📋 SearchResults Component
  * Lista de resultados de busca com agrupamento e estados
+ *
+ * Features (FASE 10): Internacionalização completa pt-BR/en-US
  */
 
-import { CaretDown, MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react";
 import { Button } from "@shared/components/ui/button";
 import { cn } from "@shared/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "react-i18next"; // 🌍 FASE 10
 import type { SearchResult } from "../types/search.types";
+import { EmptyState } from "./EmptyState"; // 🎨 FASE 9
 import { SearchResultItem } from "./SearchResultItem";
 
 interface SearchResultsProps {
@@ -44,36 +48,11 @@ export function SearchResults({
   isEmpty,
   listRef,
 }: SearchResultsProps) {
-  // Estado vazio: sem resultados para a busca
+  const { t } = useTranslation("search"); // � FASE 10
+
+  // �🎨 FASE 9: Estado vazio - sem resultados para a busca
   if (isEmpty && query) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center py-12 text-center"
-      >
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
-          <MagnifyingGlassIcon className="h-8 w-8 text-neutral-400 dark:text-neutral-500" />
-        </div>
-        <h3 className="mb-2 text-base font-medium text-neutral-900 dark:text-white">
-          Nenhum resultado encontrado
-        </h3>
-        <p className="max-w-sm text-sm text-neutral-600 dark:text-neutral-400">
-          Não encontramos nenhuma página que corresponda a{" "}
-          <span className="font-semibold">"{query}"</span>
-        </p>
-        <div className="mt-4">
-          <p className="text-xs text-neutral-500 dark:text-neutral-500">
-            Tente buscar por:
-          </p>
-          <ul className="mt-2 space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
-            <li>• Nome de página</li>
-            <li>• Configurações</li>
-            <li>• Ajuda</li>
-          </ul>
-        </div>
-      </motion.div>
-    );
+    return <EmptyState type="no-results" query={query} />;
   }
 
   // Agrupar resultados por tipo
@@ -88,51 +67,64 @@ export function SearchResults({
     {} as Record<string, SearchResult[]>,
   );
 
-  // Labels de categorias
+  // 🌍 FASE 10: Labels de categorias internacionalizados
   const categoryLabels: Record<string, string> = {
-    page: "Páginas",
-    staff: "Barbeiros",
-    service: "Serviços",
-    unit: "Unidades",
+    page: t("results.categories.pages"),
+    staff: t("results.categories.staff"),
+    service: t("results.categories.services"),
+    unit: t("results.categories.units"),
   };
 
   return (
     <div ref={listRef} className="flex flex-col gap-4">
       {/* Resultados agrupados por categoria */}
-      {Object.entries(groupedResults).map(([type, categoryResults]) => (
-        <div key={type} className="flex flex-col gap-2">
-          {/* Header da categoria */}
-          <div className="px-2">
-            <h3 className="text-xs font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
-              {categoryLabels[type] || type} ({categoryResults.length})
-            </h3>
-          </div>
-
-          {/* Lista de resultados */}
-          <div
-            role="listbox"
-            aria-label={`Resultados de ${categoryLabels[type] || type}`}
-            className="flex flex-col gap-1"
+      {Object.entries(groupedResults).map(
+        ([type, categoryResults], groupIndex) => (
+          <motion.div
+            key={type}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{
+              duration: 0.3,
+              delay: groupIndex * 0.1, // 🎨 FASE 4.2: Stagger entre grupos
+              ease: [0.25, 0.1, 0.25, 1], // Easing suave
+            }}
+            className="flex flex-col gap-2"
           >
-            <AnimatePresence mode="popLayout">
-              {categoryResults.map((result, categoryIndex) => {
-                const globalIndex = results.indexOf(result);
-                return (
-                  <SearchResultItem
-                    key={result.id}
-                    result={result}
-                    query={query}
-                    isSelected={globalIndex === selectedIndex}
-                    onSelect={() => onSelect(result)}
-                    onMouseEnter={() => onMouseEnter(globalIndex)}
-                    index={categoryIndex}
-                  />
-                );
-              })}
-            </AnimatePresence>
-          </div>
-        </div>
-      ))}
+            {/* Header da categoria */}
+            <div className="px-2">
+              <h3 className="text-xs font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
+                {categoryLabels[type] || type} ({categoryResults.length})
+              </h3>
+            </div>
+
+            {/* Lista de resultados */}
+            <div
+              role="listbox"
+              aria-label={`Resultados de ${categoryLabels[type] || type}`}
+              className="flex flex-col gap-1"
+            >
+              <AnimatePresence mode="popLayout">
+                {categoryResults.map((result, categoryIndex) => {
+                  const globalIndex = results.indexOf(result);
+                  return (
+                    <SearchResultItem
+                      key={result.id}
+                      result={result}
+                      query={query}
+                      isSelected={globalIndex === selectedIndex}
+                      onSelect={() => onSelect(result)}
+                      onMouseEnter={() => onMouseEnter(globalIndex)}
+                      index={categoryIndex}
+                    />
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        ),
+      )}
 
       {/* Botão "Ver mais" */}
       <AnimatePresence>
@@ -153,9 +145,10 @@ export function SearchResults({
                 "dark:text-neutral-300 dark:hover:text-neutral-100",
                 "hover:bg-neutral-100 dark:hover:bg-neutral-800",
               )}
+              aria-label={t("results.showMore")} // ♿ FASE 8
             >
-              Ver mais resultados
-              <CaretDown className="h-4 w-4" weight="bold" />
+              {t("results.showMore")}
+              <CaretDown className="h-4 w-4" weight="bold" aria-hidden="true" />
             </Button>
           </motion.div>
         )}

@@ -29,6 +29,10 @@ export {
   truncateText,
 } from "./utils/search-highlighter";
 export {
+  deserializeSearchResult,
+  getIconForSearchResult,
+} from "./utils/search-icon-resolver";
+export {
   calculateRelevanceScore,
   filterByMinScore,
   scoreAndSort,
@@ -45,6 +49,7 @@ export type {
   SearchOptions,
   SearchResult,
   SearchState,
+  SerializableSearchResult,
   StaffSearchResult,
   UserRole,
 } from "./types/search.types";

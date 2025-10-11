@@ -1,17 +1,21 @@
 /**
  * 📄 SearchResultItem Component
  * Item individual de resultado de busca com animações e acessibilidade
+ *
+ * Features (FASE 10): Internacionalização completa pt-BR/en-US
  */
 
 import { ArrowRightIcon } from "@phosphor-icons/react";
 import { BadgeWithoutDot } from "@shared/components/ui/badge";
 import { cn } from "@shared/lib/utils";
 import { motion } from "framer-motion";
+import { memo } from "react"; // ⚡ FASE 6: Otimização
+import { useTranslation } from "react-i18next"; // 🌍 FASE 10
 import type { PageSearchResult, SearchResult } from "../types/search.types";
 import { HighlightedText } from "./HighlightedText";
 
 interface SearchResultItemProps {
-  result: SearchResult;
+  result: SearchResult & { clickCount?: number }; // ✅ FASE 4.1: Adicionar clickCount
   query: string;
   isSelected: boolean;
   onSelect: () => void;
@@ -30,8 +34,10 @@ interface SearchResultItemProps {
  * - Badge de seção (para páginas)
  * - Hover state suave
  * - Acessibilidade completa
+ *
+ * ⚡ FASE 6: Memoizado para evitar re-renders desnecessários
  */
-export function SearchResultItem({
+function SearchResultItemComponent({
   result,
   query,
   isSelected,
@@ -39,6 +45,7 @@ export function SearchResultItem({
   onMouseEnter,
   index,
 }: SearchResultItemProps) {
+  const { t } = useTranslation("search"); // 🌍 FASE 10
   const Icon = result.icon;
 
   // Validar que Icon é um componente React válido
@@ -71,6 +78,52 @@ export function SearchResultItem({
     return null;
   };
 
+  // 🏆 FASE 4.1: Badge de frequência do histórico
+  const getFrequencyBadge = () => {
+    if (result.clickCount && result.clickCount > 1) {
+      return (
+        <BadgeWithoutDot
+          variant="warning"
+          size="sm"
+          className="text-xs font-semibold"
+        >
+          ×{result.clickCount}
+        </BadgeWithoutDot>
+      );
+    }
+    return null;
+  };
+
+  // ♿ FASE 8 + 🌍 FASE 10: Label acessível descritivo e internacionalizado
+  const getAriaLabel = () => {
+    const parts: string[] = [result.title];
+
+    if (result.description) {
+      parts.push(result.description);
+    }
+
+    if (result.type === "page") {
+      const pageResult = result as PageSearchResult;
+      parts.push(`Seção ${pageResult.section}`);
+    }
+
+    if (result.type === "staff") {
+      parts.push(
+        result.status === "ACTIVE" ? t("status.active") : t("status.inactive"),
+      );
+    }
+
+    if (result.clickCount && result.clickCount > 1) {
+      parts.push(t("history.accessCount", { count: result.clickCount }));
+    }
+
+    if (isSelected) {
+      parts.push(t("status.selected"));
+    }
+
+    return parts.join(", ");
+  };
+
   return (
     <motion.button
       initial={{ opacity: 0, y: 4 }}
@@ -84,6 +137,7 @@ export function SearchResultItem({
       onMouseEnter={onMouseEnter}
       role="option"
       aria-selected={isSelected}
+      aria-label={getAriaLabel()} // ♿ FASE 8
       className={cn(
         "group relative flex w-full items-center gap-3 rounded-lg px-4 py-4 text-left transition-all duration-150",
         "focus:ring-2 focus:ring-neutral-400 focus:outline-none dark:focus:ring-neutral-700",
@@ -93,21 +147,36 @@ export function SearchResultItem({
       )}
     >
       {/* Ícone do resultado */}
-      <div
-        className={cn(
-          "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md transition-all duration-150",
-          isSelected
-            ? "bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
-            : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
-          "group-hover:scale-105",
+      <div className="relative flex-shrink-0">
+        <div
+          className={cn(
+            "flex h-10 w-10 items-center justify-center rounded-md transition-all duration-150",
+            isSelected
+              ? "bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200"
+              : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
+            "group-hover:scale-105",
+          )}
+        >
+          <Icon className="h-5 w-5" weight="duotone" />
+        </div>
+
+        {/* 🟢 FASE 4.3: Indicador de status para staff */}
+        {result.type === "staff" && result.status && (
+          <div
+            className={cn(
+              "absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white dark:border-neutral-900",
+              result.status === "ACTIVE"
+                ? "bg-green-500"
+                : "bg-neutral-400 dark:bg-neutral-600",
+            )}
+            aria-hidden="true" // ♿ FASE 8: Status já está no aria-label do botão
+          />
         )}
-      >
-        <Icon className="h-5 w-5" weight="duotone" />
       </div>
 
       {/* Conteúdo */}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        {/* Título com highlight */}
+        {/* Título com highlight e badges */}
         <div className="flex items-center gap-2">
           <HighlightedText
             text={result.title}
@@ -116,6 +185,7 @@ export function SearchResultItem({
             highlightClassName="bg-amber-400/30 dark:bg-amber-500/20 text-neutral-900 dark:text-amber-300 font-semibold rounded px-0.5"
           />
           {getSectionBadge()}
+          {getFrequencyBadge()} {/* 🏆 FASE 4.1: Badge de frequência */}
         </div>
 
         {/* Descrição com highlight */}
@@ -153,3 +223,17 @@ export function SearchResultItem({
     </motion.button>
   );
 }
+
+// ⚡ FASE 6: Export memoizado para prevenir re-renders desnecessários
+// Só re-renderiza se result.id, query, ou isSelected mudarem
+export const SearchResultItem = memo(
+  SearchResultItemComponent,
+  (prev, next) => {
+    return (
+      prev.result.id === next.result.id &&
+      prev.query === next.query &&
+      prev.isSelected === next.isSelected &&
+      prev.index === next.index
+    );
+  },
+);

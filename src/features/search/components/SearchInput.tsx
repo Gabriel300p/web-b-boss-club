@@ -1,6 +1,8 @@
 /**
  * 🔍 SearchInput Component
  * Input de busca com debounce, loading state e animações
+ *
+ * Features (FASE 10): Internacionalização completa pt-BR/en-US
  */
 
 import { MagnifyingGlassIcon, X } from "@phosphor-icons/react";
@@ -8,6 +10,7 @@ import { Input } from "@shared/components/ui/input";
 import { cn } from "@shared/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { forwardRef, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next"; // 🌍 FASE 10
 
 interface SearchInputProps {
   value: string;
@@ -17,6 +20,7 @@ interface SearchInputProps {
   isLoading?: boolean;
   autoFocus?: boolean;
   className?: string;
+  "aria-describedby"?: string; // ♿ FASE 8
 }
 
 /**
@@ -40,9 +44,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       isLoading = false,
       autoFocus = true,
       className,
+      "aria-describedby": ariaDescribedBy, // ♿ FASE 8
     },
     ref,
   ) => {
+    const { t } = useTranslation("search"); // 🌍 FASE 10
     const internalRef = useRef<HTMLInputElement>(null);
     const inputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
 
@@ -76,20 +82,26 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             {isLoading ? (
               <motion.div
                 key="loading"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.15 }}
+                initial={{ opacity: 0, scale: 0.8, rotate: -90 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                exit={{ opacity: 0, scale: 0.8, rotate: 90 }}
+                transition={{
+                  duration: 0.3,
+                  ease: [0.25, 0.1, 0.25, 1], // 🎨 FASE 4.2: Easing suave
+                }}
               >
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-600 dark:border-neutral-600 dark:border-t-neutral-300" />
               </motion.div>
             ) : (
               <motion.div
                 key="search-icon"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.15 }}
+                initial={{ opacity: 0, scale: 0.8, rotate: 90 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                exit={{ opacity: 0, scale: 0.8, rotate: -90 }}
+                transition={{
+                  duration: 0.3,
+                  ease: [0.25, 0.1, 0.25, 1], // 🎨 FASE 4.2: Easing suave
+                }}
               >
                 <MagnifyingGlassIcon
                   className="h-5 w-5 text-neutral-400 dark:text-neutral-500"
@@ -114,8 +126,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             "placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
             className,
           )}
-          aria-label="Pesquisar no sistema"
+          aria-label={t("input.ariaLabel")}
           aria-autocomplete="list"
+          aria-describedby={ariaDescribedBy} // ♿ FASE 8
           autoComplete="off"
           spellCheck={false}
         />
@@ -127,7 +140,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.15 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{
+                duration: 0.2,
+                ease: [0.25, 0.1, 0.25, 1],
+              }}
               onClick={handleClear}
               className={cn(
                 "absolute right-3 flex items-center justify-center",
@@ -138,7 +156,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
                 "transition-colors duration-150",
                 "focus:ring-2 focus:ring-neutral-400 focus:outline-none dark:focus:ring-neutral-600",
               )}
-              aria-label="Limpar busca"
+              aria-label={t("input.clearButton")}
               type="button"
             >
               <X className="h-4 w-4" weight="bold" />

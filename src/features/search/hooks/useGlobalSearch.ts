@@ -59,7 +59,8 @@ export function useGlobalSearch() {
     selectedCategory === "all" || selectedCategory === "staff",
   );
 
-  // Combinar resultados
+  // ⚡ FASE 6: Combinar resultados (memoizado)
+  // Só recalcula quando pageResults, staffResults ou selectedCategory mudam
   const allResults = useMemo(() => {
     // Filtrar por categoria selecionada
     if (selectedCategory === "page") {
@@ -73,7 +74,8 @@ export function useGlobalSearch() {
     return [...pageResults, ...staffResults].sort((a, b) => b.score - a.score);
   }, [pageResults, staffResults, selectedCategory]);
 
-  // Calcular categorias com contadores
+  // ⚡ FASE 6: Calcular categorias com contadores (memoizado)
+  // Só recalcula quando os comprimentos dos arrays mudam
   const categories: SearchCategory[] = useMemo(() => {
     return [
       {

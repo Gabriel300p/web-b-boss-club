@@ -61,22 +61,32 @@ export function useSearchStaff(
   maxResults: number = 5,
   enabled: boolean = true,
 ) {
+  // 🚨 FASE 6: Parâmetros para queryKey completa
+  const searchParams = {
+    search: query,
+    status: "ACTIVE" as const,
+    limit: 50,
+  };
+
   // Buscar staff via API (apenas ativos por padrão)
   const {
     data: staffData,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["search", "staff", query],
-    queryFn: () =>
-      fetchStaffList({
-        search: query,
-        status: "ACTIVE", // Apenas barbeiros ativos
-        limit: 50, // Buscar mais para aplicar scoring local
-      }),
+    // ✅ FASE 6: QueryKey completa com TODOS os parâmetros
+    queryKey: ["search", "staff", searchParams],
+    queryFn: () => fetchStaffList(searchParams),
     enabled: enabled && query.trim().length > 0, // Só buscar se tiver query
-    staleTime: 30 * 1000, // 30 segundos
-    gcTime: 5 * 60 * 1000, // 5 minutos
+    // ⚡ FASE 6: Cache agressivo - evita requisições desnecessárias
+    staleTime: 5 * 60 * 1000, // 5 minutos (antes: 30s)
+    gcTime: 10 * 60 * 1000, // 10 minutos (antes: 5min)
+    // ⚡ FASE 6: Desabilita refetch ao focar na janela
+    refetchOnWindowFocus: false,
+    // ⚡ FASE 6: Desabilita refetch ao remontar componente
+    refetchOnMount: false,
+    // ⚡ FASE 6: Retry apenas 1 vez em caso de erro
+    retry: 1,
   });
 
   // Mapear e calcular scores

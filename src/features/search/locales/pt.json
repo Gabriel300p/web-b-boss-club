@@ -1,0 +1,98 @@
+{
+  "search": {
+    "modal": {
+      "title": "Buscar no sistema",
+      "description": "Use a busca para encontrar páginas, barbeiros e outros recursos do sistema. Navegue com as setas do teclado e pressione Enter para selecionar. Pressione Ctrl+Backspace para limpar a busca ou Ctrl+H para limpar o histórico.",
+      "ariaLabel": "Busca global do sistema"
+    },
+    "input": {
+      "placeholder": "Pesquisar no sistema...",
+      "placeholderWithResults": "Pesquisar...",
+      "placeholderEmpty": "Pesquisar páginas, barbeiros...",
+      "ariaLabel": "Pesquisar no sistema",
+      "clearButton": "Limpar busca"
+    },
+    "results": {
+      "found": "{{count}} resultado encontrado",
+      "found_plural": "{{count}} resultados encontrados",
+      "foundFor": "{{count}} resultado encontrado para \"{{query}}\"",
+      "foundFor_plural": "{{count}} resultados encontrados para \"{{query}}\"",
+      "none": "Nenhum resultado encontrado para \"{{query}}\"",
+      "showMore": "Ver mais resultados",
+      "categories": {
+        "all": "Tudo",
+        "pages": "Páginas",
+        "staff": "Barbeiros",
+        "services": "Serviços"
+      }
+    },
+    "history": {
+      "title": "Pesquisas Recentes",
+      "clear": "Limpar tudo",
+      "showing": "Mostrando {{count}} item do histórico de busca",
+      "showing_plural": "Mostrando {{count}} itens do histórico de busca",
+      "accessCount": "Acessado {{count}} vez",
+      "accessCount_plural": "Acessado {{count}} vezes"
+    },
+    "emptyState": {
+      "noResults": {
+        "title": "Nenhum resultado encontrado",
+        "description": "Não encontramos nada que corresponda a",
+        "tipsTitle": "💡 Dicas de busca:",
+        "tips": {
+          "numeric": "IDs numéricos não são suportados. Tente buscar por nome.",
+          "email": "Buscando por email? Tente apenas o nome do barbeiro.",
+          "multiWord": "Busca multi-palavra: todas as palavras devem estar presentes.",
+          "general": "Tente termos mais gerais como \"barbeiro\", \"agendamento\" ou \"configurações\"",
+          "spelling": "Verifique a ortografia e tente variações do termo",
+          "keywords": "Use palavras-chave individuais ao invés de frases completas"
+        },
+        "popularPages": "Páginas populares:",
+        "suggestions": {
+          "staff": "Barbeiros",
+          "appointments": "Agendamentos",
+          "settings": "Configurações"
+        }
+      },
+      "noHistory": {
+        "title": "Seu histórico está vazio",
+        "description": "Suas buscas recentes aparecerão aqui para acesso rápido.",
+        "motivational": {
+          "title": "Comece a explorar!",
+          "description": "Digite qualquer termo acima para buscar páginas, barbeiros e muito mais. Suas buscas favoritas ficarão salvas aqui."
+        },
+        "shortcuts": {
+          "title": "⌨️ Atalhos úteis:",
+          "openSearch": "Abrir busca",
+          "navigate": "Navegar resultados",
+          "clear": "Limpar busca"
+        }
+      },
+      "initial": {
+        "title": "Busca Global",
+        "description": "Encontre rapidamente qualquer página, barbeiro ou recurso do sistema.",
+        "categories": {
+          "staff": {
+            "title": "Barbeiros",
+            "description": "Busque por nome ou email"
+          },
+          "pages": {
+            "title": "Páginas",
+            "description": "Navegue para qualquer seção"
+          }
+        },
+        "hint": "Digite algo acima para começar"
+      }
+    },
+    "status": {
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "selected": "Selecionado"
+    },
+    "footer": {
+      "navigate": "Navegar",
+      "select": "Selecionar",
+      "close": "Fechar"
+    }
+  }
+}

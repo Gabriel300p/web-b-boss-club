@@ -1,13 +1,17 @@
 /**
  * 🕐 RecentSearches Component
  * Exibe pesquisas recentes quando não há busca ativa
+ *
+ * Features (FASE 10): Internacionalização completa pt-BR/en-US
  */
 
 import { ClockCounterClockwise, X } from "@phosphor-icons/react";
 import { Button } from "@shared/components/ui/button";
 import { cn } from "@shared/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "react-i18next"; // 🌍 FASE 10
 import type { SearchHistoryItem } from "../types/search.types";
+import { EmptyState } from "./EmptyState"; // 🎨 FASE 9
 import { SearchResultItem } from "./SearchResultItem";
 
 interface RecentSearchesProps {
@@ -39,25 +43,11 @@ export function RecentSearches({
   onMouseEnter,
   listRef,
 }: RecentSearchesProps) {
-  // Estado vazio: sem histórico
+  const { t } = useTranslation("search"); // � FASE 10
+
+  // �🎨 FASE 9: Estado vazio - sem histórico
   if (recentSearches.length === 0) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex flex-col items-center justify-center py-12 text-center"
-      >
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
-          <ClockCounterClockwise className="h-8 w-8 text-neutral-400 dark:text-neutral-500" />
-        </div>
-        <h3 className="mb-2 text-base font-medium text-neutral-900 dark:text-white">
-          Nenhuma pesquisa recente
-        </h3>
-        <p className="max-w-sm text-sm text-neutral-600 dark:text-neutral-400">
-          Suas pesquisas recentes aparecerão aqui
-        </p>
-      </motion.div>
-    );
+    return <EmptyState type="no-history" />;
   }
 
   return (
@@ -66,7 +56,7 @@ export function RecentSearches({
       <div className="flex items-center justify-between px-2">
         <h3 className="flex items-center gap-2 text-xs font-semibold tracking-wide text-neutral-500 uppercase dark:text-neutral-400">
           <ClockCounterClockwise className="h-4 w-4" weight="bold" />
-          Pesquisas Recentes
+          {t("history.title")}
         </h3>
         <Button
           onClick={onClearAll}
@@ -78,14 +68,14 @@ export function RecentSearches({
             "dark:text-neutral-400 dark:hover:text-neutral-100",
           )}
         >
-          Limpar tudo
+          {t("history.clear")}
         </Button>
       </div>
 
       {/* Lista de pesquisas recentes */}
       <div
         role="listbox"
-        aria-label="Pesquisas recentes"
+        aria-label={t("history.title")}
         className="flex flex-col gap-1"
       >
         <AnimatePresence mode="popLayout">

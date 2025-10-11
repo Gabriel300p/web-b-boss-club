@@ -1,6 +1,8 @@
 /**
  * 🔍 SearchModal Component
  * Modal principal de busca global do sistema
+ *
+ * Features (FASE 10): Internacionalização completa pt-BR/en-US
  */
 
 import {
@@ -11,6 +13,7 @@ import {
 } from "@shared/components/ui/dialog";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next"; // 🌍 FASE 10
 import { useGlobalSearch } from "../hooks/useGlobalSearch";
 import { useSearchHistory } from "../hooks/useSearchHistory";
 import { useSearchKeyboard } from "../hooks/useSearchKeyboard";
@@ -38,6 +41,7 @@ interface SearchModalProps {
  */
 export function SearchModal({ open, onOpenChange }: SearchModalProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation("search"); // 🌍 FASE 10
 
   // Hook de busca global
   const {
@@ -52,8 +56,9 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
     isEmpty,
   } = useGlobalSearch();
 
-  // Hook de histórico (desabilitado temporariamente)
-  const { recentHistory, removeFromHistory, clearHistory } = useSearchHistory();
+  // Hook de histórico (✅ FASE 3: Habilitado!)
+  const { recentHistory, addToHistory, removeFromHistory, clearHistory } =
+    useSearchHistory();
 
   // Determinar se mostra resultados ou histórico
   const showResults = debouncedQuery.length > 0;
@@ -66,8 +71,8 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
   // Navegação por resultado
   const handleSelect = useCallback(
     (result: SearchResult) => {
-      // TODO FASE 3: Adicionar ao histórico quando reativar
-      // addToHistory(result);
+      // ✅ FASE 3: Adicionar ao histórico
+      addToHistory(result);
 
       // Navegar baseado no tipo
       if (result.type === "page") {
@@ -87,7 +92,7 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
       // Limpar query após pequeno delay (UX)
       setTimeout(clearQuery, 300);
     },
-    [navigate, onOpenChange, clearQuery],
+    [navigate, onOpenChange, clearQuery, addToHistory],
   );
 
   // Callback estável para fechar modal
@@ -101,6 +106,8 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
     onSelect: handleSelect,
     onClose: handleClose,
     isOpen: open,
+    onClearQuery: clearQuery, // ⌨️ FASE 5: Ctrl+Backspace e primeiro Esc
+    onClearHistory: clearHistory, // ⌨️ FASE 5: Ctrl+H
   });
 
   // Limpar ao fechar
@@ -120,13 +127,13 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
       <DialogContent
         className="max-w-2xl gap-0 overflow-hidden p-0"
         showCloseButton={false}
+        role="search" // ♿ FASE 8: Role semântico
+        aria-label={t("modal.ariaLabel")}
       >
         {/* Header com título acessível (oculto visualmente) */}
-        <DialogTitle className="sr-only">Buscar no sistema</DialogTitle>
-        <DialogDescription className="sr-only">
-          Use a busca para encontrar páginas, barbeiros e outros recursos do
-          sistema. Navegue com as setas do teclado e pressione Enter para
-          selecionar.
+        <DialogTitle className="sr-only">{t("modal.title")}</DialogTitle>
+        <DialogDescription className="sr-only" id="search-instructions">
+          {t("modal.description")}
         </DialogDescription>
 
         {/* Input de busca */}
@@ -137,9 +144,34 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
             onClear={clearQuery}
             isLoading={isLoading}
             placeholder={
-              showResults ? "Pesquisar..." : "Pesquisar páginas, barbeiros..."
+              showResults
+                ? t("input.placeholderWithResults")
+                : t("input.placeholderEmpty")
             }
+            aria-describedby="search-instructions" // ♿ FASE 8
           />
+        </div>
+
+        {/* ♿ FASE 8: Anúncio de resultados para screen readers */}
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className="sr-only"
+        >
+          {showResults && query && (
+            <>
+              {displayResults.length > 0
+                ? t("results.foundFor", {
+                    count: displayResults.length,
+                    query,
+                  })
+                : t("results.none", { query })}
+            </>
+          )}
+          {!showResults && recentHistory.length > 0 && (
+            <>{t("history.showing", { count: recentHistory.length })}</>
+          )}
         </div>
 
         {/* Resultados ou histórico */}
@@ -176,26 +208,25 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
               <kbd className="rounded bg-neutral-200 px-1.5 py-0.5 font-mono dark:bg-neutral-700">
                 ↑↓
               </kbd>
-              <span>Navegar</span>
+              <span>{t("footer.navigate")}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <kbd className="rounded bg-neutral-200 px-1.5 py-0.5 font-mono dark:bg-neutral-700">
                 Enter
               </kbd>
-              <span>Selecionar</span>
+              <span>{t("footer.select")}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <kbd className="rounded bg-neutral-200 px-1.5 py-0.5 font-mono dark:bg-neutral-700">
                 Esc
               </kbd>
-              <span>Fechar</span>
+              <span>{t("footer.close")}</span>
             </div>
           </div>
 
           {showResults && results.length > 0 && (
             <span className="text-xs text-neutral-500 dark:text-neutral-500">
-              {results.length}{" "}
-              {results.length === 1 ? "resultado" : "resultados"}
+              {t("results.found", { count: results.length })}
             </span>
           )}
         </div>

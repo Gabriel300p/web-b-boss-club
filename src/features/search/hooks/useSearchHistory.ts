@@ -1,51 +1,64 @@
 /**
  * 📝 useSearchHistory Hook
- * Gerenciamento de histórico de buscas
+ * Gerenciamento de histórico de buscas com reconstrução de ícones
  *
- * ⚠️ TEMPORARIAMENTE DESABILITADO - Ícones não podem ser serializados
+ * ✅ FASE 3: Habilitado com serialização inteligente
  */
 
-import { useCallback, useState } from "react";
-import type { SearchHistoryItem } from "../types/search.types";
+import { useCallback, useEffect, useState } from "react";
+import { searchHistoryService } from "../services/search-history.service";
+import type { SearchResult } from "../types/search.types";
 
 /**
- *  Hook para gerenciar histórico de buscas
+ * 🎯 Hook para gerenciar histórico de buscas
  *
  * @returns Histórico e métodos para manipulação
  */
 export function useSearchHistory() {
-  // ⚠️ HISTÓRICO TEMPORARIAMENTE DESABILITADO
-  // Ícones não podem ser serializados para localStorage
-  // TODO FASE 2: Implementar salvamento sem ícone + reconstrução ao carregar
-  const [history] = useState<SearchHistoryItem[]>([]);
+  const [history, setHistory] = useState<
+    (SearchResult & { searchedAt: Date; clickCount: number })[]
+  >([]);
 
-  const addToHistory = useCallback(() => {
-    // Desabilitado
+  // Carregar histórico ao montar
+  useEffect(() => {
+    setHistory(searchHistoryService.get());
   }, []);
 
-  const removeFromHistory = useCallback(() => {
-    // Desabilitado
+  const addToHistory = useCallback((result: SearchResult) => {
+    searchHistoryService.save(result);
+    setHistory(searchHistoryService.get());
+  }, []);
+
+  const removeFromHistory = useCallback((id: string) => {
+    searchHistoryService.remove(id);
+    setHistory(searchHistoryService.get());
   }, []);
 
   const clearHistory = useCallback(() => {
-    // Desabilitado
+    searchHistoryService.clear();
+    setHistory([]);
   }, []);
 
-  const getRecent = useCallback((): SearchHistoryItem[] => {
-    return [];
-  }, []);
+  const getRecent = useCallback(
+    (
+      limit: number = 5,
+    ): (SearchResult & { searchedAt: Date; clickCount: number })[] => {
+      return searchHistoryService.getRecent(limit);
+    },
+    [],
+  );
 
-  const getByType = useCallback((): SearchHistoryItem[] => {
-    return [];
-  }, []);
+  const getByType = useCallback(
+    (
+      type: SearchResult["type"],
+    ): (SearchResult & { searchedAt: Date; clickCount: number })[] => {
+      return searchHistoryService.getByType(type);
+    },
+    [],
+  );
 
-  const recentHistory: SearchHistoryItem[] = [];
-
-  const stats = {
-    total: 0,
-    byType: {} as Record<string, number>,
-    mostClicked: null,
-  };
+  const recentHistory = searchHistoryService.getRecent(5);
+  const stats = searchHistoryService.getStats();
 
   return {
     history,
@@ -56,7 +69,7 @@ export function useSearchHistory() {
     clearHistory,
     getRecent,
     getByType,
-    isEmpty: true,
-    hasHistory: false,
+    isEmpty: history.length === 0,
+    hasHistory: history.length > 0,
   };
 }
