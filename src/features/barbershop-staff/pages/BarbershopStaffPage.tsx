@@ -1,4 +1,5 @@
 import { Divider } from "@/shared/components/ui";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { BulkActionsBar } from "../components/common/BulkActionsBar";
@@ -12,6 +13,10 @@ import { BarbershopStaffPageContent } from "./sections/BarbershopStaffPageConten
 import { BarbershopStaffPageHeader } from "./sections/BarbershopStaffPageHeader";
 
 export function BarbershopStaffPage() {
+  // 🔍 Ler nome do staff da URL (vindo da busca global)
+  const search = useSearch({ from: "/barbershop-staff" });
+  const navigate = useNavigate();
+
   // 🎯 Modal states
   const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
   const [staffModalMode, setStaffModalMode] = useState<
@@ -34,6 +39,36 @@ export function BarbershopStaffPage() {
     isLoading,
     refetch,
   } = useStableStaffManagement();
+
+  // 🔍 Aplicar filtro automático quando vem da busca global
+  const filterAppliedRef = useRef(false);
+
+  useEffect(() => {
+    const staffName = search.staffName;
+
+    // Só aplicar uma vez quando tem staffName na URL
+    if (!staffName || filterAppliedRef.current) return;
+
+    // Marcar como aplicado
+    filterAppliedRef.current = true;
+
+    // Aplicar filtro
+    updateFilter("search", staffName);
+
+    // Limpar URL (manter apenas o filtro, remover search param)
+    navigate({
+      to: "/barbershop-staff",
+      search: {},
+      replace: true,
+    });
+  }, [search.staffName, updateFilter, navigate]);
+
+  // Reset quando staffName muda
+  useEffect(() => {
+    if (search.staffName) {
+      filterAppliedRef.current = false;
+    }
+  }, [search.staffName]);
 
   // 🎯 Hook com ações (toggle status, etc)
   const { toggleStaffStatus } = useBarbershopStaff(filters);

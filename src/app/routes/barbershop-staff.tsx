@@ -4,8 +4,14 @@ import { RouteSkeleton } from "@shared/components/skeletons/_index";
 import { useLoadingConfig } from "@shared/hooks/useLoadingConfig";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
+import { z } from "zod";
 
 import { BarbershopStaffPage as DirectBarbershopStaffPage } from "@features/barbershop-staff/_index";
+
+// Schema para search params
+const barbershopStaffSearchSchema = z.object({
+  staffName: z.string().optional(), // Nome do barbeiro para filtrar automaticamente
+});
 
 const LazyBarbershopStaffPage = lazy(() =>
   import("@features/barbershop-staff/_index.ts").then((module) => ({
@@ -39,6 +45,7 @@ function BarbershopStaffPageLoader() {
 }
 
 export const Route = createFileRoute("/barbershop-staff")({
+  validateSearch: barbershopStaffSearchSchema,
   component: () => (
     <AuthGuard requireAuth={true}>
       <MainLayout>
