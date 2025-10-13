@@ -23,7 +23,7 @@ const getStatusBadge = (status: string, t: typeof i18n.t): BadgeConfig => {
       withDot: true,
     },
     INACTIVE: {
-      variant: "neutral",
+      variant: "danger",
       label: t("status.inactive", { defaultValue: "Inativo" }),
       withDot: true,
     },
@@ -33,7 +33,7 @@ const getStatusBadge = (status: string, t: typeof i18n.t): BadgeConfig => {
       withDot: true,
     },
     TERMINATED: {
-      variant: "danger",
+      variant: "neutral",
       label: t("status.terminated", { defaultValue: "Demitido" }),
       withDot: true,
     },
