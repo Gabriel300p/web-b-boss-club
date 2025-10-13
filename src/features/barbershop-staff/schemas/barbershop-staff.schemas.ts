@@ -140,6 +140,7 @@ export const barbershopStaffSchema = z.object({
   total_attendances: z.number().optional().default(0),
   average_rating: z.number().nullable().optional(),
   total_revenue: z.number().optional().default(0),
+  score: z.number().nullable().optional(), // 🎯 Score de desempenho (0-100)
   _count: z
     .object({
       reviews: z.number().optional(),

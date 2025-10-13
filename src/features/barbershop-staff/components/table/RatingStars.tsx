@@ -23,7 +23,7 @@ export function RatingStars({
   // Se não tem rating, mostra mensagem
   if (rating === null || rating === undefined) {
     return (
-      <span className={cn("text-muted-foreground text-xs", className)}>
+      <span className={cn("text-muted-foreground text-sm", className)}>
         Sem avaliações
       </span>
     );
@@ -34,7 +34,7 @@ export function RatingStars({
   const hasHalfStar = rating % 1 >= 0.25 && rating % 1 < 0.75;
 
   const starSize = size === "sm" ? "h-3 w-3" : "h-4 w-4";
-  const textSize = size === "sm" ? "text-xs" : "text-sm";
+  const textSize = size === "sm" ? "text-sm" : "text-sm";
 
   const renderStar = (position: number) => {
     if (position <= fullStars) {
@@ -58,7 +58,7 @@ export function RatingStars({
       return (
         <Star
           key={position}
-          className={cn(starSize, "fill-gray-700 text-gray-700")}
+          className={cn(starSize, "fill-neutral-700 text-neutral-700")}
         />
       );
     }

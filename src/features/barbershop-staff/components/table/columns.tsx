@@ -9,6 +9,7 @@ import { getStatusBadge } from "../../helpers/column.helper";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
 import { StaffActions, type StaffActionHandlers } from "./columns-actions";
 import { PerformanceCell } from "./PerformanceCell";
+import { ScoreCell } from "./ScoreCell";
 import StaffAvatar from "./StaffAvatar";
 import { UnitsCell } from "./UnitsCell";
 
@@ -125,20 +126,66 @@ export const createColumns = ({
       id: "performance",
       accessorKey: "total_attendances",
       header: ({ column }) => (
-        <TableSort column={column}>{t("fields.performance")}</TableSort>
+        <TableSort column={column} align="center">
+          {t("fields.performance")}
+        </TableSort>
       ),
       cell: ({ row }) => {
         const totalAttendances = row.original.total_attendances || 0;
         const averageRating = row.original.average_rating || null;
 
         return (
-          <PerformanceCell
-            totalAttendances={totalAttendances}
-            averageRating={averageRating}
-          />
+          <div className="flex w-full justify-center text-center">
+            <PerformanceCell
+              totalAttendances={totalAttendances}
+              averageRating={averageRating}
+            />
+          </div>
         );
       },
       enableSorting: true,
+    },
+
+    // 3.5. 🆕 Score (performance_score)
+    {
+      id: "score",
+      accessorKey: "score",
+      header: ({ column }) => (
+        <TableSort column={column} align="center">
+          {t("fields.score")}
+        </TableSort>
+      ),
+      cell: ({ row }) => {
+        const staffId = row.original.id;
+        const score = row.original.score
+          ? Number(row.original.score)
+          : undefined;
+
+        // Helper para determinar o level baseado no score
+        const getScoreLevel = (scoreValue: number) => {
+          if (scoreValue >= 95) return "excellent";
+          if (scoreValue >= 85) return "good";
+          if (scoreValue >= 70) return "regular";
+          if (scoreValue >= 50) return "needs_improvement";
+          return "critical";
+        };
+
+        return (
+          <div className="flex w-full justify-center text-center">
+            <ScoreCell
+              score={score}
+              scoreLevel={
+                score !== undefined ? getScoreLevel(score) : undefined
+              }
+              onClick={() => {
+                // TODO: Open ScoreReportModal when created
+                console.log("Open score modal for staff:", staffId);
+              }}
+            />
+          </div>
+        );
+      },
+      enableSorting: false,
     },
 
     // 4. 🆕 Receita Total (total_revenue)
