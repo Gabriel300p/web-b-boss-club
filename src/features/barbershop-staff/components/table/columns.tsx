@@ -5,14 +5,12 @@ import TableSort from "@shared/components/ui/table-sort";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import {
-  getAvailabilityBadge,
-  getRoleBadge,
-  getStatusBadge,
-} from "../../helpers/column.helper";
+import { getStatusBadge } from "../../helpers/column.helper";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
 import { StaffActions, type StaffActionHandlers } from "./columns-actions";
+import { PerformanceCell } from "./PerformanceCell";
 import StaffAvatar from "./StaffAvatar";
+import { UnitsCell } from "./UnitsCell";
 
 // 🎯 Interface para props das colunas
 type StaffColumnsProps = StaffActionHandlers & {
@@ -68,6 +66,7 @@ export const createColumns = ({
   }
 
   columns.push(
+    // 1. Nome/Email (staff_info)
     {
       id: "staff_info",
       accessorKey: "first_name",
@@ -104,63 +103,71 @@ export const createColumns = ({
         );
       },
     },
-    {
-      id: "role_in_shop",
-      accessorKey: "role_in_shop",
-      header: ({ column }) => (
-        <TableSort column={column} align="center">
-          {t("fields.role")}
-        </TableSort>
-      ),
-      cell: ({ row }) => {
-        const role = row.getValue("role_in_shop") as string;
-        const badgeConfig = getRoleBadge(role, t);
 
+    // 2. 🆕 Unidades (units)
+    {
+      id: "units",
+      accessorKey: "units",
+      header: () => <div className="text-center">{t("fields.units")}</div>,
+      cell: ({ row }) => {
+        const units = row.original.units || [];
         return (
-          <div className="flex justify-center">
-            <Badge {...badgeConfig} />
+          <div className="flex w-full justify-center">
+            <UnitsCell units={units} />
           </div>
         );
       },
+      enableSorting: false,
     },
+
+    // 3. 🆕 Performance (total_attendances + average_rating)
     {
-      id: "status",
-      accessorKey: "status",
+      id: "performance",
+      accessorKey: "total_attendances",
+      header: ({ column }) => (
+        <TableSort column={column}>{t("fields.performance")}</TableSort>
+      ),
+      cell: ({ row }) => {
+        const totalAttendances = row.original.total_attendances || 0;
+        const averageRating = row.original.average_rating || null;
+
+        return (
+          <PerformanceCell
+            totalAttendances={totalAttendances}
+            averageRating={averageRating}
+          />
+        );
+      },
+      enableSorting: true,
+    },
+
+    // 4. 🆕 Receita Total (total_revenue)
+    {
+      id: "total_revenue",
+      accessorKey: "total_revenue",
       header: ({ column }) => (
         <TableSort column={column} align="center">
-          {t("fields.status")}
+          {t("fields.totalRevenue")}
         </TableSort>
       ),
       cell: ({ row }) => {
-        const status = row.getValue("status") as string;
-        const badgeConfig = getStatusBadge(status, t);
+        const revenue = row.original.total_revenue || 0;
 
         return (
-          <div className="flex justify-center">
-            <Badge {...badgeConfig} />
+          <div className="text-center">
+            <span className="text-sm font-medium text-neutral-100">
+              {new Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              }).format(Math.abs(revenue))}
+            </span>
           </div>
         );
       },
+      enableSorting: true,
     },
-    {
-      id: "is_available",
-      accessorKey: "is_available",
-      header: ({ column }) => (
-        <TableSort column={column} align="center">
-          {t("fields.available")}
-        </TableSort>
-      ),
-      cell: ({ row }) => {
-        const isAvailable = row.getValue("is_available") as boolean;
-        const badgeConfig = getAvailabilityBadge(isAvailable, t);
 
-        return (
-          <div className="flex justify-center">
-            <Badge {...badgeConfig} />
-          </div>
-        );
-      },
-    },
+    // 6. 🆕 Data de Admissão (hire_date) - Melhor formatação
     {
       id: "hire_date",
       accessorKey: "hire_date",
@@ -191,7 +198,7 @@ export const createColumns = ({
           }
 
           return (
-            <div className="text-center text-sm text-neutral-500">
+            <div className="text-center text-sm text-neutral-100">
               {format(date, "dd/MM/yyyy", { locale: ptBR })}
             </div>
           );
@@ -200,7 +207,30 @@ export const createColumns = ({
           return <div className="text-center text-sm text-neutral-400">-</div>;
         }
       },
+      enableSorting: true,
     },
+
+    // 5. Status
+    {
+      id: "status",
+      accessorKey: "status",
+      header: ({ column }) => (
+        <TableSort column={column} align="center">
+          {t("fields.status")}
+        </TableSort>
+      ),
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        const badgeConfig = getStatusBadge(status, t);
+
+        return (
+          <div className="flex justify-center">
+            <Badge {...badgeConfig} />
+          </div>
+        );
+      },
+    },
+    // 7. Ações
     {
       id: "actions",
       header: () => <div className="text-center">{t("fields.actions")}</div>,
@@ -214,6 +244,8 @@ export const createColumns = ({
           </div>
         );
       },
+      enableSorting: false,
+      enableHiding: false,
     },
   );
 

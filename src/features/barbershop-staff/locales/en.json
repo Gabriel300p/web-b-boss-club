@@ -8,6 +8,9 @@
   "fields": {
     "name": "Name",
     "email": "Email",
+    "units": "Unit(s)",
+    "performance": "Performance",
+    "totalRevenue": "Total Revenue",
     "role": "Role",
     "status": "Status",
     "available": "Availability",
@@ -102,7 +105,9 @@
       "hireDate": "Hire Date",
       "terminatedDate": "Termination Date",
       "salary": "Salary",
-      "commission": "Commission"
+      "commission": "Commission",
+      "units": "Units",
+      "primaryUnit": "Primary Unit"
     },
     "placeholders": {
       "name": "Enter the barber's name",
@@ -114,7 +119,10 @@
       "hireDate": "DD/MM/YYYY",
       "terminatedDate": "DD/MM/YYYY",
       "salary": "R$ 0.00",
-      "commission": "0.0%"
+      "commission": "0.0%",
+      "units": "Select units...",
+      "primaryUnit": "Select primary unit...",
+      "selectUnitsFirst": "Select units first"
     },
     "hints": {
       "description": "Additional information about the staff member (optional)",

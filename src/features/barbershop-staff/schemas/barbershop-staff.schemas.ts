@@ -123,6 +123,28 @@ export const barbershopStaffSchema = z.object({
     id: z.string(),
     name: z.string(),
   }),
+
+  // 🆕 FASE 2.x - Novos campos de analytics
+  units: z
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        city: z.string(),
+        state: z.string(),
+        is_primary: z.boolean(),
+      }),
+    )
+    .optional()
+    .default([]),
+  total_attendances: z.number().optional().default(0),
+  average_rating: z.number().nullable().optional(),
+  total_revenue: z.number().optional().default(0),
+  _count: z
+    .object({
+      reviews: z.number().optional(),
+    })
+    .optional(),
 });
 
 // 📝 Schema para criação de staff (formulário)
@@ -152,7 +174,24 @@ export const createStaffFormInputSchema = baseStaffFieldsSchema
     // Campos formatados como string no frontend (serão convertidos para number no transform)
     salary: z.string().optional(),
     commission_rate: z.string().optional(),
-  });
+
+    // 🆕 FASE 4 - Campos de unidades (múltiplas)
+    unit_ids: z.array(z.string()).optional().default([]),
+    primary_unit_id: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // Se primary_unit_id foi definido, deve estar em unit_ids
+      if (data.primary_unit_id && data.unit_ids && data.unit_ids.length > 0) {
+        return data.unit_ids.includes(data.primary_unit_id);
+      }
+      return true;
+    },
+    {
+      message: "Unidade principal deve estar na lista de unidades selecionadas",
+      path: ["primary_unit_id"],
+    },
+  );
 
 // 📝 Form schema for creating staff (com transformação para formato do backend)
 // Aceita full_name e transforma automaticamente para o formato do backend
@@ -202,6 +241,10 @@ export const createStaffFormSchema = createStaffFormInputSchema.transform(
       commission_rate,
       hire_date,
       // terminated_date, // COMENTADO TEMPORARIAMENTE
+      // 🆕 FASE 4 - Campos de unidades
+      unit_ids:
+        data.unit_ids && data.unit_ids.length > 0 ? data.unit_ids : undefined,
+      primary_unit_id: data.primary_unit_id || undefined,
     };
   },
 );
@@ -224,8 +267,24 @@ export const updateStaffFormInputSchema = z
     salary: z.string().optional(),
     commission_rate: z.string().optional(),
     hire_date: z.string().optional(),
+    // 🆕 FASE 4 - Campos de unidades
+    unit_ids: z.array(z.string()).optional(),
+    primary_unit_id: z.string().optional(),
   })
-  .partial();
+  .partial()
+  .refine(
+    (data) => {
+      // Se primary_unit_id foi definido, deve estar em unit_ids
+      if (data.primary_unit_id && data.unit_ids && data.unit_ids.length > 0) {
+        return data.unit_ids.includes(data.primary_unit_id);
+      }
+      return true;
+    },
+    {
+      message: "Unidade principal deve estar na lista de unidades selecionadas",
+      path: ["primary_unit_id"],
+    },
+  );
 
 // 📝 Form schema for updating staff (com transformação)
 // NOTA: CPF e email são imutáveis
@@ -262,7 +321,7 @@ export const updateStaffFormSchema = updateStaffFormInputSchema.transform(
       last_name,
       display_name: data.display_name,
       phone: data.phone,
-      avatar_url: data.avatar_url, // 📸 Avatar URL
+      avatar_url: data.avatar_url || undefined, // 📸 Avatar URL (empty string → undefined)
       role_in_shop: data.role_in_shop,
       status: data.status,
       is_available: data.is_available,
@@ -271,6 +330,10 @@ export const updateStaffFormSchema = updateStaffFormInputSchema.transform(
       salary,
       commission_rate,
       hire_date,
+      // 🆕 FASE 4 - Campos de unidades
+      unit_ids:
+        data.unit_ids && data.unit_ids.length > 0 ? data.unit_ids : undefined,
+      primary_unit_id: data.primary_unit_id || undefined,
     };
   },
 );
@@ -300,9 +363,25 @@ export const staffApiToFormSchema = z
           .optional(), // 📸 Avatar URL (aceita null da API)
       })
       .optional(),
+    // 🆕 FASE 4 - Unidades vêm da API como array
+    units: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          city: z.string(),
+          state: z.string(),
+          is_primary: z.boolean(),
+        }),
+      )
+      .optional(),
   })
-  .transform(
-    (data): Partial<z.infer<typeof createStaffFormInputSchema>> => ({
+  .transform((data): Partial<z.infer<typeof createStaffFormInputSchema>> => {
+    // 🔄 Extrair unit_ids e primary_unit_id do array units
+    const unit_ids = data.units?.map((u) => u.id) || [];
+    const primary_unit_id = data.units?.find((u) => u.is_primary)?.id;
+
+    return {
       // ✅ Retorna no formato dos campos base (form format)
       // Garante type-safety referenciando o schema de input
       full_name: [data.first_name, data.last_name].filter(Boolean).join(" "),
@@ -319,8 +398,12 @@ export const staffApiToFormSchema = z
         ? numberToPercentage(data.commission_rate)
         : "",
       hire_date: data.hire_date ? isoToDate(data.hire_date) : "",
-    }),
-  );
+
+      // 🆕 FASE 4 - Unidades
+      unit_ids,
+      primary_unit_id,
+    };
+  });
 
 // 📋 Schemas por step (para validação granular)
 export const basicDataStepSchema = createStaffFormInputSchema.pick({

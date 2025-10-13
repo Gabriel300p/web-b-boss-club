@@ -8,10 +8,13 @@
   "fields": {
     "name": "Nome",
     "email": "Email",
+    "units": "Unidade(s)",
+    "performance": "Performance",
+    "totalRevenue": "Receita Total",
     "role": "Função",
     "status": "Status",
     "available": "Disponibilidade",
-    "hireDate": "Data de Contratação",
+    "hireDate": "Admissão",
     "actions": "Ações"
   },
   "roles": {
@@ -98,7 +101,9 @@
       "hireDate": "Data de admissão",
       "terminatedDate": "Data de demissão",
       "salary": "Salário",
-      "commission": "Comissão"
+      "commission": "Comissão",
+      "units": "Unidades",
+      "primaryUnit": "Unidade Principal"
     },
     "placeholders": {
       "name": "Digite o nome do barbeiro",
@@ -111,7 +116,10 @@
       "hireDate": "DD/MM/AAAA",
       "terminatedDate": "DD/MM/AAAA",
       "salary": "R$ 0,00",
-      "commission": "0,0%"
+      "commission": "0,0%",
+      "units": "Selecione as unidades...",
+      "primaryUnit": "Selecione a unidade principal...",
+      "selectUnitsFirst": "Selecione unidades primeiro"
     },
     "hints": {
       "description": "Informações adicionais sobre o colaborador (opcional)",

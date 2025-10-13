@@ -1,6 +1,6 @@
 /**
  * 📝 Admission Info Step - Step 2: Informações de Admissão
- * Status, Data de admissão, Data de demissão, Salário, Comissão
+ * Status, Data de admissão, Data de demissão, Salário, Comissão, Unidades
  */
 import {
   FormControl,
@@ -17,15 +17,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@shared/components/ui/select";
+import { apiService } from "@shared/services/api.service";
 import { getTodayFormatted } from "@shared/utils/date.utils";
 import {
   createFormattedOnChange,
   inputFormatters,
 } from "@shared/utils/input-formatters";
-import { memo, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { memo, useEffect, useMemo } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import type { CreateStaffFormInput } from "../../../schemas/barbershop-staff.schemas";
+import { MultiSelectUnits } from "../fields/MultiSelectUnits";
 import type { StaffFormMode } from "../StaffForm";
 
 interface AdmissionInfoStepProps {
@@ -60,6 +63,31 @@ export const AdmissionInfoStep = memo(function AdmissionInfoStep({
   }, [isCreateMode, watch, setValue]);
 
   // const showTerminatedDate = statusValue === "TERMINATED"; // TEMPORARIAMENTE COMENTADO
+
+  // 🏢 Buscar unidades disponíveis (movido para fora do render)
+  const { data: unitsResponse } = useQuery({
+    queryKey: ["barbershop-units", "list"],
+    queryFn: async () => {
+      const response = await apiService.get(
+        "/barbershop-units?page=1&limit=100",
+      );
+      return response.data as {
+        units: Array<{ id: string; name: string; city: string; state: string }>;
+      };
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const currentUnitIds = watch("unit_ids");
+  const selectedUnitIds = useMemo(() => currentUnitIds || [], [currentUnitIds]);
+
+  const selectedUnits = useMemo(() => {
+    return (
+      unitsResponse?.units?.filter((unit) =>
+        selectedUnitIds.includes(unit.id),
+      ) || []
+    );
+  }, [unitsResponse?.units, selectedUnitIds]);
 
   return (
     <div className="space-y-5">
@@ -96,6 +124,75 @@ export const AdmissionInfoStep = memo(function AdmissionInfoStep({
                 <SelectItem value="TERMINATED" className="text-neutral-50">
                   {t("status.terminated")}
                 </SelectItem>
+              </SelectContent>
+            </Select>
+            <FormMessage className="text-red-400" />
+          </FormItem>
+        )}
+      />
+
+      {/* 🏢 Unidades - Multi-select */}
+      <FormField
+        control={form.control}
+        name="unit_ids"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-neutral-200">
+              {t("wizard.fields.units")}
+            </FormLabel>
+            <FormControl>
+              <MultiSelectUnits
+                value={field.value || []}
+                onChange={field.onChange}
+                disabled={isViewMode || isSubmitting || isLoading}
+                placeholder={t("wizard.placeholders.units")}
+              />
+            </FormControl>
+            <FormMessage className="text-red-400" />
+          </FormItem>
+        )}
+      />
+
+      {/* 🏢 Unidade Principal - Select simples (apenas unidades selecionadas) */}
+      <FormField
+        control={form.control}
+        name="primary_unit_id"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-neutral-200">
+              {t("wizard.fields.primaryUnit")}
+            </FormLabel>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value || ""}
+              disabled={
+                isViewMode ||
+                isSubmitting ||
+                isLoading ||
+                selectedUnitIds.length === 0
+              }
+            >
+              <FormControl>
+                <SelectTrigger className="border-neutral-700 bg-neutral-800/50 text-neutral-50 hover:bg-neutral-800 disabled:opacity-60">
+                  <SelectValue
+                    placeholder={
+                      selectedUnitIds.length === 0
+                        ? t("wizard.placeholders.selectUnitsFirst")
+                        : t("wizard.placeholders.primaryUnit")
+                    }
+                  />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent className="border-neutral-700 bg-neutral-900">
+                {selectedUnits.map((unit) => (
+                  <SelectItem
+                    key={unit.id}
+                    value={unit.id}
+                    className="text-neutral-50"
+                  >
+                    {unit.name} - {unit.city}/{unit.state}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <FormMessage className="text-red-400" />
