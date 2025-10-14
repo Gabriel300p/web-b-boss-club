@@ -3,13 +3,12 @@ import { Badge } from "@shared/components/ui/badge";
 import { Checkbox } from "@shared/components/ui/checkbox";
 import TableSort from "@shared/components/ui/table-sort";
 import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { getStatusBadge } from "../../helpers/column.helper";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
 import { StaffActions, type StaffActionHandlers } from "./columns-actions";
 import { PerformanceCell } from "./PerformanceCell";
-import { ScoreCell } from "./ScoreCell";
+import type { ScoreLevel } from "./ScoreCell";
+import { ScoreCellWithModal } from "./ScoreCellWithModal";
 import StaffAvatar from "./StaffAvatar";
 import { UnitsCell } from "./UnitsCell";
 
@@ -145,8 +144,6 @@ export const createColumns = ({
       },
       enableSorting: true,
     },
-
-    // 3.5. 🆕 Score (performance_score)
     {
       id: "score",
       accessorKey: "score",
@@ -161,8 +158,16 @@ export const createColumns = ({
           ? Number(row.original.score)
           : undefined;
 
+        // 🆕 Dados reais para o tooltip
+        const averageRating = row.original.average_rating || null;
+        const totalReviews = row.original._count?.reviews || 0;
+        const totalRevenue = row.original.total_revenue
+          ? Number(row.original.total_revenue)
+          : 0;
+        const totalAttendances = row.original.total_attendances || 0;
+
         // Helper para determinar o level baseado no score
-        const getScoreLevel = (scoreValue: number) => {
+        const getScoreLevel = (scoreValue: number): ScoreLevel => {
           if (scoreValue >= 95) return "excellent";
           if (scoreValue >= 85) return "good";
           if (scoreValue >= 70) return "regular";
@@ -170,17 +175,30 @@ export const createColumns = ({
           return "critical";
         };
 
+        // Pegar nome e email do staff
+        const displayName =
+          row.original.display_name ||
+          `${row.original.first_name}${row.original.last_name ? ` ${row.original.last_name}` : ""}`.trim();
+        const email = row.original.user?.email || "";
+        const avatarUrl = row.original.user?.avatar_url || null;
+
+        // Determinar score level (null se score for null)
+        const scoreLevel =
+          score !== null && score !== undefined ? getScoreLevel(score) : null;
+
         return (
           <div className="flex w-full justify-center text-center">
-            <ScoreCell
-              score={score}
-              scoreLevel={
-                score !== undefined ? getScoreLevel(score) : undefined
-              }
-              onClick={() => {
-                // TODO: Open ScoreReportModal when created
-                console.log("Open score modal for staff:", staffId);
-              }}
+            <ScoreCellWithModal
+              staffId={staffId}
+              staffName={displayName}
+              staffPhoto={avatarUrl}
+              staffEmail={email}
+              score={score !== undefined ? score : null}
+              scoreLevel={scoreLevel}
+              averageRating={averageRating}
+              totalReviews={totalReviews}
+              totalRevenue={totalRevenue}
+              totalAttendances={totalAttendances}
             />
           </div>
         );
@@ -210,49 +228,6 @@ export const createColumns = ({
             </span>
           </div>
         );
-      },
-      enableSorting: true,
-    },
-
-    // 6. 🆕 Data de Admissão (hire_date) - Melhor formatação
-    {
-      id: "hire_date",
-      accessorKey: "hire_date",
-      header: ({ column }) => (
-        <TableSort column={column} align="center">
-          {t("fields.hireDate")}
-        </TableSort>
-      ),
-      cell: ({ row }) => {
-        const hireDate = row.getValue("hire_date");
-
-        // Verificar se é uma string válida e não é objeto vazio
-        if (
-          !hireDate ||
-          typeof hireDate !== "string" ||
-          hireDate.trim() === ""
-        ) {
-          return <div className="text-center text-sm text-neutral-400">-</div>;
-        }
-
-        try {
-          const date = new Date(hireDate);
-          // Verificar se a data é válida
-          if (isNaN(date.getTime())) {
-            return (
-              <div className="text-center text-sm text-neutral-400">-</div>
-            );
-          }
-
-          return (
-            <div className="text-center text-sm text-neutral-100">
-              {format(date, "dd/MM/yyyy", { locale: ptBR })}
-            </div>
-          );
-        } catch (error) {
-          console.error(error);
-          return <div className="text-center text-sm text-neutral-400">-</div>;
-        }
       },
       enableSorting: true,
     },

@@ -36,8 +36,9 @@ export function PerformanceCell({
       {/* Rating row */}
       <div className="flex items-center gap-2">
         <RatingStars rating={averageRating} size="sm" showCount={false} />
-
-        <span className="text-sm text-neutral-400">({totalAttendances})</span>
+        {totalAttendances > 0 && (
+          <span className="text-sm text-neutral-400">({totalAttendances})</span>
+        )}
       </div>
     </div>
   );
