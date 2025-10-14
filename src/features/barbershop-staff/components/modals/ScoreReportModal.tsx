@@ -312,7 +312,7 @@ export function ScoreReportModal({
                 icon={<Star className="h-4 w-4" />}
                 label="Avaliação Média"
                 value={formattedRating}
-                subtitle={`${totalReviews} avaliações`}
+                subtitle={`${totalReviews} ${totalReviews === 1 ? 'avaliação' : 'avaliações'}`}
                 iconColor="text-yellow-500"
               />
               <MetricCard

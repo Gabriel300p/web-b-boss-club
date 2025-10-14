@@ -203,7 +203,12 @@ export const createColumns = ({
           </div>
         );
       },
-      enableSorting: false,
+      enableSorting: true,
+      sortingFn: (rowA, rowB) => {
+        const scoreA = rowA.original.score ? Number(rowA.original.score) : -1;
+        const scoreB = rowB.original.score ? Number(rowB.original.score) : -1;
+        return scoreA - scoreB;
+      },
     },
 
     // 4. 🆕 Receita Total (total_revenue)

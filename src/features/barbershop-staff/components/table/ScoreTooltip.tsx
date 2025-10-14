@@ -102,7 +102,7 @@ export function ScoreTooltip({
 
   const tooltipContent = isVisible && (
     <div
-      className="pointer-events-none fixed z-[9999]"
+      className="pointer-events-none fixed z-[99999]"
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
@@ -116,7 +116,7 @@ export function ScoreTooltip({
       </div>
 
       {/* Content */}
-      <div className="animate-in fade-in-0 zoom-in-95 min-w-[200px] rounded-lg border border-neutral-800 bg-neutral-900 p-3 shadow-xl duration-200">
+      <div className="animate-in fade-in-0 zoom-in-95 min-w-[200px] rounded-lg border border-neutral-800 bg-neutral-900 p-3 shadow-2xl duration-200">
         <div className="flex flex-col gap-2">
           {/* Header: Score + Nível */}
           <div className="flex items-center justify-between gap-3 border-b border-neutral-800 pb-2">

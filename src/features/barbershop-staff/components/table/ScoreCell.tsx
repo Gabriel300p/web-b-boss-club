@@ -61,9 +61,9 @@ export function ScoreCell({
             <span className="text-xs font-medium text-neutral-500">---</span>
           </div>
 
-          {/* Tooltip explicativo (hover) */}
-          <div className="pointer-events-none absolute bottom-full left-1/2 z-[9999] mb-2 -translate-x-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-            <div className="min-w-[200px] rounded-lg border border-neutral-800 bg-neutral-900 p-3 shadow-xl">
+          {/* Tooltip explicativo (hover) - Absolute position com bottom-full */}
+          <div className="pointer-events-none absolute bottom-full left-1/2 z-[99999] mb-2 -translate-x-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <div className="min-w-[220px] rounded-lg border border-neutral-800 bg-neutral-900 p-3 shadow-2xl backdrop-blur-sm">
               <p className="text-xs font-semibold text-neutral-300">
                 📊 Dados Insuficientes
               </p>
