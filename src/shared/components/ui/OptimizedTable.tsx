@@ -10,56 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "@shared/components/ui/table";
-import type { Cell, Row, Table as TableType } from "@tanstack/react-table";
+import type { Table as TableType } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
-import { memo } from "react";
 
 interface OptimizedTableProps<TData> {
   table: TableType<TData>;
   enableAnimations?: boolean;
 }
-
-// Memoized table row for performance
-const TableRowMemo = memo(function TableRowMemo<TData>({
-  row,
-  index,
-  enableAnimations = true,
-}: {
-  row: Row<TData>;
-  index: number;
-  enableAnimations?: boolean;
-}) {
-  if (enableAnimations) {
-    return (
-      <AnimatedTableRow
-        index={index}
-        className="border-b border-neutral-700/50 transition-colors hover:bg-neutral-800/30 data-[state=selected]:bg-neutral-800/50"
-      >
-        {row
-          .getVisibleCells()
-          .filter((cell: Cell<TData, unknown>) => cell.column.getIsVisible())
-          .map((cell: Cell<TData, unknown>) => (
-            <TableCell key={cell.id}>
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </TableCell>
-          ))}
-      </AnimatedTableRow>
-    );
-  }
-
-  return (
-    <TableRow className="border-b border-neutral-700/50 transition-colors hover:bg-neutral-800/30 data-[state=selected]:bg-neutral-800/50">
-      {row
-        .getVisibleCells()
-        .filter((cell: Cell<TData, unknown>) => cell.column.getIsVisible())
-        .map((cell: Cell<TData, unknown>) => (
-          <TableCell key={cell.id}>
-            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-          </TableCell>
-        ))}
-    </TableRow>
-  );
-});
 
 export function OptimizedTable<TData>({
   table,
@@ -90,14 +47,31 @@ export function OptimizedTable<TData>({
         </TableHeader>
         <TableBody>
           {rows?.length ? (
-            rows.map((row, index) => (
-              <TableRowMemo
-                key={row.id}
-                row={row}
-                index={index}
-                enableAnimations={enableAnimations}
-              />
-            ))
+            rows.map((row, index) => {
+              const RowComponent = enableAnimations
+                ? AnimatedTableRow
+                : TableRow;
+              return (
+                <RowComponent
+                  key={row.id}
+                  index={index}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="border-b border-neutral-700/50 transition-colors hover:bg-neutral-800/30 data-[state=selected]:bg-neutral-800/50"
+                >
+                  {row
+                    .getVisibleCells()
+                    .filter((cell) => cell.column.getIsVisible())
+                    .map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                </RowComponent>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell

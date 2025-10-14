@@ -239,9 +239,13 @@
   },
   "bulkActions": {
     "selectAll": "Selecionar todos da página",
+    "selectAllPage": "Selecionar todos restantes",
+    "deselectAll": "Desmarcar todos",
     "selectRow": "Selecionar linha",
     "itemsSelected": "{{count}} item selecionado",
     "itemsSelected_other": "{{count}} itens selecionados",
+    "ofTotal": "{{selected}} de {{total}} total",
+    "allPagesSelected": "Todas as páginas selecionadas",
     "limitReached": "Limite de {{limit}} seleções atingido",
     "activate": "Ativar",
     "deactivate": "Desativar",

@@ -69,9 +69,25 @@ export function BulkActionsBar({
                 <div className="bg-primary-500/20 text-primary-400 flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold">
                   {selectedCount}
                 </div>
-                <span className="text-sm font-medium text-neutral-200">
-                  {t("bulkActions.itemsSelected", { count: selectedCount })}
-                </span>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-neutral-200">
+                    {t("bulkActions.itemsSelected", { count: selectedCount })}
+                  </span>
+                  {/* 🎯 Indicador de seleção entre páginas (Opção C) */}
+                  {totalRecords && totalRecords > selectedCount && (
+                    <span className="text-xs text-neutral-400">
+                      {t("bulkActions.ofTotal", {
+                        selected: selectedCount,
+                        total: totalRecords,
+                      })}
+                    </span>
+                  )}
+                  {isAllPagesSelected && (
+                    <span className="text-xs text-yellow-500">
+                      {t("bulkActions.allPagesSelected")}
+                    </span>
+                  )}
+                </div>
                 {isLimitReached && (
                   <span className="ml-2 text-xs text-yellow-500">
                     {t("bulkActions.limitReached", { limit: maxLimit })}

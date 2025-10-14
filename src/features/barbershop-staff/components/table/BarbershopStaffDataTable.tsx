@@ -51,8 +51,9 @@ function BarbershopStaffDataTableComponent<TData, TValue>({
   const [internalRowSelection, setInternalRowSelection] =
     useState<RowSelectionState>({});
 
-  // 🔍 DEBUG: Prove component re-renders
+  // Use external or internal row selection state
   const finalRowSelection = externalRowSelection ?? internalRowSelection;
+
   const table = useReactTable({
     data,
     columns,
@@ -71,6 +72,9 @@ function BarbershopStaffDataTableComponent<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: onRowSelectionChange ?? setInternalRowSelection,
     enableRowSelection: enableRowSelection ? true : false,
+    // 🔥 CRITICAL: Não resetar seleção automaticamente
+    autoResetAll: false,
+    autoResetPageIndex: false,
     // Server-side pagination
     manualPagination: true,
     pageCount: pagination?.total_pages ?? -1,

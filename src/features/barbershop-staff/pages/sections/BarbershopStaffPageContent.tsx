@@ -8,6 +8,7 @@ import type {
   QueryObserverResult,
   RefetchOptions,
 } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { BarbershopStaffFilters } from "../../components/filter/BarbershopStaffFilters";
 import { BarbershopStaffDataTable } from "../../components/table/BarbershopStaffDataTable";
 import { createColumns } from "../../components/table/columns";
@@ -87,6 +88,34 @@ export function BarbershopStaffPageContent({
     !stableLoading && staff.length === 0 && !hasActiveFilters;
   const shouldShowFilteredEmptyState =
     !stableLoading && staff.length === 0 && hasActiveFilters;
+
+  // ⌨️ Atalho de teclado Ctrl+A para selecionar todos da página
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ctrl+A ou Cmd+A (Mac)
+      if ((event.ctrlKey || event.metaKey) && event.key === "a") {
+        // Só funciona se não estiver em input/textarea
+        const target = event.target as HTMLElement;
+        if (
+          target.tagName !== "INPUT" &&
+          target.tagName !== "TEXTAREA" &&
+          !target.isContentEditable
+        ) {
+          event.preventDefault();
+          // Selecionar todos da página atual
+          const allIds = staff.map((s) => s.id);
+          const newSelection: Record<string, boolean> = {};
+          allIds.forEach((id) => {
+            newSelection[id] = true;
+          });
+          bulkSelection.setRowSelection(newSelection);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [staff, bulkSelection]);
 
   return (
     <div className="space-y-6">

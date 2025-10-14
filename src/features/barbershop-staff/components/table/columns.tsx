@@ -2,6 +2,11 @@ import i18n from "@/app/i18n/init";
 import { Badge } from "@shared/components/ui/badge";
 import { Checkbox } from "@shared/components/ui/checkbox";
 import TableSort from "@shared/components/ui/table-sort";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@shared/components/ui/tooltip";
 import type { ColumnDef } from "@tanstack/react-table";
 import { getStatusBadge } from "../../helpers/column.helper";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
@@ -33,28 +38,60 @@ export const createColumns = ({
   if (enableBulkSelection) {
     columns.push({
       id: "select",
-      header: ({ table }) => (
-        <div className="flex items-center justify-center">
-          <Checkbox
-            checked={table.getIsAllPageRowsSelected()}
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label={t("bulkActions.selectAll")}
-          />
-        </div>
-      ),
-      cell: ({ row, table }) => {
-        // 🔍 DEBUG: Check table state directly
-        const tableState = table.getState().rowSelection;
-        const isInTableState = tableState[row.id] === true;
+      header: ({ table }) => {
+        const allPageRowsSelected = table.getIsAllPageRowsSelected();
+        const somePageRowsSelected = table.getIsSomePageRowsSelected();
+
+        // Estado do checkbox:
+        // - indeterminate: alguns selecionados
+        // - true: todos da página selecionados
+        // - false: nenhum selecionado
+        const checkedState = allPageRowsSelected
+          ? true
+          : somePageRowsSelected
+            ? "indeterminate"
+            : false;
+
+        // Tooltip text baseado no estado
+        const tooltipText = allPageRowsSelected
+          ? t("bulkActions.deselectAll")
+          : somePageRowsSelected
+            ? t("bulkActions.selectAllPage")
+            : t("bulkActions.selectAll");
+
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Checkbox
+                    checked={checkedState}
+                    onCheckedChange={(value) =>
+                      table.toggleAllPageRowsSelected(!!value)
+                    }
+                    aria-label={tooltipText}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="text-xs">
+                <p>{tooltipText}</p>
+                {somePageRowsSelected && !allPageRowsSelected && (
+                  <p className="text-neutral-400">
+                    ({table.getSelectedRowModel().rows.length} de{" "}
+                    {table.getRowModel().rows.length})
+                  </p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center justify-center">
             <Checkbox
-              checked={isInTableState}
-              onCheckedChange={(value) => {
-                row.toggleSelected(!!value);
-              }}
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label={t("bulkActions.selectRow")}
             />
           </div>
