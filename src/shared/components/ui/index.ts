@@ -53,6 +53,11 @@ export { Progress } from "./progress";
 // export { DataTable } from "./data-table";
 // export { EmptyState } from "./empty-state";
 // export { Stat } from "./stat";
-// export { Tooltip } from "./tooltip";
+export {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
 // export { Sheet } from "./sheet";
 // export { Tabs } from "./tabs";

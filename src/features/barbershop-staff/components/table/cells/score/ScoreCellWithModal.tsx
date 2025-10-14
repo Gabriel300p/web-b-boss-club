@@ -3,7 +3,7 @@
  * Wrapper da célula de score que gerencia o estado do modal
  */
 import { useState } from "react";
-import { ScoreReportModal } from "../modals/ScoreReportModal";
+import { ScoreReportModal } from "../../../dialogs/ScoreReportModal";
 import type { ScoreLevel } from "./ScoreCell";
 import { ScoreCell } from "./ScoreCell";
 
@@ -21,7 +21,7 @@ interface ScoreCellWithModalProps {
   totalRevenue: number;
   totalAttendances: number;
   // Optional
-  variant?: "bar" | "gauge";
+  variant?: "gauge";
 }
 
 export function ScoreCellWithModal({

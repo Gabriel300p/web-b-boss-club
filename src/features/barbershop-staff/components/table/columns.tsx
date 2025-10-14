@@ -5,12 +5,12 @@ import TableSort from "@shared/components/ui/table-sort";
 import type { ColumnDef } from "@tanstack/react-table";
 import { getStatusBadge } from "../../helpers/column.helper";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
+import { PerformanceCell } from "./cells/performance/PerformanceCell";
+import type { ScoreLevel } from "./cells/score/ScoreCell";
+import { ScoreCellWithModal } from "./cells/score/ScoreCellWithModal";
+import StaffAvatar from "./cells/StaffAvatar";
+import { UnitsCell } from "./cells/UnitsCell";
 import { StaffActions, type StaffActionHandlers } from "./columns-actions";
-import { PerformanceCell } from "./PerformanceCell";
-import type { ScoreLevel } from "./ScoreCell";
-import { ScoreCellWithModal } from "./ScoreCellWithModal";
-import StaffAvatar from "./StaffAvatar";
-import { UnitsCell } from "./UnitsCell";
 
 // 🎯 Interface para props das colunas
 type StaffColumnsProps = StaffActionHandlers & {
@@ -111,9 +111,10 @@ export const createColumns = ({
       header: () => <div className="text-center">{t("fields.units")}</div>,
       cell: ({ row }) => {
         const units = row.original.units || [];
+        const staffId = row.original.id;
         return (
           <div className="flex w-full justify-center">
-            <UnitsCell units={units} />
+            <UnitsCell staffId={staffId} units={units} />
           </div>
         );
       },
@@ -132,12 +133,14 @@ export const createColumns = ({
       cell: ({ row }) => {
         const totalAttendances = row.original.total_attendances || 0;
         const averageRating = row.original.average_rating || null;
+        const reviewCount = row.original._count?.reviews || 0;
 
         return (
           <div className="flex w-full justify-center text-center">
             <PerformanceCell
               totalAttendances={totalAttendances}
               averageRating={averageRating}
+              reviewCount={reviewCount}
             />
           </div>
         );

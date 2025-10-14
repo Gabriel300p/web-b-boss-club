@@ -4,7 +4,6 @@
  * Facilita A/B testing e escolha de design
  */
 import { MiniGauge } from "./MiniGauge";
-import { ScoreBar } from "./ScoreBar";
 
 export type ScoreLevel =
   | "critical"
@@ -13,7 +12,7 @@ export type ScoreLevel =
   | "good"
   | "excellent";
 
-export type ScoreDisplayVariant = "bar" | "gauge";
+export type ScoreDisplayVariant = "gauge";
 
 interface ScoreDisplayProps {
   score: number;
@@ -30,7 +29,7 @@ interface ScoreDisplayProps {
 export function ScoreDisplay({
   score,
   level,
-  variant = "bar", // 'bar' como padrão, pode trocar para 'gauge'
+  variant = "gauge", // 'gauge' como padrão
   showLabel = true,
   className,
 }: ScoreDisplayProps) {
@@ -45,13 +44,4 @@ export function ScoreDisplay({
       />
     );
   }
-
-  return (
-    <ScoreBar
-      score={score}
-      level={level}
-      showLabel={showLabel}
-      className={className}
-    />
-  );
 }
