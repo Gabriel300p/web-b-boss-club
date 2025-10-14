@@ -6,6 +6,7 @@ import { BulkActionsBar } from "../components/common/BulkActionsBar";
 import { StaffModal } from "../components/dialogs/StaffModal";
 import { StaffStatusModal } from "../components/dialogs/StaffStatusModal";
 import { useBarbershopStaff } from "../hooks/useBarbershopStaff";
+import { useBulkActions } from "../hooks/useBulkActions";
 import { useBulkSelection } from "../hooks/useBulkSelection";
 import { useStableStaffManagement } from "../hooks/useStableStaffManagement";
 import type { BarbershopStaff } from "../schemas/barbershop-staff.schemas";
@@ -73,11 +74,34 @@ export function BarbershopStaffPage() {
   // 🎯 Hook com ações (toggle status, etc)
   const { toggleStaffStatus } = useBarbershopStaff(filters);
 
-  // 🎯 Bulk selection hook (Fase 1)
+  // 🎯 Bulk selection hook
   const bulkSelection = useBulkSelection({
     data: staff,
     totalRecords: pagination?.total,
   });
+
+  // 🎯 Bulk actions hook (activate/deactivate/csv)
+  const bulkActions = useBulkActions({
+    onSuccess: () => {
+      // Limpar seleção após sucesso
+      bulkSelection.clearSelection();
+      // Refetch data para atualizar lista
+      refetch();
+    },
+    onCSVExportSuccess: () => {
+      // Limpar seleção após export
+      bulkSelection.clearSelection();
+    },
+  });
+
+  // 🎯 Handler para exportar CSV
+  const handleExportCSV = useCallback(() => {
+    // Filtrar apenas os staff selecionados
+    const selectedStaff = staff.filter((s) =>
+      bulkSelection.selectedIds.includes(s.id),
+    );
+    bulkActions.exportCSV(selectedStaff);
+  }, [staff, bulkSelection.selectedIds, bulkActions]);
 
   // 🎯 Estado para loading de select all pages
   const [isLoadingAllPages, setIsLoadingAllPages] = useState(false);
@@ -181,10 +205,17 @@ export function BarbershopStaffPage() {
         />
       </div>
 
-      {/* 🎯 Barra de ações em lote (Fase 1 - botões desabilitados) */}
+      {/* 🎯 Barra de ações em lote (FASE 3 - completa com CSV) */}
       <BulkActionsBar
         selectedCount={bulkSelection.selectedCount}
+        selectedIds={bulkSelection.selectedIds}
         onClearSelection={bulkSelection.clearSelection}
+        onActivate={bulkActions.activateStaff}
+        onDeactivate={bulkActions.deactivateStaff}
+        onDownloadCSV={handleExportCSV}
+        isActivating={bulkActions.isActivating}
+        isDeactivating={bulkActions.isDeactivating}
+        isExportingCSV={bulkActions.isExportingCSV}
         isLimitReached={bulkSelection.isLimitReached}
         maxLimit={bulkSelection.maxLimit}
         totalRecords={pagination?.total}

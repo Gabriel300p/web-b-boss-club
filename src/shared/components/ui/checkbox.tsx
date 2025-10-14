@@ -13,7 +13,7 @@ const Checkbox = React.forwardRef<
       ref={ref}
       checked={checked}
       className={cn(
-        "peer size-5 shrink-0 rounded-sm border-2 transition-all duration-200",
+        "peer size-5 shrink-0 cursor-pointer rounded-sm border-2 transition-all duration-200",
         "focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900 focus-visible:outline-none",
         "disabled:cursor-not-allowed disabled:opacity-50",
         // Estados não selecionados

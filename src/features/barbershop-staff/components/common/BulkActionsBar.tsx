@@ -1,14 +1,20 @@
 import { Button } from "@/shared/components/ui/button";
 import { Switch } from "@/shared/components/ui/switch";
 import { AnimatePresence, motion } from "framer-motion";
-import { Download, Power, X } from "lucide-react";
+import { Download, Loader2, Power, X } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  ConfirmBulkActionDialog,
+  type BulkActionType,
+} from "../dialogs/ConfirmBulkActionDialog";
 
 interface BulkActionsBarProps {
   selectedCount: number;
+  selectedIds: string[];
   onClearSelection: () => void;
-  onActivate?: () => void;
-  onDeactivate?: () => void;
+  onActivate?: (ids: string[]) => void;
+  onDeactivate?: (ids: string[]) => void;
   onDownloadCSV?: () => void;
   isLimitReached?: boolean;
   maxLimit?: number;
@@ -16,6 +22,9 @@ interface BulkActionsBarProps {
   isAllPagesSelected?: boolean;
   onToggleAllPages?: () => void;
   isLoadingAllPages?: boolean;
+  isActivating?: boolean;
+  isDeactivating?: boolean;
+  isExportingCSV?: boolean;
 }
 
 /**
@@ -24,12 +33,14 @@ interface BulkActionsBarProps {
  * Features:
  * - Animação slide up com Framer Motion
  * - Contador de itens selecionados
- * - Botões de ações em lote (desabilitados na Fase 1)
+ * - Botões de ações em lote com confirmação
+ * - Loading states durante operações
  * - Posicionamento fixed bottom
  * - Design responsivo
  */
 export function BulkActionsBar({
   selectedCount,
+  selectedIds,
   onClearSelection,
   onActivate,
   onDeactivate,
@@ -40,8 +51,32 @@ export function BulkActionsBar({
   isAllPagesSelected = false,
   onToggleAllPages,
   isLoadingAllPages = false,
+  isActivating = false,
+  isDeactivating = false,
+  isExportingCSV = false,
 }: BulkActionsBarProps) {
   const { t } = useTranslation("barbershop-staff");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogAction, setDialogAction] = useState<BulkActionType>("activate");
+
+  // 🎯 Loading state global (qualquer operação em andamento)
+  const isLoading =
+    isActivating || isDeactivating || isLoadingAllPages || isExportingCSV;
+
+  // 🎯 Handlers de diálogo
+  const handleOpenDialog = (action: BulkActionType) => {
+    setDialogAction(action);
+    setDialogOpen(true);
+  };
+
+  const handleConfirmAction = () => {
+    setDialogOpen(false);
+    if (dialogAction === "activate") {
+      onActivate?.(selectedIds);
+    } else {
+      onDeactivate?.(selectedIds);
+    }
+  };
 
   // 🎯 Mostrar opção de selecionar todas as páginas apenas se:
   // 1. Tem mais registros que o selecionado atualmente
@@ -101,8 +136,8 @@ export function BulkActionsBar({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={onActivate}
-                  disabled={!onActivate}
+                  onClick={() => handleOpenDialog("activate")}
+                  disabled={!onActivate || isLoading}
                   className="gap-2"
                   title={
                     !onActivate
@@ -110,7 +145,11 @@ export function BulkActionsBar({
                       : t("bulkActions.activate")
                   }
                 >
-                  <Power className="h-4 w-4" />
+                  {isActivating ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Power className="h-4 w-4" />
+                  )}
                   <span className="hidden sm:inline">
                     {t("bulkActions.activate")}
                   </span>
@@ -120,8 +159,8 @@ export function BulkActionsBar({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={onDeactivate}
-                  disabled={!onDeactivate}
+                  onClick={() => handleOpenDialog("deactivate")}
+                  disabled={!onDeactivate || isLoading}
                   className="gap-2"
                   title={
                     !onDeactivate
@@ -129,7 +168,11 @@ export function BulkActionsBar({
                       : t("bulkActions.deactivate")
                   }
                 >
-                  <Power className="h-4 w-4" />
+                  {isDeactivating ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Power className="h-4 w-4" />
+                  )}
                   <span className="hidden sm:inline">
                     {t("bulkActions.deactivate")}
                   </span>
@@ -140,7 +183,7 @@ export function BulkActionsBar({
                   variant="ghost"
                   size="sm"
                   onClick={onDownloadCSV}
-                  disabled={!onDownloadCSV}
+                  disabled={!onDownloadCSV || isLoading}
                   className="gap-2"
                   title={
                     !onDownloadCSV
@@ -148,7 +191,11 @@ export function BulkActionsBar({
                       : t("bulkActions.downloadCSV")
                   }
                 >
-                  <Download className="h-4 w-4" />
+                  {isExportingCSV ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
                   <span className="hidden sm:inline">
                     {t("bulkActions.downloadCSV")}
                   </span>
@@ -162,6 +209,7 @@ export function BulkActionsBar({
                   variant="ghost"
                   size="sm"
                   onClick={onClearSelection}
+                  disabled={isLoading}
                   className="gap-2 text-neutral-400 hover:text-neutral-200"
                 >
                   <X className="h-4 w-4" />
@@ -197,6 +245,16 @@ export function BulkActionsBar({
           </div>
         </motion.div>
       )}
+
+      {/* 🎯 Diálogo de confirmação */}
+      <ConfirmBulkActionDialog
+        isOpen={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onConfirm={handleConfirmAction}
+        actionType={dialogAction}
+        count={selectedCount}
+        isLoading={isActivating || isDeactivating}
+      />
     </AnimatePresence>
   );
 }
