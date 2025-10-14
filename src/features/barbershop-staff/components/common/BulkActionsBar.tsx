@@ -1,20 +1,19 @@
 import { Button } from "@/shared/components/ui/button";
-import { Switch } from "@/shared/components/ui/switch";
+import { TrashIcon } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, Loader2, Power, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ConfirmBulkActionDialog,
-  type BulkActionType,
-} from "../dialogs/ConfirmBulkActionDialog";
+import { StaffStatusModal } from "../dialogs/StaffStatusModal";
+
+export type BulkActionType = "activate" | "deactivate";
 
 interface BulkActionsBarProps {
   selectedCount: number;
   selectedIds: string[];
   onClearSelection: () => void;
-  onActivate?: (ids: string[]) => void;
-  onDeactivate?: (ids: string[]) => void;
+  onActivate?: (ids: string[]) => Promise<void>;
+  onDeactivate?: (ids: string[]) => Promise<void>;
   onDownloadCSV?: () => void;
   isLimitReached?: boolean;
   maxLimit?: number;
@@ -48,8 +47,6 @@ export function BulkActionsBar({
   isLimitReached = false,
   maxLimit = 500,
   totalRecords,
-  isAllPagesSelected = false,
-  onToggleAllPages,
   isLoadingAllPages = false,
   isActivating = false,
   isDeactivating = false,
@@ -69,59 +66,38 @@ export function BulkActionsBar({
     setDialogOpen(true);
   };
 
-  const handleConfirmAction = () => {
-    setDialogOpen(false);
+  const handleConfirmAction = async () => {
     if (dialogAction === "activate") {
-      onActivate?.(selectedIds);
+      await onActivate?.(selectedIds);
     } else {
-      onDeactivate?.(selectedIds);
+      await onDeactivate?.(selectedIds);
     }
+    setDialogOpen(false);
   };
-
-  // 🎯 Mostrar opção de selecionar todas as páginas apenas se:
-  // 1. Tem mais registros que o selecionado atualmente
-  // 2. Tem a função onToggleAllPages disponível
-  const showSelectAllPages =
-    totalRecords &&
-    totalRecords > selectedCount &&
-    !isAllPagesSelected &&
-    onToggleAllPages;
 
   return (
     <AnimatePresence>
       {selectedCount > 0 && (
         <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
+          initial={{ y: 100, opacity: 0, scale: 0.95 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={{ y: 100, opacity: 0, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2"
         >
-          <div className="flex flex-col gap-3 rounded-lg border border-neutral-700 bg-neutral-800/95 px-6 py-4 shadow-2xl backdrop-blur-sm">
+          <div className="flex flex-col gap-3 rounded-lg border border-neutral-700/70 bg-neutral-800/95 px-5 py-3 shadow-lg ring-1 shadow-neutral-900/50 ring-white/5 backdrop-blur-md">
             <div className="flex items-center gap-3">
               {/* Contador de selecionados */}
               <div className="flex items-center gap-2 border-r border-neutral-700 pr-4">
-                <div className="bg-primary-500/20 text-primary-400 flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold">
-                  {selectedCount}
-                </div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-neutral-200">
-                    {t("bulkActions.itemsSelected", { count: selectedCount })}
+                  {/* 🎯 Contador com destaque em amarelo */}
+                  <span className="text-sm font-semibold text-neutral-300">
+                    <span className="text-yellow-400">{selectedCount}</span>
+                    {" de "}
+                    {totalRecords}
+                    {" selecionado"}
+                    {selectedCount !== 1 && "s"}
                   </span>
-                  {/* 🎯 Indicador de seleção entre páginas (Opção C) */}
-                  {totalRecords && totalRecords > selectedCount && (
-                    <span className="text-xs text-neutral-400">
-                      {t("bulkActions.ofTotal", {
-                        selected: selectedCount,
-                        total: totalRecords,
-                      })}
-                    </span>
-                  )}
-                  {isAllPagesSelected && (
-                    <span className="text-xs text-yellow-500">
-                      {t("bulkActions.allPagesSelected")}
-                    </span>
-                  )}
                 </div>
                 {isLimitReached && (
                   <span className="ml-2 text-xs text-yellow-500">
@@ -138,7 +114,7 @@ export function BulkActionsBar({
                   size="sm"
                   onClick={() => handleOpenDialog("activate")}
                   disabled={!onActivate || isLoading}
-                  className="gap-2"
+                  className="gap-2 transition-all hover:bg-green-600/20 hover:text-green-400 hover:shadow-md hover:shadow-green-500/20"
                   title={
                     !onActivate
                       ? t("bulkActions.comingSoon")
@@ -155,26 +131,26 @@ export function BulkActionsBar({
                   </span>
                 </Button>
 
-                {/* Desativar */}
+                {/* Inativar */}
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleOpenDialog("deactivate")}
                   disabled={!onDeactivate || isLoading}
-                  className="gap-2"
+                  className="gap-2 transition-all hover:bg-red-600/20 hover:text-red-400 hover:shadow-md hover:shadow-red-500/20"
                   title={
                     !onDeactivate
                       ? t("bulkActions.comingSoon")
-                      : t("bulkActions.deactivate")
+                      : t("bulkActions.inactivate")
                   }
                 >
                   {isDeactivating ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Power className="h-4 w-4" />
+                    <TrashIcon className="h-4 w-4" />
                   )}
                   <span className="hidden sm:inline">
-                    {t("bulkActions.deactivate")}
+                    {t("bulkActions.inactivate")}
                   </span>
                 </Button>
 
@@ -184,7 +160,7 @@ export function BulkActionsBar({
                   size="sm"
                   onClick={onDownloadCSV}
                   disabled={!onDownloadCSV || isLoading}
-                  className="gap-2"
+                  className="gap-2 transition-all hover:bg-yellow-600/20 hover:text-yellow-400 hover:shadow-md hover:shadow-yellow-500/20"
                   title={
                     !onDownloadCSV
                       ? t("bulkActions.comingSoon")
@@ -219,41 +195,19 @@ export function BulkActionsBar({
                 </Button>
               </div>
             </div>
-
-            {/* 🎯 Toggle para selecionar todas as páginas */}
-            {showSelectAllPages && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="flex items-center gap-3 border-t border-neutral-700 pt-3"
-              >
-                <Switch
-                  checked={isAllPagesSelected}
-                  onCheckedChange={onToggleAllPages}
-                  disabled={isLoadingAllPages}
-                />
-                <label className="text-sm text-neutral-300">
-                  {isLoadingAllPages
-                    ? t("bulkActions.loadingAllPages")
-                    : t("bulkActions.selectAllPages", {
-                        total: Math.min(totalRecords || 0, maxLimit),
-                      })}
-                </label>
-              </motion.div>
-            )}
           </div>
         </motion.div>
       )}
 
-      {/* 🎯 Diálogo de confirmação */}
-      <ConfirmBulkActionDialog
+      {/* 🎯 Modal de confirmação (StaffStatusModal unificado) */}
+      <StaffStatusModal
         isOpen={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onConfirm={handleConfirmAction}
-        actionType={dialogAction}
         count={selectedCount}
-        isLoading={isActivating || isDeactivating}
+        isBulk={true}
+        isActivating={dialogAction === "activate"}
+        staff={null}
       />
     </AnimatePresence>
   );

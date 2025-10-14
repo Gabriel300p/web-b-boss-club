@@ -50,7 +50,7 @@
     "close": "Close",
     "view": "View",
     "activate": "Activate",
-    "deactivate": "Deactivate"
+    "inactivate": "Inactivate"
   },
   "modals": {
     "createStaff": {
@@ -243,7 +243,7 @@
     "itemsSelected_other": "{{count}} items selected",
     "limitReached": "Limit of {{limit}} selections reached",
     "activate": "Activate",
-    "deactivate": "Deactivate",
+    "inactivate": "Inactivate",
     "downloadCSV": "Download CSV",
     "clearSelection": "Clear selection",
     "comingSoon": "Coming soon (Phase 2/3)",

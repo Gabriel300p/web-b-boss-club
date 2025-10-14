@@ -50,7 +50,7 @@
     "close": "Fechar",
     "view": "Visualizar",
     "activate": "Ativar",
-    "deactivate": "Inativar"
+    "inactivate": "Inativar"
   },
   "modals": {
     "createStaff": {
@@ -248,7 +248,7 @@
     "allPagesSelected": "Todas as páginas selecionadas",
     "limitReached": "Limite de {{limit}} seleções atingido",
     "activate": "Ativar",
-    "deactivate": "Desativar",
+    "inactivate": "Inativar",
     "downloadCSV": "Baixar CSV",
     "clearSelection": "Limpar seleção",
     "comingSoon": "Em breve (Fase 2/3)",

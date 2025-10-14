@@ -165,8 +165,8 @@ export function useBulkActions(options?: UseBulkActionsOptions) {
       isExportingCSV,
 
     // Actions
-    activateStaff: activateMutation.mutate,
-    deactivateStaff: deactivateMutation.mutate,
+    activateStaff: activateMutation.mutateAsync,
+    deactivateStaff: deactivateMutation.mutateAsync,
     exportCSV: handleExportCSV,
 
     // Results
