@@ -33,9 +33,9 @@ export function useBulkActions(options?: UseBulkActionsOptions) {
   const activateMutation = useMutation({
     mutationFn: bulkActivateStaff,
     onSuccess: (result) => {
-      // Invalidar cache
+      // ✅ Invalidar apenas lista de staff (não stats/details)
       queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.all(user?.id),
+        queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
       });
 
       // Toast de sucesso com detalhes
@@ -80,9 +80,9 @@ export function useBulkActions(options?: UseBulkActionsOptions) {
   const deactivateMutation = useMutation({
     mutationFn: bulkDeactivateStaff,
     onSuccess: (result) => {
-      // Invalidar cache
+      // ✅ Invalidar apenas lista de staff (não stats/details)
       queryClient.invalidateQueries({
-        queryKey: STAFF_QUERY_KEYS.staff.all(user?.id),
+        queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
       });
 
       // Toast de sucesso com detalhes
@@ -127,7 +127,7 @@ export function useBulkActions(options?: UseBulkActionsOptions) {
   const handleExportCSV = async (staffList: BarbershopStaff[]) => {
     setIsExportingCSV(true);
     try {
-      await exportStaffToCSV(staffList);
+      await exportStaffToCSV(staffList, user?.email);
       success(
         "Exportação concluída!",
         `${staffList.length} colaborador${staffList.length > 1 ? "es" : ""} exportado${staffList.length > 1 ? "s" : ""} com sucesso`,

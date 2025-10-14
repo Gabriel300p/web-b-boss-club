@@ -85,8 +85,7 @@ export function BarbershopStaffPage() {
     onSuccess: () => {
       // Limpar seleção após sucesso
       bulkSelection.clearSelection();
-      // Refetch data para atualizar lista
-      refetch();
+      // ✅ invalidateQueries no hook já faz refetch automático
     },
     onCSVExportSuccess: () => {
       // Limpar seleção após export

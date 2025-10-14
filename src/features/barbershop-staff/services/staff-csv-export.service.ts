@@ -3,7 +3,11 @@
  * Serviço para exportação de colaboradores em CSV com todas as colunas
  */
 
-import { exportToCSV, generateTimestamp } from "@shared/utils/csv.utils";
+import {
+  exportToCSVWithMetadata,
+  generateTimestamp,
+} from "@shared/utils/csv.utils";
+import { numberToCurrency } from "@shared/utils/currency.utils";
 import { format } from "date-fns";
 import type { BarbershopStaff } from "../schemas/barbershop-staff.schemas";
 
@@ -34,13 +38,8 @@ interface StaffCSVRow {
   total_avaliacoes: string;
   receita_total: string;
 
-  // Score breakdown (se disponível)
+  // Score
   score_total: string;
-  score_atendimentos: string;
-  score_avaliacao: string;
-  score_receita: string;
-  rank_posicao: string;
-  rank_percentil: string;
 }
 
 /**
@@ -119,39 +118,65 @@ async function staffToCSVRow(staff: BarbershopStaff): Promise<StaffCSVRow> {
       ? analytics.average_rating.toFixed(2)
       : "0",
     total_avaliacoes: analytics.total_reviews.toString(),
-    receita_total: analytics.total_revenue
-      ? `R$ ${analytics.total_revenue.toFixed(2)}`
-      : "R$ 0,00",
+    receita_total: numberToCurrency(analytics.total_revenue || 0),
 
-    // Score (simplificado - score total disponível diretamente)
+    // Score
     score_total: analytics.score?.toString() || "0",
-    score_atendimentos: "-",
-    score_avaliacao: "-",
-    score_receita: "-",
-    rank_posicao: "-",
-    rank_percentil: "-",
   };
 }
 
 /**
  * Exporta colaboradores selecionados para CSV
+ * Processa em chunks para melhor feedback visual em listas grandes
  */
 export async function exportStaffToCSV(
   staffList: BarbershopStaff[],
+  exportedBy?: string,
 ): Promise<void> {
   if (staffList.length === 0) {
     throw new Error("Nenhum colaborador selecionado para exportar");
   }
 
-  // Converter todos os colaboradores para linhas do CSV
-  const csvRows = await Promise.all(
-    staffList.map((staff) => staffToCSVRow(staff)),
-  );
+  // Para listas grandes, processar em chunks com pequeno delay
+  // Isso permite que a UI atualize o loading state
+  const CHUNK_SIZE = 100;
+  const csvRows: StaffCSVRow[] = [];
+
+  for (let i = 0; i < staffList.length; i += CHUNK_SIZE) {
+    const chunk = staffList.slice(i, i + CHUNK_SIZE);
+    const chunkRows = await Promise.all(
+      chunk.map((staff) => staffToCSVRow(staff)),
+    );
+    csvRows.push(...chunkRows);
+
+    // Pequeno delay para não bloquear a UI thread
+    if (i + CHUNK_SIZE < staffList.length) {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+  }
 
   // Gerar nome do arquivo com timestamp
   const timestamp = generateTimestamp();
   const filename = `colaboradores-${timestamp}.csv`;
 
-  // Exportar (casting para Record<string, unknown>[] para compatibilidade)
-  exportToCSV(csvRows as unknown as Record<string, unknown>[], filename);
+  // Calcular estatísticas para metadados
+  const activeCount = csvRows.filter((row) => row.status === "Ativo").length;
+  const inactiveCount = csvRows.filter(
+    (row) => row.status === "Inativo",
+  ).length;
+
+  // Exportar com metadados
+  exportToCSVWithMetadata(
+    csvRows as unknown as Record<string, unknown>[],
+    filename,
+    {
+      exportedBy,
+      totalRecords: staffList.length,
+      customFields: {
+        Ativos: activeCount.toString(),
+        Inativos: inactiveCount.toString(),
+        Sistema: "B-Boss Club - Gestão de Barbearias",
+      },
+    },
+  );
 }

@@ -113,3 +113,46 @@ export function exportToCSV(
   const csv = convertToCSV(data);
   downloadCSV(csv, filename);
 }
+
+/**
+ * Exporta dados para CSV com metadados (linhas de comentário no início)
+ */
+export function exportToCSVWithMetadata(
+  data: Record<string, unknown>[],
+  filename: string,
+  metadata?: {
+    exportedBy?: string;
+    totalRecords?: number;
+    customFields?: Record<string, string>;
+  },
+): void {
+  const csv = convertToCSV(data);
+
+  // Criar linhas de metadados (comentários CSV começam com #)
+  const metadataLines: string[] = [];
+
+  if (metadata) {
+    metadataLines.push(
+      `# Exportado em: ${new Date().toLocaleString("pt-BR", { dateStyle: "full", timeStyle: "short" })}`,
+    );
+
+    if (metadata.exportedBy) {
+      metadataLines.push(`# Exportado por: ${metadata.exportedBy}`);
+    }
+
+    if (metadata.totalRecords !== undefined) {
+      metadataLines.push(`# Total de registros: ${metadata.totalRecords}`);
+    }
+
+    if (metadata.customFields) {
+      Object.entries(metadata.customFields).forEach(([key, value]) => {
+        metadataLines.push(`# ${key}: ${value}`);
+      });
+    }
+
+    metadataLines.push(""); // Linha vazia entre metadados e dados
+  }
+
+  const csvWithMetadata = [...metadataLines, csv].join("\n");
+  downloadCSV(csvWithMetadata, filename);
+}
