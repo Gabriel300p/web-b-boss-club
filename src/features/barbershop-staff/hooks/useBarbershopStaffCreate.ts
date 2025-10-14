@@ -29,8 +29,18 @@ export function useBarbershopStaffCreate(
         // 3. Define defaults (role_in_shop, status, is_available)
         // 4. Formata o payload exatamente como o backend espera
 
+        // 🏢 Define primeira unidade como principal se não foi especificada
+        const dataWithPrimaryUnit = {
+          ...data,
+          primary_unit_id:
+            data.primary_unit_id ||
+            (data.unit_ids && data.unit_ids.length > 0
+              ? data.unit_ids[0]
+              : undefined),
+        };
+
         // Backend infere barbershop_id automaticamente do owner logado
-        return createStaff(data);
+        return createStaff(dataWithPrimaryUnit);
       },
       onSuccess: async (response) => {
         // ✅ Estratégia otimizada: invalidar apenas listas (não detalhes)

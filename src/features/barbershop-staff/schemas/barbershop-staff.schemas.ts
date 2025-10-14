@@ -176,8 +176,11 @@ export const createStaffFormInputSchema = baseStaffFieldsSchema
     salary: z.string().optional(),
     commission_rate: z.string().optional(),
 
-    // 🆕 FASE 4 - Campos de unidades (múltiplas)
-    unit_ids: z.array(z.string()).optional().default([]),
+    // 🆕 FASE 4 - Campos de unidades (múltiplas) - OBRIGATÓRIO
+    unit_ids: z
+      .array(z.string())
+      .min(1, "Selecione pelo menos uma unidade")
+      .default([]),
     primary_unit_id: z.string().optional(),
   })
   .refine(
@@ -273,6 +276,19 @@ export const updateStaffFormInputSchema = z
     primary_unit_id: z.string().optional(),
   })
   .partial()
+  .refine(
+    (data) => {
+      // Se unit_ids foi fornecido, deve ter pelo menos 1 unidade
+      if (data.unit_ids !== undefined && data.unit_ids.length === 0) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Selecione pelo menos uma unidade",
+      path: ["unit_ids"],
+    },
+  )
   .refine(
     (data) => {
       // Se primary_unit_id foi definido, deve estar em unit_ids
@@ -421,6 +437,7 @@ export const admissionInfoStepSchema = createStaffFormInputSchema
     // terminated_date: true, // TEMPORARIAMENTE COMENTADO
     salary: true,
     commission_rate: true,
+    unit_ids: true, // 🏢 Obrigatório
   })
   .extend({
     // Ajusta campos opcionais (salary e commission_rate já são strings no createStaffFormInputSchema)

@@ -128,8 +128,18 @@ export function useBarbershopStaff(
 
   // 🚀 Update mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateStaffFormData }) =>
-      updateStaff(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateStaffFormData }) => {
+      // 🏢 Define primeira unidade como principal se não foi especificada
+      const dataWithPrimaryUnit = {
+        ...data,
+        primary_unit_id:
+          data.primary_unit_id ||
+          (data.unit_ids && data.unit_ids.length > 0
+            ? data.unit_ids[0]
+            : undefined),
+      };
+      return updateStaff(id, dataWithPrimaryUnit);
+    },
     onSuccess: (data) => {
       // Invalidate and refetch staff list
       queryClient.invalidateQueries({

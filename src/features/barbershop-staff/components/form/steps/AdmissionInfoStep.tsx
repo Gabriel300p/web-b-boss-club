@@ -4,6 +4,7 @@
  */
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,14 +18,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@shared/components/ui/select";
-import { apiService } from "@shared/services/api.service";
 import { getTodayFormatted } from "@shared/utils/date.utils";
 import {
   createFormattedOnChange,
   inputFormatters,
 } from "@shared/utils/input-formatters";
-import { useQuery } from "@tanstack/react-query";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import type { CreateStaffFormInput } from "../../../schemas/barbershop-staff.schemas";
@@ -53,41 +52,12 @@ export const AdmissionInfoStep = memo(function AdmissionInfoStep({
     formState: { isSubmitting },
   } = form;
 
-  // const statusValue = watch("status"); // TEMPORARIAMENTE COMENTADO
-
   // Define data de admissão como hoje por padrão no modo create
   useEffect(() => {
     if (isCreateMode && !watch("hire_date")) {
       setValue("hire_date", getTodayFormatted());
     }
   }, [isCreateMode, watch, setValue]);
-
-  // const showTerminatedDate = statusValue === "TERMINATED"; // TEMPORARIAMENTE COMENTADO
-
-  // 🏢 Buscar unidades disponíveis (movido para fora do render)
-  const { data: unitsResponse } = useQuery({
-    queryKey: ["barbershop-units", "list"],
-    queryFn: async () => {
-      const response = await apiService.get(
-        "/barbershop-units?page=1&limit=100",
-      );
-      return response.data as {
-        units: Array<{ id: string; name: string; city: string; state: string }>;
-      };
-    },
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const currentUnitIds = watch("unit_ids");
-  const selectedUnitIds = useMemo(() => currentUnitIds || [], [currentUnitIds]);
-
-  const selectedUnits = useMemo(() => {
-    return (
-      unitsResponse?.units?.filter((unit) =>
-        selectedUnitIds.includes(unit.id),
-      ) || []
-    );
-  }, [unitsResponse?.units, selectedUnitIds]);
 
   return (
     <div className="space-y-5">
@@ -138,7 +108,7 @@ export const AdmissionInfoStep = memo(function AdmissionInfoStep({
         render={({ field }) => (
           <FormItem>
             <FormLabel className="text-neutral-200">
-              {t("wizard.fields.units")}
+              {t("wizard.fields.units")} <span className="text-red-500">*</span>
             </FormLabel>
             <FormControl>
               <MultiSelectUnits
@@ -148,53 +118,12 @@ export const AdmissionInfoStep = memo(function AdmissionInfoStep({
                 placeholder={t("wizard.placeholders.units")}
               />
             </FormControl>
-            <FormMessage className="text-red-400" />
-          </FormItem>
-        )}
-      />
-
-      {/* 🏢 Unidade Principal - Select simples (apenas unidades selecionadas) */}
-      <FormField
-        control={form.control}
-        name="primary_unit_id"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-neutral-200">
-              {t("wizard.fields.primaryUnit")}
-            </FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              value={field.value || ""}
-              disabled={
-                isViewMode ||
-                isSubmitting ||
-                isLoading ||
-                selectedUnitIds.length === 0
-              }
-            >
-              <FormControl>
-                <SelectTrigger className="border-neutral-700 bg-neutral-800/50 text-neutral-50 hover:bg-neutral-800 disabled:opacity-60">
-                  <SelectValue
-                    placeholder={
-                      selectedUnitIds.length === 0
-                        ? t("wizard.placeholders.selectUnitsFirst")
-                        : t("wizard.placeholders.primaryUnit")
-                    }
-                  />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent className="border-neutral-700 bg-neutral-900">
-                {selectedUnits.map((unit) => (
-                  <SelectItem
-                    key={unit.id}
-                    value={unit.id}
-                    className="text-neutral-50"
-                  >
-                    {unit.name} - {unit.city}/{unit.state}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <FormDescription className="mt-1 text-xs text-neutral-500">
+              {t("wizard.descriptions.primaryUnitAuto", {
+                defaultValue:
+                  "A primeira unidade selecionada será definida como principal",
+              })}
+            </FormDescription>
             <FormMessage className="text-red-400" />
           </FormItem>
         )}
@@ -228,40 +157,6 @@ export const AdmissionInfoStep = memo(function AdmissionInfoStep({
           </FormItem>
         )}
       />
-
-      {/* Data de demissão - só aparece quando status é TERMINATED */}
-      {/* TEMPORARIAMENTE COMENTADO PARA DEBUG
-      {showTerminatedDate && (
-        <FormField
-          control={form.control}
-          name="terminated_date"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-neutral-200">
-                {t("wizard.fields.terminatedDate")}{" "}
-                <span className="text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={t("wizard.placeholders.terminatedDate")}
-                  disabled={isViewMode || isSubmitting || isLoading}
-                  maxLength={10}
-                  variant="form"
-                  className="text-neutral-50 placeholder:text-neutral-500 disabled:opacity-60"
-                  {...field}
-                  value={field.value || ""}
-                  onChange={createFormattedOnChange(
-                    field.onChange,
-                    inputFormatters.date,
-                  )}
-                />
-              </FormControl>
-              <FormMessage className="text-red-400" />
-            </FormItem>
-          )}
-        />
-      )}
-      */}
 
       {/* Salário */}
       <FormField

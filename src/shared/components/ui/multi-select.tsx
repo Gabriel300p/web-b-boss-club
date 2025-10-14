@@ -81,7 +81,7 @@ export function MultiSelect({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between border-neutral-700 bg-neutral-800/50 text-neutral-50 hover:bg-neutral-800 disabled:opacity-60",
+            "w-full justify-between border-neutral-800 bg-neutral-900/50 px-3 text-neutral-50 hover:bg-neutral-800 disabled:opacity-60",
             className,
           )}
           disabled={disabled}
@@ -129,7 +129,7 @@ export function MultiSelect({
               </>
             )}
           </div>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent

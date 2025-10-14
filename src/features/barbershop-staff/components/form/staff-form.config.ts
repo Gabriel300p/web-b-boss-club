@@ -87,7 +87,7 @@ export const SIDEBAR_HEADER_CONFIGS: Record<
 const VALIDATION_FIELD_GROUPS = {
   BASIC_DATA_CREATE: ["full_name", "cpf"] as const,
   BASIC_DATA_EDIT: ["full_name"] as const,
-  ADMISSION_INFO: ["status"] as const,
+  ADMISSION_INFO: ["status", "unit_ids"] as const,
   USER_ACCESS: ["email"] as const,
 } as const;
 
@@ -122,6 +122,7 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
         hire_date: true,
         salary: true,
         commission_rate: true,
+        unit_ids: true,
       }),
     },
   },

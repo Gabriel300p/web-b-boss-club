@@ -101,9 +101,6 @@ export function UnitsCell({ staffId, units, className }: UnitsCellProps) {
       <div className={cn("flex items-center justify-center gap-2", className)}>
         {/* <UnitPhoto unit={unit} size="sm" /> */}
         <span className="text-sm text-neutral-100">{unit.name}</span>
-        {unit.is_primary && (
-          <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-        )}
       </div>
     );
   }
@@ -116,10 +113,6 @@ export function UnitsCell({ staffId, units, className }: UnitsCellProps) {
     <div className={cn("flex items-center justify-center gap-2", className)}>
       {/* <UnitPhoto unit={primaryUnit} size="sm" /> */}
       <span className="text-sm text-neutral-100">{primaryUnit.name}</span>
-      {/* {primaryUnit.is_primary && (
-        <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-      )} */}
-
       <Popover>
         <PopoverTrigger asChild>
           <button
