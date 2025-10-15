@@ -80,7 +80,7 @@ export function BarbershopStaffPage() {
     totalRecords: pagination?.total,
   });
 
-  // 🎯 Bulk actions hook (activate/deactivate/csv)
+  // 🎯 Bulk actions hook (activate/inactivate/csv)
   const bulkActions = useBulkActions({
     onSuccess: () => {
       // Limpar seleção após sucesso
@@ -92,6 +92,21 @@ export function BarbershopStaffPage() {
       bulkSelection.clearSelection();
     },
   });
+
+  // 🎯 Wrappers para as ações de bulk sem retorno
+  const handleBulkActivate = useCallback(
+    (ids: string[]) => {
+      bulkActions.activateStaff(ids);
+    },
+    [bulkActions],
+  );
+
+  const handleBulkInactivate = useCallback(
+    (ids: string[]) => {
+      bulkActions.deactivateStaff(ids);
+    },
+    [bulkActions],
+  );
 
   // 🎯 Handler para exportar CSV
   const handleExportCSV = useCallback(() => {
@@ -209,11 +224,11 @@ export function BarbershopStaffPage() {
         selectedCount={bulkSelection.selectedCount}
         selectedIds={bulkSelection.selectedIds}
         onClearSelection={bulkSelection.clearSelection}
-        onActivate={bulkActions.activateStaff}
-        onDeactivate={bulkActions.deactivateStaff}
+        onActivate={handleBulkActivate}
+        onInactivate={handleBulkInactivate}
         onDownloadCSV={handleExportCSV}
         isActivating={bulkActions.isActivating}
-        isDeactivating={bulkActions.isDeactivating}
+        isInactivating={bulkActions.isDeactivating}
         isExportingCSV={bulkActions.isExportingCSV}
         isLimitReached={bulkSelection.isLimitReached}
         maxLimit={bulkSelection.maxLimit}

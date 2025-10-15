@@ -219,14 +219,14 @@ export function useBarbershopStaff(
           ? t("toasts.success.activateTitle", {
               defaultValue: "Colaborador ativado!",
             })
-          : t("toasts.success.deactivateTitle", {
+          : t("toasts.success.inactivateTitle", {
               defaultValue: "Colaborador inativado!",
             }),
         isActive
           ? t("toasts.success.activateMessage", {
               defaultValue: "O colaborador foi ativado com sucesso.",
             })
-          : t("toasts.success.deactivateMessage", {
+          : t("toasts.success.inactivateMessage", {
               defaultValue: "O colaborador foi inativado com sucesso.",
             }),
       );

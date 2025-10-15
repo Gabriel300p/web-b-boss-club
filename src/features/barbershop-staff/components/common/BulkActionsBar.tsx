@@ -6,14 +6,14 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StaffStatusModal } from "../dialogs/StaffStatusModal";
 
-export type BulkActionType = "activate" | "deactivate";
+export type BulkActionType = "activate" | "inactivate";
 
 interface BulkActionsBarProps {
   selectedCount: number;
   selectedIds: string[];
   onClearSelection: () => void;
-  onActivate?: (ids: string[]) => Promise<void>;
-  onDeactivate?: (ids: string[]) => Promise<void>;
+  onActivate?: (ids: string[]) => void;
+  onInactivate?: (ids: string[]) => void;
   onDownloadCSV?: () => void;
   isLimitReached?: boolean;
   maxLimit?: number;
@@ -22,7 +22,7 @@ interface BulkActionsBarProps {
   onToggleAllPages?: () => void;
   isLoadingAllPages?: boolean;
   isActivating?: boolean;
-  isDeactivating?: boolean;
+  isInactivating?: boolean;
   isExportingCSV?: boolean;
 }
 
@@ -42,14 +42,14 @@ export function BulkActionsBar({
   selectedIds,
   onClearSelection,
   onActivate,
-  onDeactivate,
+  onInactivate,
   onDownloadCSV,
   isLimitReached = false,
   maxLimit = 500,
   totalRecords,
   isLoadingAllPages = false,
   isActivating = false,
-  isDeactivating = false,
+  isInactivating = false,
   isExportingCSV = false,
 }: BulkActionsBarProps) {
   const { t } = useTranslation("barbershop-staff");
@@ -58,7 +58,7 @@ export function BulkActionsBar({
 
   // 🎯 Loading state global (qualquer operação em andamento)
   const isLoading =
-    isActivating || isDeactivating || isLoadingAllPages || isExportingCSV;
+    isActivating || isInactivating || isLoadingAllPages || isExportingCSV;
 
   // 🎯 Handlers de diálogo
   const handleOpenDialog = (action: BulkActionType) => {
@@ -68,9 +68,9 @@ export function BulkActionsBar({
 
   const handleConfirmAction = async () => {
     if (dialogAction === "activate") {
-      await onActivate?.(selectedIds);
+      onActivate?.(selectedIds);
     } else {
-      await onDeactivate?.(selectedIds);
+      onInactivate?.(selectedIds);
     }
     setDialogOpen(false);
   };
@@ -135,16 +135,16 @@ export function BulkActionsBar({
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleOpenDialog("deactivate")}
-                  disabled={!onDeactivate || isLoading}
+                  onClick={() => handleOpenDialog("inactivate")}
+                  disabled={!onInactivate || isLoading}
                   className="gap-2 transition-all hover:bg-red-600/20 hover:text-red-400 hover:shadow-md hover:shadow-red-500/20"
                   title={
-                    !onDeactivate
+                    !onInactivate
                       ? t("bulkActions.comingSoon")
                       : t("bulkActions.inactivate")
                   }
                 >
-                  {isDeactivating ? (
+                  {isInactivating ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <TrashIcon className="h-4 w-4" />

@@ -58,7 +58,7 @@ const getAvailableActions = (
     displayName || `${firstName} ${lastName}`.trim() || "este barbeiro";
 
   // Construir labels ANTES de passar para t()
-  const deactivateLabel = `Inativar ${staffName}`;
+  const inactivateLabel = `Inativar ${staffName}`;
   const activateLabel = `Ativar ${staffName}`;
 
   // 🎯 Grupo 1: Ações de visualização e edição
@@ -96,7 +96,7 @@ const getAvailableActions = (
     {
       type: StaffActionType.TOGGLE_STATUS,
       label: isActive
-        ? t("actions.deactivate", { defaultValue: deactivateLabel })
+        ? t("actions.inactivate", { defaultValue: inactivateLabel })
         : t("actions.activate", { defaultValue: activateLabel }),
       icon: isActive
         ? (TrashIcon as React.ComponentType<{

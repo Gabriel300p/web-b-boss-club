@@ -14,7 +14,7 @@ import { Button } from "@shared/components/ui/button";
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { memo } from "react";
 
-export type BulkActionType = "activate" | "deactivate";
+export type BulkActionType = "activate" | "inactivate";
 
 interface ConfirmBulkActionDialogProps {
   isOpen: boolean;
@@ -35,7 +35,7 @@ const ACTION_CONFIG = {
     colorClass: "bg-green-500/10 text-green-500",
     buttonVariant: "default" as const,
   },
-  deactivate: {
+  inactivate: {
     title: "Inativar colaboradores selecionados?",
     description: (count: number) =>
       `${count} colaborador${count > 1 ? "es" : ""} será${count > 1 ? "ão" : ""} inativado${count > 1 ? "s" : ""}. Você poderá ativá-lo${count > 1 ? "s" : ""} novamente.`,
