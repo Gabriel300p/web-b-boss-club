@@ -36,7 +36,7 @@ const SCORE_COLORS: Record<
     text: "text-yellow-500",
   },
   excellent: {
-    primary: "oklch(86.5% 0.204 142.5)", // green-400 - Verde vibrante
+    primary: "oklch(72.3% 0.219 149.579)", // green-400 - Verde vibrante
     text: "text-green-400",
   },
 };
