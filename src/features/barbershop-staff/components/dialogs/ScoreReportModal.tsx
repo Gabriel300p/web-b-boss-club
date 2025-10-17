@@ -26,12 +26,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
-export type ScoreLevel =
-  | "critical"
-  | "needs_improvement"
-  | "regular"
-  | "good"
-  | "excellent";
+export type ScoreLevel = "critical" | "good" | "excellent";
 
 interface ScoreReportModalProps {
   open: boolean;
@@ -57,7 +52,7 @@ interface ScoreReportModalProps {
 }
 
 /**
- * Configuração de níveis
+ * Configuração de níveis (3 níveis com verde vibrante)
  */
 const LEVEL_CONFIG: Record<
   ScoreLevel,
@@ -70,39 +65,25 @@ const LEVEL_CONFIG: Record<
   }
 > = {
   critical: {
-    label: "Crítico",
-    emoji: "🔴",
+    label: "Precisa Melhorar",
+    emoji: "�",
     color: "text-red-500",
     bg: "bg-red-500/10",
     border: "border-red-500/20",
   },
-  needs_improvement: {
-    label: "Precisa Melhorar",
-    emoji: "🟠",
-    color: "text-orange-500",
-    bg: "bg-orange-500/10",
-    border: "border-orange-500/20",
-  },
-  regular: {
-    label: "Regular",
+  good: {
+    label: "Bom",
     emoji: "🟡",
     color: "text-yellow-500",
     bg: "bg-yellow-500/10",
     border: "border-yellow-500/20",
   },
-  good: {
-    label: "Bom",
-    emoji: "🟢",
-    color: "text-green-500",
-    bg: "bg-green-500/10",
-    border: "border-green-500/20",
-  },
   excellent: {
     label: "Excelente",
-    emoji: "🔵",
-    color: "text-blue-500",
-    bg: "bg-blue-500/10",
-    border: "border-blue-500/20",
+    emoji: "�",
+    color: "text-green-400",
+    bg: "bg-green-400/10",
+    border: "border-green-400/20",
   },
 };
 
@@ -205,7 +186,19 @@ export function ScoreReportModal({
   totalStaff,
   period = "Últimos 30 dias",
 }: ScoreReportModalProps) {
-  const config = LEVEL_CONFIG[level];
+  // 🛡️ Proteção contra níveis inválidos (fallback para critical)
+  const safeLevel: ScoreLevel = LEVEL_CONFIG[level] ? level : "critical";
+  const config = LEVEL_CONFIG[safeLevel];
+
+  // 🐛 DEBUG: Log para ver níveis inválidos
+  if (!LEVEL_CONFIG[level]) {
+    console.error(
+      "[ScoreReportModal] Nível inválido recebido:",
+      level,
+      "| Score:",
+      score,
+    );
+  }
 
   // Formatadores
   const formattedRevenue = new Intl.NumberFormat("pt-BR", {

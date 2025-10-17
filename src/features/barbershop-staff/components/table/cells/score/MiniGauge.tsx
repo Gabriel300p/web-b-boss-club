@@ -6,12 +6,7 @@
 import { cn } from "@shared/lib/utils";
 import { memo } from "react";
 
-export type ScoreLevel =
-  | "critical"
-  | "needs_improvement"
-  | "regular"
-  | "good"
-  | "excellent";
+export type ScoreLevel = "critical" | "good" | "excellent";
 
 interface MiniGaugeProps {
   score: number; // 0-100
@@ -22,7 +17,8 @@ interface MiniGaugeProps {
 }
 
 /**
- * Configuração de cores por nível (simplificado - menos futurista)
+ * Configuração de cores por nível (3 níveis com cores vibrantes)
+ * Baseado em padrões da indústria: Vermelho → Amarelo/Laranja → Verde
  */
 const SCORE_COLORS: Record<
   ScoreLevel,
@@ -32,24 +28,16 @@ const SCORE_COLORS: Record<
   }
 > = {
   critical: {
-    primary: "oklch(63.7% 0.237 25.331)", // red-500
+    primary: "oklch(63.7% 0.237 25.331)", // red-500 - Vermelho forte
     text: "text-red-500",
   },
-  needs_improvement: {
-    primary: "oklch(70.5% 0.213 47.604)", // orange-500
-    text: "text-orange-500",
-  },
-  regular: {
-    primary: "oklch(79.5% 0.184 86.047)", // yellow-500
+  good: {
+    primary: "oklch(79.5% 0.184 86.047)", // yellow-500 - Amarelo/Laranja
     text: "text-yellow-500",
   },
-  good: {
-    primary: "oklch(84.1% 0.238 128.85)", // green-500
-    text: "text-lime-500",
-  },
   excellent: {
-    primary: "oklch(72.3% 0.219 149.579)", // blue-500
-    text: "text-green-500",
+    primary: "oklch(86.5% 0.204 142.5)", // green-400 - Verde vibrante
+    text: "text-green-400",
   },
 };
 
@@ -86,7 +74,20 @@ export const MiniGauge = memo(function MiniGauge({
   size = "sm",
   className,
 }: MiniGaugeProps) {
-  const colors = SCORE_COLORS[level];
+  // 🛡️ Proteção contra níveis inválidos (fallback para critical)
+  const safeLevel: ScoreLevel = SCORE_COLORS[level] ? level : "critical";
+
+  // 🐛 DEBUG: Log para ver o que está chegando
+  if (!SCORE_COLORS[level]) {
+    console.error(
+      "[MiniGauge] Nível inválido recebido:",
+      level,
+      "| Score:",
+      score,
+    );
+  }
+
+  const colors = SCORE_COLORS[safeLevel];
   const dimensions = SIZES[size];
 
   // Calcular ângulo do arco (180° = semicírculo)

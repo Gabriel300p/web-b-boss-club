@@ -8,12 +8,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-export type ScoreLevel =
-  | "critical"
-  | "needs_improvement"
-  | "regular"
-  | "good"
-  | "excellent";
+export type ScoreLevel = "critical" | "good" | "excellent";
 
 interface ScoreTooltipProps {
   children: ReactNode;
@@ -28,36 +23,30 @@ interface ScoreTooltipProps {
 }
 
 /**
- * Labels dos níveis em português
+ * Labels dos níveis em português (3 níveis)
  */
 const LEVEL_LABELS: Record<ScoreLevel, string> = {
-  critical: "Crítico",
-  needs_improvement: "Precisa Melhorar",
-  regular: "Regular",
+  critical: "Precisa Melhorar",
   good: "Bom",
   excellent: "Excelente",
 };
 
 /**
- * Emojis dos níveis
+ * Emojis dos níveis (3 níveis)
  */
 const LEVEL_EMOJIS: Record<ScoreLevel, string> = {
   critical: "🔴",
-  needs_improvement: "🟠",
-  regular: "🟡",
-  good: "🟢",
-  excellent: "🔵",
+  good: "�",
+  excellent: "�",
 };
 
 /**
- * Cores dos níveis
+ * Cores dos níveis (3 níveis com verde vibrante)
  */
 const LEVEL_COLORS: Record<ScoreLevel, string> = {
   critical: "text-red-500",
-  needs_improvement: "text-orange-500",
-  regular: "text-yellow-500",
-  good: "text-green-500",
-  excellent: "text-blue-500",
+  good: "text-yellow-500",
+  excellent: "text-green-400",
 };
 
 export function ScoreTooltip({

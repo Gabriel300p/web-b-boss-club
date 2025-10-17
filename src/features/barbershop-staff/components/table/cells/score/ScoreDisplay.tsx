@@ -5,12 +5,7 @@
  */
 import { MiniGauge } from "./MiniGauge";
 
-export type ScoreLevel =
-  | "critical"
-  | "needs_improvement"
-  | "regular"
-  | "good"
-  | "excellent";
+export type ScoreLevel = "critical" | "good" | "excellent";
 
 export type ScoreDisplayVariant = "gauge";
 

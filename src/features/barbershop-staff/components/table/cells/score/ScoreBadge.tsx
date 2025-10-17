@@ -6,12 +6,7 @@ import { cn } from "@shared/lib/utils";
 import { TrendingUp } from "lucide-react";
 import { memo } from "react";
 
-export type ScoreLevel =
-  | "critical"
-  | "needs_improvement"
-  | "regular"
-  | "good"
-  | "excellent";
+export type ScoreLevel = "critical" | "good" | "excellent";
 
 interface ScoreBadgeProps {
   score: number; // 0-100
@@ -22,18 +17,16 @@ interface ScoreBadgeProps {
 }
 
 /**
- * Determina o nível do score baseado no valor
+ * Determina o nível do score baseado no valor (3 níveis)
  */
 function getScoreLevel(score: number): ScoreLevel {
-  if (score >= 95) return "excellent";
-  if (score >= 85) return "good";
-  if (score >= 70) return "regular";
-  if (score >= 50) return "needs_improvement";
+  if (score >= 85) return "excellent";
+  if (score >= 60) return "good";
   return "critical";
 }
 
 /**
- * Configuração de cores e estilos por nível
+ * Configuração de cores e estilos por nível (3 níveis com verde vibrante)
  */
 const SCORE_CONFIG: Record<
   ScoreLevel,
@@ -50,29 +43,17 @@ const SCORE_CONFIG: Record<
     textColor: "text-red-500",
     borderColor: "border-red-500/20",
   },
-  needs_improvement: {
-    variant: "warning",
-    bgColor: "bg-orange-500/10",
-    textColor: "text-orange-500",
-    borderColor: "border-orange-500/20",
-  },
-  regular: {
+  good: {
     variant: "warning",
     bgColor: "bg-yellow-500/10",
     textColor: "text-yellow-500",
     borderColor: "border-yellow-500/20",
   },
-  good: {
-    variant: "success",
-    bgColor: "bg-green-500/10",
-    textColor: "text-green-500",
-    borderColor: "border-green-500/20",
-  },
   excellent: {
-    variant: "default",
-    bgColor: "bg-blue-500/10",
-    textColor: "text-blue-500",
-    borderColor: "border-blue-500/20",
+    variant: "success",
+    bgColor: "bg-green-400/10",
+    textColor: "text-green-400",
+    borderColor: "border-green-400/20",
   },
 };
 

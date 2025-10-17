@@ -11,7 +11,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { getStatusBadge } from "../../helpers/column.helper";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
 import { PerformanceCell } from "./cells/performance/PerformanceCell";
-import type { ScoreLevel } from "./cells/score/ScoreCell";
 import { ScoreCellWithModal } from "./cells/score/ScoreCellWithModal";
 import StaffAvatar from "./cells/StaffAvatar";
 import { UnitsCell } from "./cells/UnitsCell";
@@ -206,15 +205,6 @@ export const createColumns = ({
           : 0;
         const totalAttendances = row.original.total_attendances || 0;
 
-        // Helper para determinar o level baseado no score
-        const getScoreLevel = (scoreValue: number): ScoreLevel => {
-          if (scoreValue >= 95) return "excellent";
-          if (scoreValue >= 85) return "good";
-          if (scoreValue >= 70) return "regular";
-          if (scoreValue >= 50) return "needs_improvement";
-          return "critical";
-        };
-
         // Pegar nome e email do staff
         const displayName =
           row.original.display_name ||
@@ -222,9 +212,8 @@ export const createColumns = ({
         const email = row.original.user?.email || "";
         const avatarUrl = row.original.user?.avatar_url || null;
 
-        // Determinar score level (null se score for null)
-        const scoreLevel =
-          score !== null && score !== undefined ? getScoreLevel(score) : null;
+        // ✅ Usar o score_level que vem do backend (já calculado com os thresholds corretos)
+        const scoreLevel = row.original.score_level || null;
 
         return (
           <div className="flex w-full justify-center text-center">

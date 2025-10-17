@@ -9,12 +9,7 @@ import {
 } from "@shared/components/ui/tooltip";
 import { ScoreDisplay, type ScoreDisplayVariant } from "./ScoreDisplay";
 
-export type ScoreLevel =
-  | "critical"
-  | "needs_improvement"
-  | "regular"
-  | "good"
-  | "excellent";
+export type ScoreLevel = "critical" | "good" | "excellent";
 
 interface ScoreCellProps {
   // Score pode vir da lista principal se disponível
@@ -30,13 +25,11 @@ interface ScoreCellProps {
 }
 
 /**
- * Helper para determinar o nível baseado no score
+ * Helper para determinar o nível baseado no score (3 níveis)
  */
-function getScoreLevel(score: number) {
-  if (score >= 95) return "excellent";
-  if (score >= 85) return "good";
-  if (score >= 70) return "regular";
-  if (score >= 50) return "needs_improvement";
+function getScoreLevel(score: number): ScoreLevel {
+  if (score >= 85) return "excellent";
+  if (score >= 60) return "good";
   return "critical";
 }
 
@@ -74,30 +67,34 @@ export function ScoreCell({
               <span className="text-xs font-medium text-neutral-500">---</span>
             </div>
           </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-[220px]">
+          <TooltipContent side="top" className="max-w-[240px]">
             <div className="flex flex-col gap-2">
               <p className="text-xs font-semibold text-neutral-100">
-                📊 Dados Insuficientes
+                📊 Score Indisponível
               </p>
               <div>
-                <p className="text-xs text-neutral-300">Mínimo necessário:</p>
-                <ul className="mt-1 space-y-0.5 text-xs text-neutral-400">
-                  <li>• 5 atendimentos concluídos</li>
-                  <li>• 1 avaliação de cliente</li>
-                </ul>
+                <p className="text-xs text-neutral-300">
+                  Este barbeiro não possui atividade recente suficiente{" "}
+                  <strong className="text-neutral-100">no último ano</strong>{" "}
+                  para calcular o Score.
+                </p>
               </div>
               <div className="border-t border-neutral-700 pt-2">
-                <p className="text-xs text-neutral-300">
-                  Atendimentos:{" "}
-                  <span className="font-medium text-neutral-100">
-                    {totalAttendances}
-                  </span>
+                <p className="mb-1 text-xs text-neutral-400">
+                  Dados históricos encontrados:
                 </p>
                 <p className="text-xs text-neutral-300">
-                  Avaliações:{" "}
-                  <span className="font-medium text-neutral-100">
-                    {totalReviews}
-                  </span>
+                  • {totalAttendances} atendimento
+                  {totalAttendances !== 1 ? "s" : ""}
+                </p>
+                <p className="text-xs text-neutral-300">
+                  • {totalReviews} avaliação{totalReviews !== 1 ? "ões" : ""}
+                </p>
+              </div>
+              <div className="rounded bg-neutral-800/50 px-2 py-1.5">
+                <p className="text-xs text-neutral-400">
+                  <strong className="text-neutral-200">Necessário:</strong> 5+
+                  atendimentos e 1+ avaliação no último ano
                 </p>
               </div>
             </div>

@@ -19,13 +19,8 @@ export const SCORE_QUERY_KEYS = {
   },
 } as const;
 
-// 📊 Tipos para Score
-export type ScoreLevel =
-  | "critical"
-  | "needs_improvement"
-  | "regular"
-  | "good"
-  | "excellent";
+// 📊 Tipos para Score (3 níveis)
+export type ScoreLevel = "critical" | "good" | "excellent";
 
 export interface ScoreFilters {
   period?: "7d" | "30d" | "90d";
@@ -164,27 +159,23 @@ export function useStaffScore(
 }
 
 /**
- * 🎨 Helper: Obter cor do badge baseado no nível
+ * 🎨 Helper: Obter cor do badge baseado no nível (3 níveis)
  */
 export function getScoreBadgeColor(level: ScoreLevel): string {
   const colors: Record<ScoreLevel, string> = {
     critical: "text-red-500 bg-red-500/10 border-red-500/20",
-    needs_improvement: "text-orange-500 bg-orange-500/10 border-orange-500/20",
-    regular: "text-yellow-500 bg-yellow-500/10 border-yellow-500/20",
-    good: "text-green-500 bg-green-500/10 border-green-500/20",
-    excellent: "text-blue-500 bg-blue-500/10 border-blue-500/20",
+    good: "text-yellow-500 bg-yellow-500/10 border-yellow-500/20",
+    excellent: "text-green-400 bg-green-400/10 border-green-400/20",
   };
   return colors[level];
 }
 
 /**
- * 🎨 Helper: Obter label traduzido do nível
+ * 🎨 Helper: Obter label traduzido do nível (3 níveis)
  */
 export function getScoreLevelLabel(level: ScoreLevel): string {
   const labels: Record<ScoreLevel, string> = {
-    critical: "Crítico",
-    needs_improvement: "Precisa Melhorar",
-    regular: "Regular",
+    critical: "Precisa Melhorar",
     good: "Bom",
     excellent: "Excelente",
   };
@@ -192,15 +183,13 @@ export function getScoreLevelLabel(level: ScoreLevel): string {
 }
 
 /**
- * 🎨 Helper: Obter emoji do nível
+ * 🎨 Helper: Obter emoji do nível (3 níveis)
  */
 export function getScoreLevelEmoji(level: ScoreLevel): string {
   const emojis: Record<ScoreLevel, string> = {
     critical: "🔴",
-    needs_improvement: "🟠",
-    regular: "🟡",
-    good: "🟢",
-    excellent: "🔵",
+    good: "�",
+    excellent: "�",
   };
   return emojis[level];
 }
