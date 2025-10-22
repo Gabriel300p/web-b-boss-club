@@ -25,7 +25,6 @@ import {
   AdmissionInfoStep,
   BasicDataStep,
   UserAccessStep,
-  // WorkScheduleStep, // Removido temporariamente
 } from "./steps/_index";
 
 export interface SidebarHeaderConfig {

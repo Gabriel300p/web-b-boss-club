@@ -216,22 +216,20 @@ export const createStaffFormSchema = createStaffFormInputSchema.transform(
 
     // 🔄 Transformação 2: Converter strings formatadas para números (apenas se não estiverem vazias)
     // Aceita tanto string quanto número
-    const salary =
-      data.salary
-        ? typeof data.salary === "string"
-          ? data.salary.trim()
-            ? currencyToNumber(data.salary)
-            : undefined
-          : data.salary
-        : undefined;
-    const commission_rate =
-      data.commission_rate
-        ? typeof data.commission_rate === "string"
-          ? data.commission_rate.trim()
-            ? percentageToNumber(data.commission_rate)
-            : undefined
-          : data.commission_rate
-        : undefined;
+    const salary = data.salary
+      ? typeof data.salary === "string"
+        ? data.salary.trim()
+          ? currencyToNumber(data.salary)
+          : undefined
+        : data.salary
+      : undefined;
+    const commission_rate = data.commission_rate
+      ? typeof data.commission_rate === "string"
+        ? data.commission_rate.trim()
+          ? percentageToNumber(data.commission_rate)
+          : undefined
+        : data.commission_rate
+      : undefined;
 
     // 🔄 Transformação 3: Converter datas DD/MM/YYYY para ISO datetime (YYYY-MM-DDTHH:mm:ss.sssZ) (apenas se não estiverem vazias)
     const hire_date =
@@ -337,22 +335,20 @@ export const updateStaffFormSchema = updateStaffFormInputSchema.transform(
 
     // 🔄 Transformação 2: Converter strings formatadas para números (apenas se preenchidos)
     // Aceita tanto string quanto número
-    const salary =
-      data.salary
-        ? typeof data.salary === "string"
-          ? data.salary.trim()
-            ? currencyToNumber(data.salary)
-            : undefined
-          : data.salary
-        : undefined;
-    const commission_rate =
-      data.commission_rate
-        ? typeof data.commission_rate === "string"
-          ? data.commission_rate.trim()
-            ? percentageToNumber(data.commission_rate)
-            : undefined
-          : data.commission_rate
-        : undefined;
+    const salary = data.salary
+      ? typeof data.salary === "string"
+        ? data.salary.trim()
+          ? currencyToNumber(data.salary)
+          : undefined
+        : data.salary
+      : undefined;
+    const commission_rate = data.commission_rate
+      ? typeof data.commission_rate === "string"
+        ? data.commission_rate.trim()
+          ? percentageToNumber(data.commission_rate)
+          : undefined
+        : data.commission_rate
+      : undefined;
 
     // 🔄 Transformação 3: Converter data DD/MM/YYYY para ISO datetime
     const hire_date =
