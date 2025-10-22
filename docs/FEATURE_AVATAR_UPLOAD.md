@@ -211,7 +211,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGc...
 ### 2️⃣ **Testar no Frontend**
 
 1. Abrir formulário de criação de staff
-2. Ir para a tab "Acesso do Usuário" (step 4)
+2. Ir para a tab "Acesso do Usuário" (step 3)
 3. Verá o componente de upload no topo
 4. Pode:
    - Clicar no círculo para selecionar arquivo

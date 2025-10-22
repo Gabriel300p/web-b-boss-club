@@ -134,3 +134,191 @@ export async function fetchAllStaffIds(
   );
   return response.data.data.map((staff) => staff.id);
 }
+
+// 🚀 Score V3: Tipos
+export interface ScoreV3Response {
+  staffId: string;
+  staffName: string;
+  daysWorking: number;
+  barbershopSize: "SMALL" | "MEDIUM" | "LARGE";
+  sizeConfidence: number;
+  targetAttendances: number;
+  rampMultiplier: number;
+  score: number;
+  scoreLevel:
+    | "critical"
+    | "needs_improvement"
+    | "regular"
+    | "good"
+    | "excellent";
+  color: string;
+  breakdown: {
+    ratingScore: number;
+    volumeScore: number;
+    totalBonuses: number;
+    bonusDetails: {
+      recency: number;
+      consistency: number;
+      validation: number;
+      ticketAverage: number;
+      retention: number;
+    };
+  };
+  metrics: {
+    averageRating: number | null;
+    totalReviews: number;
+    totalAttendances: number;
+    attendancePercentage: number;
+  };
+  comparisonV2: {
+    scoreV2: number;
+    improvement: number;
+    improvementPercentage: number;
+  };
+}
+
+// 🚀 Score V3: Fetch score with dynamic targets
+export async function fetchStaffScoreV3(
+  staffId: string,
+): Promise<ScoreV3Response> {
+  const response = await apiService.get<ScoreV3Response>(
+    `/barbershop-staff/${staffId}/score-v3`,
+  );
+  return response.data;
+}
+
+// 📊 Score V3: Tipos do Breakdown Detalhado
+export interface ScoreComponent {
+  value: number;
+  percentage: number;
+  description: string;
+  icon?: string;
+}
+
+export interface BonusDetails {
+  name: string;
+  value: number;
+  achieved: boolean;
+  reason: string;
+  progress: number;
+  tip?: string;
+}
+
+export interface PenaltyDetails {
+  name: string;
+  value: number;
+  applied: boolean;
+  reason: string;
+  tip?: string;
+}
+
+export interface ScoreBreakdownDetailed {
+  // Base info
+  score: number;
+  scoreLevel: "critical" | "good" | "excellent";
+  color: "green" | "yellow" | "red";
+  lastUpdated: string;
+
+  // Quick breakdown (para tooltip)
+  quickBreakdown: {
+    rating: ScoreComponent;
+    volume: ScoreComponent;
+    totalBonuses: number;
+    totalPenalties: number;
+  };
+
+  // Detailed breakdown (para modal)
+  detailedBreakdown: {
+    rating: {
+      component: ScoreComponent;
+      averageRating: number;
+      totalReviews: number;
+      starDistribution: {
+        "5": number;
+        "4": number;
+        "3": number;
+        "2": number;
+        "1": number;
+      };
+    };
+    volume: {
+      component: ScoreComponent;
+      totalAttendances: number;
+      targetAttendances: number;
+      achievementPercentage: number;
+      dailyAverage: number;
+    };
+    bonuses: {
+      recency: BonusDetails;
+      consistency: BonusDetails;
+      validation: BonusDetails;
+      momentum: BonusDetails;
+    };
+    penalties: {
+      lowRating: PenaltyDetails;
+      inactivity: PenaltyDetails;
+    };
+    calculation: {
+      formula: string;
+      steps: Array<{
+        step: number;
+        description: string;
+        calculation: string;
+        result: number;
+      }>;
+    };
+  };
+
+  // History
+  history: Array<{
+    date: string;
+    score: number;
+    level: string;
+  }>;
+
+  // Insights
+  insights: {
+    strengths: string[];
+    weaknesses: string[];
+    recommendations: string[];
+  };
+
+  // V3 specific (retornado pelo backend mas não está no tipo base)
+  staffId?: string;
+  staffName?: string;
+  insufficientData?: boolean;
+  insufficientDataReason?: string;
+  barbershopSize?: "SMALL" | "MEDIUM" | "LARGE";
+  targetAttendances?: number;
+  isInRampPeriod?: boolean;
+  daysWorking?: number;
+}
+
+// 📊 Score V3: Fetch breakdown detalhado (para modal)
+export async function getStaffScoreBreakdown(
+  staffId: string,
+): Promise<ScoreBreakdownDetailed> {
+  const response = await apiService.get<ScoreBreakdownDetailed>(
+    `/barbershop-staff/${staffId}/score-breakdown`,
+  );
+  console.log("📊 [Frontend] Resposta da API breakdown:", response.data);
+  console.log(
+    "📊 [Frontend] detailedBreakdown:",
+    response.data.detailedBreakdown,
+  );
+  return response.data;
+}
+
+// Export service object
+export const barbershopStaffService = {
+  fetchStaffList,
+  fetchStaffStats,
+  fetchStaffById,
+  createStaff,
+  updateStaff,
+  deleteStaff,
+  toggleStaffStatus,
+  fetchAllStaffIds,
+  fetchStaffScoreV3,
+  getStaffScoreBreakdown,
+};

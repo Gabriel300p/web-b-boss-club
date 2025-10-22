@@ -228,6 +228,12 @@ export const createColumns = ({
               totalReviews={totalReviews}
               totalRevenue={totalRevenue}
               totalAttendances={totalAttendances}
+              // 🎯 Score V3 data from backend
+              barbershopSize={row.original.barbershop_size}
+              targetAttendances={row.original.target_attendances}
+              daysWorking={row.original.days_working}
+              rampMultiplier={row.original.ramp_multiplier}
+              isInRampPeriod={row.original.is_in_ramp_period}
             />
           </div>
         );

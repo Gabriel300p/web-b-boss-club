@@ -5,4 +5,4 @@
 export { AdmissionInfoStep } from "./AdmissionInfoStep";
 export { BasicDataStep } from "./BasicDataStep";
 export { UserAccessStep } from "./UserAccessStep";
-export { WorkScheduleStep } from "./WorkScheduleStep";
+// export { WorkScheduleStep } from "./WorkScheduleStep"; // Removido temporariamente

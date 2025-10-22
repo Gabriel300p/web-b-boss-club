@@ -142,6 +142,12 @@ export const barbershopStaffSchema = z.object({
   total_revenue: z.number().optional().default(0),
   score: z.number().nullable().optional(), // 🎯 Score de desempenho (0-100)
   score_level: z.enum(["critical", "good", "excellent"]).nullable().optional(), // 🎯 Nível do score (calculado pelo backend)
+  // 🎯 SCORE V3 - Dados de segmentação e período de rampa
+  barbershop_size: z.enum(["SMALL", "MEDIUM", "LARGE"]).nullable().optional(), // Porte da barbearia detectado
+  target_attendances: z.number().nullable().optional(), // Meta de atendimentos ajustada
+  days_working: z.number().nullable().optional(), // Dias desde a contratação
+  ramp_multiplier: z.number().nullable().optional(), // Multiplicador de rampa (0.6-1.0)
+  is_in_ramp_period: z.boolean().nullable().optional(), // Se está em período de rampa
   _count: z
     .object({
       reviews: z.number().optional(),
@@ -174,8 +180,9 @@ export const createStaffFormInputSchema = baseStaffFieldsSchema
     // terminated_date: z.string().optional(), // COMENTADO - será adicionado depois
 
     // Campos formatados como string no frontend (serão convertidos para number no transform)
-    salary: z.string().optional(),
-    commission_rate: z.string().optional(),
+    // Aceita tanto string (do formulário) quanto número (de testes/APIs diretas)
+    salary: z.union([z.string(), z.number()]).optional(),
+    commission_rate: z.union([z.string(), z.number()]).optional(),
 
     // 🆕 FASE 4 - Campos de unidades (múltiplas) - OBRIGATÓRIO
     unit_ids: z
@@ -208,13 +215,22 @@ export const createStaffFormSchema = createStaffFormInputSchema.transform(
     const last_name = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
 
     // 🔄 Transformação 2: Converter strings formatadas para números (apenas se não estiverem vazias)
+    // Aceita tanto string quanto número
     const salary =
-      data.salary && data.salary.trim()
-        ? currencyToNumber(data.salary)
+      data.salary
+        ? typeof data.salary === "string"
+          ? data.salary.trim()
+            ? currencyToNumber(data.salary)
+            : undefined
+          : data.salary
         : undefined;
     const commission_rate =
-      data.commission_rate && data.commission_rate.trim()
-        ? percentageToNumber(data.commission_rate)
+      data.commission_rate
+        ? typeof data.commission_rate === "string"
+          ? data.commission_rate.trim()
+            ? percentageToNumber(data.commission_rate)
+            : undefined
+          : data.commission_rate
         : undefined;
 
     // 🔄 Transformação 3: Converter datas DD/MM/YYYY para ISO datetime (YYYY-MM-DDTHH:mm:ss.sssZ) (apenas se não estiverem vazias)
@@ -269,8 +285,9 @@ export const updateStaffFormInputSchema = z
     is_available: baseStaffFieldsSchema.shape.is_available.optional(),
     internal_notes: baseStaffFieldsSchema.shape.internal_notes.optional(),
     // Campos formatados como string no frontend
-    salary: z.string().optional(),
-    commission_rate: z.string().optional(),
+    // Aceita tanto string (do formulário) quanto número (de testes/APIs diretas)
+    salary: z.union([z.string(), z.number()]).optional(),
+    commission_rate: z.union([z.string(), z.number()]).optional(),
     hire_date: z.string().optional(),
     // 🆕 FASE 4 - Campos de unidades
     unit_ids: z.array(z.string()).optional(),
@@ -319,13 +336,22 @@ export const updateStaffFormSchema = updateStaffFormInputSchema.transform(
     }
 
     // 🔄 Transformação 2: Converter strings formatadas para números (apenas se preenchidos)
+    // Aceita tanto string quanto número
     const salary =
-      data.salary && data.salary.trim()
-        ? currencyToNumber(data.salary)
+      data.salary
+        ? typeof data.salary === "string"
+          ? data.salary.trim()
+            ? currencyToNumber(data.salary)
+            : undefined
+          : data.salary
         : undefined;
     const commission_rate =
-      data.commission_rate && data.commission_rate.trim()
-        ? percentageToNumber(data.commission_rate)
+      data.commission_rate
+        ? typeof data.commission_rate === "string"
+          ? data.commission_rate.trim()
+            ? percentageToNumber(data.commission_rate)
+            : undefined
+          : data.commission_rate
         : undefined;
 
     // 🔄 Transformação 3: Converter data DD/MM/YYYY para ISO datetime

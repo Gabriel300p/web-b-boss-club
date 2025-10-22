@@ -1,9 +1,11 @@
 /**
  * 📊 ScoreCellWithModal Component
  * Wrapper da célula de score que gerencia o estado do modal
+ * 🎯 Score V3: Dados de segmentação vêm do backend
+ * ⚠️ Modal temporariamente desabilitado - apenas preview hover ativo
  */
-import { useState } from "react";
-import { ScoreReportModal } from "../../../dialogs/ScoreReportModal";
+// import { useState } from "react"; // Temporariamente desabilitado
+// import { ScoreReportModal } from "../../../dialogs/ScoreReportModal"; // Temporariamente desabilitado
 import type { ScoreLevel } from "./ScoreCell";
 import { ScoreCell } from "./ScoreCell";
 
@@ -20,31 +22,44 @@ interface ScoreCellWithModalProps {
   totalReviews: number;
   totalRevenue: number;
   totalAttendances: number;
+  // 🎯 Score V3 data (from backend)
+  barbershopSize?: "SMALL" | "MEDIUM" | "LARGE" | null;
+  targetAttendances?: number | null;
+  daysWorking?: number | null;
+  rampMultiplier?: number | null;
+  isInRampPeriod?: boolean | null;
   // Optional
   variant?: "gauge";
 }
 
 export function ScoreCellWithModal({
-  staffId,
-  staffName,
-  staffPhoto,
-  staffEmail,
+  staffId: _staffId, // eslint-disable-line @typescript-eslint/no-unused-vars
+  staffName: _staffName, // eslint-disable-line @typescript-eslint/no-unused-vars
+  staffPhoto: _staffPhoto, // eslint-disable-line @typescript-eslint/no-unused-vars
+  staffEmail: _staffEmail, // eslint-disable-line @typescript-eslint/no-unused-vars
   score,
   scoreLevel,
   averageRating,
   totalReviews,
   totalRevenue,
   totalAttendances,
+  barbershopSize: _barbershopSize, // eslint-disable-line @typescript-eslint/no-unused-vars
+  targetAttendances: _targetAttendances, // eslint-disable-line @typescript-eslint/no-unused-vars
+  daysWorking: _daysWorking, // eslint-disable-line @typescript-eslint/no-unused-vars
+  // rampMultiplier and isInRampPeriod are received but not used yet
   variant = "gauge",
 }: ScoreCellWithModalProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // V3 está ativo se há dados de porte da barbearia
+  // const isV3 = !!barbershopSize;
 
   // Só permite abrir modal se houver score válido
-  const handleClick = () => {
-    if (score !== null && scoreLevel !== null) {
-      setIsModalOpen(true);
-    }
-  };
+  // const handleClick = () => {
+  //   if (score !== null && scoreLevel !== null) {
+  //     setIsModalOpen(true);
+  //   }
+  // };
 
   return (
     <>
@@ -56,11 +71,11 @@ export function ScoreCellWithModal({
         totalRevenue={totalRevenue}
         totalAttendances={totalAttendances}
         variant={variant}
-        onClick={handleClick}
+        // onClick={handleClick} // Temporariamente desabilitado
       />
 
-      {/* Só renderiza modal se houver dados válidos */}
-      {score !== null && scoreLevel !== null && (
+      {/* Modal temporariamente desabilitado - apenas preview hover ativo */}
+      {/* {score !== null && scoreLevel !== null && (
         <ScoreReportModal
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
@@ -74,8 +89,13 @@ export function ScoreCellWithModal({
           totalReviews={totalReviews}
           totalRevenue={totalRevenue}
           totalAttendances={totalAttendances}
+          // 🎯 Props V3 do backend
+          isV3={isV3}
+          size={barbershopSize ?? undefined}
+          targetAttendances={targetAttendances ?? undefined}
+          daysWorking={daysWorking ?? undefined}
         />
-      )}
+      )} */}
     </>
   );
 }

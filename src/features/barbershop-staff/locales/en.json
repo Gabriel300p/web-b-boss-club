@@ -93,7 +93,7 @@
     "steps": {
       "basicData": "Basic data",
       "admissionInfo": "Admission information",
-      "workSchedule": "Work schedule",
+      "_workSchedule_disabled": "Work schedule",
       "userAccess": "User access"
     },
     "fields": {

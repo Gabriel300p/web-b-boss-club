@@ -175,11 +175,11 @@ export function ScoreTooltip({
           </div>
 
           {/* Footer: Call to action */}
-          <div className="border-t border-neutral-800 pt-2">
+          {/* <div className="border-t border-neutral-800 pt-2">
             <span className="text-xs text-neutral-500 italic">
               Clique para ver análise completa →
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

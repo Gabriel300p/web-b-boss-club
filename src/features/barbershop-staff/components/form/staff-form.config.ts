@@ -11,7 +11,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import {
   BriefcaseIcon,
-  CalendarIcon,
+  // CalendarIcon, // Removido temporariamente (usado no WorkScheduleStep)
   EyeIcon,
   KeyIcon,
   PencilIcon,
@@ -25,7 +25,7 @@ import {
   AdmissionInfoStep,
   BasicDataStep,
   UserAccessStep,
-  WorkScheduleStep,
+  // WorkScheduleStep, // Removido temporariamente
 } from "./steps/_index";
 
 export interface SidebarHeaderConfig {
@@ -126,17 +126,17 @@ export const STAFF_FORM_STEPS: StepConfig[] = [
       }),
     },
   },
+  // {
+  //   id: 3,
+  //   labelKey: "wizard.steps.workSchedule",
+  //   defaultLabel: "Horário de Trabalho",
+  //   icon: CalendarIcon,
+  //   component: WorkScheduleStep,
+  //   hasRequiredFields: false,
+  //   validationFields: [],
+  // },
   {
-    id: 3,
-    labelKey: "wizard.steps.workSchedule",
-    defaultLabel: "Horário de Trabalho",
-    icon: CalendarIcon,
-    component: WorkScheduleStep,
-    hasRequiredFields: false,
-    validationFields: [],
-  },
-  {
-    id: 4,
+    id: 3, // Renumerado de 4 para 3
     labelKey: "wizard.steps.userAccess",
     defaultLabel: "Acesso do Usuário",
     icon: KeyIcon,

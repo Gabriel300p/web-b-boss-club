@@ -107,9 +107,9 @@ export function ScoreCell({
   const level = scoreLevel || getScoreLevel(score);
 
   // Cálculo dos componentes do score
-  const ratingScore = averageRating ? (averageRating / 5) * 40 : 0;
-  const revenueScore = 35; // Simplificado - precisa do valor real do backend
-  const attendanceScore = 25; // Simplificado - precisa do valor real do backend
+  // const ratingScore = averageRating ? (averageRating / 5) * 40 : 0;
+  // const revenueScore = 35; // Simplificado - precisa do valor real do backend
+  // const attendanceScore = 25; // Simplificado - precisa do valor real do backend
 
   return (
     <div className="flex w-full justify-center px-2">
@@ -117,7 +117,7 @@ export function ScoreCell({
         <TooltipTrigger asChild>
           <button
             onClick={onClick}
-            className="group w-full max-w-[100px] cursor-pointer rounded-md p-1 transition-transform duration-200 ease-out hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-950 focus:outline-none"
+            className="group w-full max-w-[140px] cursor-pointer rounded-md p-1 transition-transform duration-200 ease-out hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-neutral-950 focus:outline-none"
             aria-label={`Score: ${score} - ${level}`}
           >
             <ScoreDisplay
@@ -132,7 +132,7 @@ export function ScoreCell({
           <div className="flex flex-col gap-3">
             {/* Header */}
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-neutral-100">
+              <span className="mr-5 text-sm font-semibold text-neutral-100">
                 Performance Score
               </span>
               <span className="text-lg font-bold text-neutral-100">
@@ -141,7 +141,7 @@ export function ScoreCell({
             </div>
 
             {/* Breakdown */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-neutral-300">⭐ Avaliação</span>
                 <span className="font-medium text-neutral-100">
@@ -160,7 +160,7 @@ export function ScoreCell({
                   {attendanceScore.toFixed(1)} pts
                 </span>
               </div>
-            </div>
+            </div> */}
 
             {/* Divider */}
             <div className="border-t border-neutral-700" />
@@ -194,11 +194,11 @@ export function ScoreCell({
             </div>
 
             {/* Footer hint */}
-            <div className="border-t border-neutral-700 pt-2">
+            {/* <div className="border-t border-neutral-700 pt-2">
               <p className="text-xs text-neutral-500">
                 Clique para ver detalhes completos
               </p>
-            </div>
+            </div> */}
           </div>
         </TooltipContent>
       </Tooltip>
