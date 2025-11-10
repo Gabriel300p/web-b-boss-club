@@ -182,7 +182,7 @@ function SearchResultItemComponent({
             text={result.title}
             query={query}
             className="truncate text-sm font-medium text-neutral-900 dark:text-white"
-            highlightClassName="bg-amber-400/30 dark:bg-amber-500/20 text-neutral-900 dark:text-amber-300 font-semibold rounded px-0.5"
+            highlightClassName="bg-yellow-400/30 dark:bg-yellow-500/20 text-neutral-900 dark:text-yellow-300 font-semibold rounded px-0.5"
           />
           {getSectionBadge()}
           {getFrequencyBadge()} {/* 🏆 FASE 4.1: Badge de frequência */}
@@ -193,7 +193,7 @@ function SearchResultItemComponent({
           text={result.description}
           query={query}
           className="truncate text-xs text-neutral-500 dark:text-neutral-400"
-          highlightClassName="bg-amber-400/30 dark:bg-amber-500/20 text-neutral-700 dark:text-amber-300 font-semibold rounded px-0.5"
+          highlightClassName="bg-yellow-400/30 dark:bg-yellow-500/20 text-neutral-700 dark:text-yellow-300 font-semibold rounded px-0.5"
         />
       </div>
 

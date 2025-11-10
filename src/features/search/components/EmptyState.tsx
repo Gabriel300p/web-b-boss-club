@@ -80,32 +80,32 @@ export function EmptyState({ type, query }: EmptyStateProps) {
           <ul className="space-y-2 text-left text-xs text-neutral-600 dark:text-neutral-400">
             {isNumeric && (
               <li className="flex items-start gap-2">
-                <span className="text-amber-500">•</span>
+                <span className="text-yellow-500">•</span>
                 <span>{t("search.emptyState.noResults.tips.numeric")}</span>
               </li>
             )}
             {isEmail && (
               <li className="flex items-start gap-2">
-                <span className="text-amber-500">•</span>
+                <span className="text-yellow-500">•</span>
                 <span>{t("search.emptyState.noResults.tips.email")}</span>
               </li>
             )}
             {hasSpaces && (
               <li className="flex items-start gap-2">
-                <span className="text-amber-500">•</span>
+                <span className="text-yellow-500">•</span>
                 <span>{t("search.emptyState.noResults.tips.multiWord")}</span>
               </li>
             )}
             <li className="flex items-start gap-2">
-              <span className="text-amber-500">•</span>
+              <span className="text-yellow-500">•</span>
               <span>{t("search.emptyState.noResults.tips.general")}</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-amber-500">•</span>
+              <span className="text-yellow-500">•</span>
               <span>{t("search.emptyState.noResults.tips.spelling")}</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-amber-500">•</span>
+              <span className="text-yellow-500">•</span>
               <span>{t("search.emptyState.noResults.tips.keywords")}</span>
             </li>
           </ul>
@@ -142,8 +142,8 @@ export function EmptyState({ type, query }: EmptyStateProps) {
         role="status"
       >
         {/* Ícone */}
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/20">
-          <ClockClockwiseIcon className="h-8 w-8 text-amber-600 dark:text-amber-500" />
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-900/20">
+          <ClockClockwiseIcon className="h-8 w-8 text-yellow-600 dark:text-yellow-500" />
         </div>
 
         {/* Título */}
@@ -157,17 +157,17 @@ export function EmptyState({ type, query }: EmptyStateProps) {
         </p>
 
         {/* 🎯 FASE 9: Incentivo com ícone motivacional */}
-        <div className="w-full max-w-md rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/50 dark:bg-amber-900/10">
+        <div className="w-full max-w-md rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900/50 dark:bg-yellow-900/10">
           <div className="mb-2 flex items-center justify-center gap-2">
             <SparkleIcon
-              className="h-4 w-4 text-amber-600 dark:text-amber-500"
+              className="h-4 w-4 text-yellow-600 dark:text-yellow-500"
               weight="fill"
             />
-            <p className="text-xs font-semibold text-amber-900 dark:text-amber-400">
+            <p className="text-xs font-semibold text-yellow-900 dark:text-yellow-400">
               {t("search.emptyState.noHistory.motivational.title")}
             </p>
           </div>
-          <p className="text-xs text-amber-800 dark:text-amber-500">
+          <p className="text-xs text-yellow-800 dark:text-yellow-500">
             {t("search.emptyState.noHistory.motivational.description")}
           </p>
         </div>
@@ -217,9 +217,9 @@ export function EmptyState({ type, query }: EmptyStateProps) {
         className="flex flex-col items-center justify-center py-12 text-center"
       >
         {/* Ícone com gradiente */}
-        <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900/30 dark:to-amber-800/20">
+        <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900/30 dark:to-yellow-800/20">
           <MagnifyingGlassIcon
-            className="h-10 w-10 text-amber-600 dark:text-amber-500"
+            className="h-10 w-10 text-yellow-600 dark:text-yellow-500"
             weight="duotone"
           />
         </div>
