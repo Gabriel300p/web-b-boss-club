@@ -34,7 +34,7 @@ export const ENVIRONMENT = detectEnvironment();
 // 📍 URLs para cada ambiente
 export const API_URLS = {
   local: "http://localhost:3002",
-  production: "http://52.3.163.218",
+  production: "/api",  // Usa CloudFront como proxy (path relativo)
 } as const;
 
 // 🚀 URL atual baseada na escolha
