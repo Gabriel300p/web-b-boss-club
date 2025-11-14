@@ -34,7 +34,7 @@ export const ENVIRONMENT = detectEnvironment();
 // 📍 URLs para cada ambiente
 export const API_URLS = {
   local: "http://localhost:3002",
-  production: "https://lhsmivjozemhghmzjxrg.supabase.co",
+  production: "http://52.3.163.218",
 } as const;
 
 // 🚀 URL atual baseada na escolha
