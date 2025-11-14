@@ -1,7 +1,7 @@
 /**
  * Dialog Components - Barrel Export
  */
-export { ToggleStaffStatusModal } from "./StaffStatusModal";
+export { StaffStatusModal } from "./StaffStatusModal";
 
 // 🆕 Modal unificada para criar/visualizar/editar
 export { StaffModal } from "./StaffModal";

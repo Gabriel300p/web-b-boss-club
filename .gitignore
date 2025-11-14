@@ -30,3 +30,8 @@ coverage
 .env.local
 .env.production
 .env.*.local
+
+# AWS deployment files
+.cloudfront-distribution-id.txt
+cloudfront-config.json
+eb-options.json

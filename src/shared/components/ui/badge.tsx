@@ -18,6 +18,8 @@ const badgeVariants = cva(
         purple: "bg-purple-900/30 text-purple-400",
         cyan: "bg-cyan-900/30 text-cyan-400",
         default: "bg-neutral-800/50 text-neutral-300",
+        secondary: "bg-neutral-700/40 text-neutral-400",
+        outline: "border border-neutral-700 text-neutral-400",
       },
       size: {
         sm: "rounded-xl px-2 py-0.5 text-[10px]",
@@ -43,6 +45,8 @@ const dotVariants = cva("rounded-full", {
       purple: "bg-purple-400",
       cyan: "bg-cyan-400",
       default: "bg-neutral-300",
+      secondary: "bg-neutral-400",
+      outline: "bg-neutral-400",
     },
     size: {
       sm: "h-1 w-1",
@@ -59,7 +63,7 @@ const dotVariants = cva("rounded-full", {
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {
-  label: string;
+  label?: string;
   withDot?: boolean;
 }
 
@@ -69,12 +73,13 @@ function Badge({
   size,
   label,
   withDot = false,
+  children,
   ...props
 }: BadgeProps) {
   return (
     <div className={cn(badgeVariants({ variant, size }), className)} {...props}>
       {withDot && <span className={cn(dotVariants({ variant, size }))} />}
-      <span>{label}</span>
+      <span>{label || children}</span>
     </div>
   );
 }

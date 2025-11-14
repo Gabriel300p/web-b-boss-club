@@ -124,16 +124,7 @@ if (-not $bucketExists) {
 
 # Configure bucket for static website hosting
 Write-Info "`nConfiguring static website hosting..."
-$websiteConfig = @"
-{
-    "IndexDocument": {
-        "Suffix": "index.html"
-    },
-    "ErrorDocument": {
-        "Key": "index.html"
-    }
-}
-"@
+$websiteConfig = '{"IndexDocument":{"Suffix":"index.html"},"ErrorDocument":{"Key":"index.html"}}'
 
 $websiteConfig | Out-File -FilePath "website-config.json" -Encoding utf8
 aws s3api put-bucket-website --bucket $BucketName --website-configuration file://website-config.json
@@ -148,20 +139,7 @@ if ($LASTEXITCODE -eq 0) {
 
 # Configure bucket policy for public read access
 Write-Info "`nConfiguring bucket policy for public access..."
-$bucketPolicy = @"
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "PublicReadGetObject",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::$BucketName/*"
-        }
-    ]
-}
-"@
+$bucketPolicy = "{`"Version`":`"2012-10-17`",`"Statement`":[{`"Sid`":`"PublicReadGetObject`",`"Effect`":`"Allow`",`"Principal`":`"*`",`"Action`":`"s3:GetObject`",`"Resource`":`"arn:aws:s3:::$BucketName/*`"}]}"
 
 $bucketPolicy | Out-File -FilePath "bucket-policy.json" -Encoding utf8
 aws s3api put-bucket-policy --bucket $BucketName --policy file://bucket-policy.json
@@ -213,64 +191,65 @@ if (-not $distributionId) {
     
     $originDomain = "$BucketName.s3-website-$Region.amazonaws.com"
     
-    $cloudfrontConfig = @"
-{
-    "CallerReference": "bboss-web-$(Get-Date -Format 'yyyyMMddHHmmss')",
-    "Comment": "B-BOSS Club Frontend CDN",
-    "Enabled": true,
-    "Origins": {
-        "Quantity": 1,
-        "Items": [
-            {
-                "Id": "S3-$BucketName",
-                "DomainName": "$originDomain",
-                "CustomOriginConfig": {
-                    "HTTPPort": 80,
-                    "HTTPSPort": 443,
-                    "OriginProtocolPolicy": "http-only"
+    # Create CloudFront config as PowerShell object
+    $timestamp = Get-Date -Format 'yyyyMMddHHmmss'
+    $cloudfrontConfig = @{
+        CallerReference = "bboss-web-$timestamp"
+        Comment = "B-BOSS Club Frontend CDN"
+        Enabled = $true
+        Origins = @{
+            Quantity = 1
+            Items = @(
+                @{
+                    Id = "S3-$BucketName"
+                    DomainName = $originDomain
+                    CustomOriginConfig = @{
+                        HTTPPort = 80
+                        HTTPSPort = 443
+                        OriginProtocolPolicy = "http-only"
+                    }
+                }
+            )
+        }
+        DefaultRootObject = "index.html"
+        DefaultCacheBehavior = @{
+            TargetOriginId = "S3-$BucketName"
+            ViewerProtocolPolicy = "redirect-to-https"
+            AllowedMethods = @{
+                Quantity = 2
+                Items = @("GET", "HEAD")
+                CachedMethods = @{
+                    Quantity = 2
+                    Items = @("GET", "HEAD")
                 }
             }
-        ]
-    },
-    "DefaultRootObject": "index.html",
-    "DefaultCacheBehavior": {
-        "TargetOriginId": "S3-$BucketName",
-        "ViewerProtocolPolicy": "redirect-to-https",
-        "AllowedMethods": {
-            "Quantity": 2,
-            "Items": ["GET", "HEAD"],
-            "CachedMethods": {
-                "Quantity": 2,
-                "Items": ["GET", "HEAD"]
+            Compress = $true
+            ForwardedValues = @{
+                QueryString = $false
+                Cookies = @{
+                    Forward = "none"
+                }
             }
-        },
-        "Compress": true,
-        "ForwardedValues": {
-            "QueryString": false,
-            "Cookies": {
-                "Forward": "none"
-            }
-        },
-        "MinTTL": 0,
-        "DefaultTTL": 86400,
-        "MaxTTL": 31536000
-    },
-    "CustomErrorResponses": {
-        "Quantity": 1,
-        "Items": [
-            {
-                "ErrorCode": 404,
-                "ResponsePagePath": "/index.html",
-                "ResponseCode": "200",
-                "ErrorCachingMinTTL": 300
-            }
-        ]
-    },
-    "PriceClass": "PriceClass_100"
-}
-"@
-
-    $cloudfrontConfig | Out-File -FilePath "cloudfront-config.json" -Encoding utf8
+            MinTTL = 0
+            DefaultTTL = 86400
+            MaxTTL = 31536000
+        }
+        CustomErrorResponses = @{
+            Quantity = 1
+            Items = @(
+                @{
+                    ErrorCode = 404
+                    ResponsePagePath = "/index.html"
+                    ResponseCode = "200"
+                    ErrorCachingMinTTL = 300
+                }
+            )
+        }
+        PriceClass = "PriceClass_100"
+    }
+    
+    # Convert to JSON and save
+    $cloudfrontConfig | ConvertTo-Json -Depth 10 | Out-File -FilePath "cloudfront-config.json" -Encoding utf8
     $result = aws cloudfront create-distribution --distribution-config file://cloudfront-config.json 2>&1 | ConvertFrom-Json
     Remove-Item "cloudfront-config.json"
     

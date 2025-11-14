@@ -1,7 +1,7 @@
 /**
  * 🧪 Teste para verificar se AuthGuard funciona corretamente
  */
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthGuard } from "../components/AuthGuard";
 
