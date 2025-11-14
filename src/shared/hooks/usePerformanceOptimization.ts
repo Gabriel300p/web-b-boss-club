@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
 interface PerformanceConfig {
   enableAnimations?: boolean;
@@ -20,21 +20,6 @@ export function usePerformanceOptimization<T>(
 
   const renderCountRef = useRef(0);
   const lastRenderTimeRef = useRef(Date.now());
-
-  // Track rendering performance
-  useEffect(() => {
-    renderCountRef.current += 1;
-    const now = Date.now();
-    const timeSinceLastRender = now - lastRenderTimeRef.current;
-    lastRenderTimeRef.current = now;
-
-    // Log performance metrics in development
-    if (process.env.NODE_ENV === "development") {
-      console.log(
-        `Render #${renderCountRef.current} - Time since last: ${timeSinceLastRender}ms`,
-      );
-    }
-  });
 
   // Determine if we should enable animations based on data size and performance
   const shouldEnableAnimations = useMemo(() => {

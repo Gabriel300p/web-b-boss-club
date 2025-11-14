@@ -1,4 +1,5 @@
 // src/features/auth/services/auth.service.ts
+import { tokenManager } from "../../../shared/services/token-manager.js";
 import type {
   AuthError,
   AuthResponse,
@@ -21,43 +22,77 @@ export async function loginRequest(
   try {
     const response = await authApiService.login(values);
 
-    // Se login for bem-sucedido e não precisar de MFA, retorna diretamente
+    // Se login for bem-sucedido e não precisar de verificação, retorna diretamente
     if (!response.data.mfaRequired && response.data.token) {
       return response.data;
     }
 
-    // Se precisar de MFA, retorna com flag
+    // Se precisar de verificação, retorna com flag
     if (response.data.mfaRequired) {
       return response.data;
     }
 
     throw createAuthError("server_error", "Resposta inválida do servidor");
   } catch (error: unknown) {
+    // Se for um ApiError do backend, preserva a mensagem específica
+    if (error && typeof error === "object" && "userMessage" in error) {
+      const apiError = error as {
+        userMessage: string;
+        message: string;
+        status: number;
+      };
+      throw createAuthError(
+        "invalid_credentials",
+        apiError.userMessage || apiError.message,
+      );
+    }
+
+    // Se for um ApiError com message específica, usa ela
+    if (error && typeof error === "object" && "message" in error) {
+      const apiError = error as { message: string; status: number };
+      if (
+        apiError.message &&
+        apiError.message !== "Request failed with status code 401"
+      ) {
+        throw createAuthError("invalid_credentials", apiError.message);
+      }
+    }
+
     // Trata erros do authApiService
     if (error instanceof Error) {
+      const errorMessage = error.message.toLowerCase();
+
       // Mapeia códigos de erro do backend para códigos locais
       if (
-        error.message.includes("credenciais") ||
-        error.message.includes("senha")
+        errorMessage.includes("credenciais") ||
+        errorMessage.includes("senha") ||
+        error.message.includes("Credenciais inválidas")
       ) {
         throw createAuthError(
           "invalid_credentials",
-          "Email/CPF ou senha incorretos",
+          "Email/CPF ou senha incorretos. Verifique suas credenciais e tente novamente.",
         );
       }
-      if (error.message.includes("não encontrado")) {
+      if (
+        errorMessage.includes("não encontrado") ||
+        errorMessage.includes("nao encontrado")
+      ) {
         throw createAuthError("user_not_found", "Usuário não encontrado");
       }
       if (
-        error.message.includes("bloqueada") ||
-        error.message.includes("suspensa")
+        errorMessage.includes("bloqueada") ||
+        errorMessage.includes("suspensa")
       ) {
         throw createAuthError(
           "account_locked",
           "Conta temporariamente bloqueada",
         );
       }
-      if (error.message.includes("rede") || error.message.includes("conexão")) {
+      if (
+        errorMessage.includes("rede") ||
+        errorMessage.includes("conexão") ||
+        errorMessage.includes("conexao")
+      ) {
         throw createAuthError(
           "network_error",
           "Erro de conexão com o servidor",
@@ -98,7 +133,8 @@ export async function checkAuthRequest(): Promise<{
         error.message.includes("não autorizado") ||
         error.message.includes("expirado")
       ) {
-        localStorage.removeItem("access_token");
+        // Usa TokenManager para limpar token
+        tokenManager.clearAccessToken();
         throw createAuthError("unauthorized", "Sessão expirada");
       }
       throw createAuthError("server_error", "Erro ao verificar autenticação");
@@ -120,10 +156,13 @@ export async function logoutRequest(): Promise<void> {
 
 export async function forgotPasswordRequest(values: {
   email: string;
-}): Promise<{ message: string }> {
+}): Promise<{ message: string; tempToken?: string }> {
   try {
     const response = await authApiService.resetPassword(values.email);
-    return { message: response.data.message };
+    return {
+      message: response.data.message,
+      tempToken: response.data.tempToken,
+    };
   } catch (error: unknown) {
     if (error instanceof Error) {
       if (error.message.includes("não encontrado")) {
@@ -154,7 +193,7 @@ export async function mfaVerificationRequest(
     const response = await authApiService.verifyMfa(values.code);
 
     if (response.data.success) {
-      // Usa os dados retornados pela verificação MFA diretamente
+      // Usa os dados retornados pela verificação de código diretamente
       const result = {
         user: {
           id: response.data.user.id,
@@ -165,21 +204,50 @@ export async function mfaVerificationRequest(
           createdAt: new Date(),
           updatedAt: new Date(),
         },
-        access_token: "",
+        access_token: response.data.access_token || "",
         isFirstLogin: response.data.isFirstLogin,
       };
 
       return result;
     }
 
-    throw createAuthError("mfa_invalid", "Código MFA inválido");
+    throw createAuthError("mfa_invalid", "Código de verificação inválido");
   } catch (error: unknown) {
+    // Se for um ApiError do backend, preserva a mensagem específica
+    if (error && typeof error === "object" && "userMessage" in error) {
+      const apiError = error as {
+        userMessage: string;
+        message: string;
+        status: number;
+      };
+
+      // Mapeia erros específicos do backend para códigos de erro apropriados
+      if (
+        apiError.userMessage?.includes("inválido") ||
+        apiError.userMessage?.includes("expirado")
+      ) {
+        throw createAuthError("mfa_invalid", apiError.userMessage);
+      }
+      if (apiError.userMessage?.includes("não encontrado")) {
+        throw createAuthError("user_not_found", apiError.userMessage);
+      }
+
+      // Para outros erros do backend, usa a mensagem específica
+      throw createAuthError(
+        "mfa_invalid",
+        apiError.userMessage || apiError.message,
+      );
+    }
+
     if (error instanceof Error) {
       if (
         error.message.includes("inválido") ||
         error.message.includes("expirado")
       ) {
-        throw createAuthError("mfa_invalid", "Código MFA inválido ou expirado");
+        throw createAuthError(
+          "mfa_invalid",
+          "Código de verificação inválido ou expirado",
+        );
       }
       if (error.message.includes("não encontrado")) {
         throw createAuthError("user_not_found", "Usuário não encontrado");
@@ -190,25 +258,87 @@ export async function mfaVerificationRequest(
           "Erro de conexão com o servidor",
         );
       }
+      if (
+        error.message.includes("401") ||
+        error.message.includes("Unauthorized")
+      ) {
+        throw createAuthError(
+          "mfa_invalid",
+          "Código de verificação inválido ou expirado",
+        );
+      }
       throw createAuthError(
-        "server_error",
-        error.message || "Erro ao verificar código MFA",
+        "mfa_invalid",
+        error.message ||
+          "Código de verificação inválido. Verifique o código e tente novamente.",
       );
     }
     throw createAuthError(
-      "server_error",
-      "Erro desconhecido ao verificar código MFA",
+      "mfa_invalid",
+      "Código de verificação inválido. Verifique o código e tente novamente.",
     );
   }
 }
 
 export async function resendMfaCodeRequest(): Promise<{ message: string }> {
   try {
-    // Simulate API call for now - implementar quando backend suportar
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    return { message: "Código reenviado com sucesso" };
+    const response = await authApiService.resendMfaCode();
+    return { message: response.data.message };
   } catch (error: unknown) {
     if (error instanceof Error) {
+      if (
+        error.message.includes("Token temporário de verificação não encontrado")
+      ) {
+        throw createAuthError(
+          "unauthorized",
+          "Sessão expirada. Por favor, solicite um novo código.",
+        );
+      }
+      if (error.message.includes("rede") || error.message.includes("conexão")) {
+        throw createAuthError(
+          "network_error",
+          "Erro de conexão com o servidor",
+        );
+      }
+      if (
+        error.message.includes("rate limit") ||
+        error.message.includes("muitas tentativas")
+      ) {
+        throw createAuthError(
+          "server_error",
+          "Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.",
+        );
+      }
+      throw createAuthError(
+        "server_error",
+        error.message || "Erro ao reenviar código de verificação",
+      );
+    }
+    throw createAuthError(
+      "server_error",
+      "Erro desconhecido ao reenviar código de verificação",
+    );
+  }
+}
+
+export async function resetPasswordRequest(values: {
+  newPassword: string;
+  confirmPassword: string;
+}): Promise<{ message: string }> {
+  try {
+    const response = await authApiService.changePassword(
+      values.newPassword,
+      values.confirmPassword,
+    );
+    return { message: response.data.message };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (
+        error.message.includes("não autorizado") ||
+        error.message.includes("expirado")
+      ) {
+        throw createAuthError("unauthorized", "Sessão expirada");
+      }
       if (error.message.includes("rede") || error.message.includes("conexão")) {
         throw createAuthError(
           "network_error",
@@ -217,13 +347,10 @@ export async function resendMfaCodeRequest(): Promise<{ message: string }> {
       }
       throw createAuthError(
         "server_error",
-        error.message || "Erro ao reenviar código MFA",
+        error.message || "Erro ao alterar senha",
       );
     }
-    throw createAuthError(
-      "server_error",
-      "Erro desconhecido ao reenviar código MFA",
-    );
+    throw createAuthError("server_error", "Erro desconhecido ao alterar senha");
   }
 }
 
@@ -234,4 +361,5 @@ export const authService = {
   forgotPassword: forgotPasswordRequest,
   verifyMfa: mfaVerificationRequest,
   resendMfaCode: resendMfaCodeRequest,
+  resetPassword: resetPasswordRequest,
 };

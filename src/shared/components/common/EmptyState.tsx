@@ -166,7 +166,7 @@ const EmptyIllustration = ({ type }: { type: EmptyStateProps["type"] }) => {
             height="60"
             rx="4"
             fill="white"
-            stroke="#e5e7eb"
+            stroke="#404040"
             strokeWidth="2"
             initial={{ scale: 0, y: 20 }}
             animate={{ scale: 1, y: 0 }}
@@ -181,7 +181,7 @@ const EmptyIllustration = ({ type }: { type: EmptyStateProps["type"] }) => {
               y1={45 + i * 8}
               x2={72 - i * 4}
               y2={45 + i * 8}
-              stroke="#d1d5db"
+              stroke="#404040"
               strokeWidth="2"
               strokeLinecap="round"
               initial={{ pathLength: 0, opacity: 0 }}
@@ -192,8 +192,8 @@ const EmptyIllustration = ({ type }: { type: EmptyStateProps["type"] }) => {
 
           <defs>
             <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#f3f4f6" />
-              <stop offset="100%" stopColor="#e5e7eb" />
+              <stop offset="0%" stopColor="#404040" />
+              <stop offset="100%" stopColor="#171717" />
             </linearGradient>
           </defs>
         </svg>
@@ -225,14 +225,14 @@ export function EmptyState({
           title: title || "Nenhuma comunicação encontrada",
           description:
             description ||
-            "Não encontramos comunicações que correspondam à sua busca.",
+            "Não encontramos barbeiros que correspondam à sua busca.",
         };
       default:
         return {
           icon: null,
-          title: title || "Nenhuma comunicação disponível",
+          title: title || "Nenhum resultado disponível",
           description:
-            description || "Não há comunicações para exibir no momento.",
+            description || "Não há barbeiros para exibir no momento.",
         };
     }
   };
@@ -244,7 +244,7 @@ export function EmptyState({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`flex flex-col items-center justify-center px-4 py-16 text-center ${className}`}
+      className={`flex flex-col items-center justify-center px-4 pt-16 text-center ${className}`}
     >
       {/* Custom illustration or icon */}
       <div className="mb-6">
@@ -269,10 +269,12 @@ export function EmptyState({
         transition={{ delay: 0.3, duration: 0.4 }}
         className="max-w-md space-y-2"
       >
-        <h3 className="text-lg font-semibold text-neutral-900">
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
           {content.title}
         </h3>
-        <p className="text-sm text-neutral-500">{content.description}</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+          {content.description}
+        </p>
       </motion.div>
 
       {/* Action button */}

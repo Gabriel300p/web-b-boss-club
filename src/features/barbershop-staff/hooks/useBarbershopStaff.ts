@@ -5,8 +5,9 @@
 import { useToast } from "@shared/hooks";
 import { createAppError, ErrorHandler, ErrorTypes } from "@shared/lib/errors";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuthStore } from "../../../app/store/auth";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useAuthStore } from "../../../app/store/auth";
 
 import type {
   CreateStaffFormData,
@@ -19,6 +20,7 @@ import {
   fetchStaffById,
   fetchStaffList,
   fetchStaffStats,
+  toggleStaffStatus,
   updateStaff,
 } from "../services/barbershop-staff.service";
 
@@ -55,22 +57,28 @@ const DEFAULT_FILTERS: StaffFilters = {
 const EMPTY_INITIAL_FILTERS: StaffFilters = DEFAULT_FILTERS;
 
 // 🚀 Main hook for staff list with filters
-export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS) {
+export function useBarbershopStaff(
+  filters: StaffFilters = EMPTY_INITIAL_FILTERS,
+) {
   // 🎯 Memoize merged filters to prevent unnecessary re-renders
-  const mergedFilters = useMemo(() => ({ 
-    ...DEFAULT_FILTERS, 
-    ...filters 
-  }), [filters]);
-  
+  const mergedFilters = useMemo(
+    () => ({
+      ...DEFAULT_FILTERS,
+      ...filters,
+    }),
+    [filters],
+  );
+
   const { success } = useToast();
   const queryClient = useQueryClient();
   const errorHandler = ErrorHandler.getInstance();
   const { user } = useAuthStore(); // 🔑 Obter usuário atual para isolamento de cache
+  const { t } = useTranslation("barbershop-staff");
 
   // 🎯 Memoize query key to prevent unnecessary re-fetches
-  const queryKey = useMemo(() => 
-    STAFF_QUERY_KEYS.staff.list(mergedFilters, user?.id), 
-    [mergedFilters, user?.id]
+  const queryKey = useMemo(
+    () => STAFF_QUERY_KEYS.staff.list(mergedFilters, user?.id),
+    [mergedFilters, user?.id],
   );
 
   // 🔄 Query for fetching staff list
@@ -99,16 +107,16 @@ export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS
       });
 
       success(
-        "Funcionário criado!",
-        `${data.staff.first_name} foi adicionado à equipe`,
-        "O funcionário foi criado com sucesso",
+        t("toasts.success.createTitle"),
+        t("toasts.success.createMessage", { name: data.staff.first_name }),
+        t("toasts.success.createDescription"),
       );
     },
     onError: (error) => {
       const appError = createAppError(
         ErrorTypes.API_ERROR,
         "CREATE_STAFF_FAILED",
-        "Erro ao criar funcionário",
+        t("toasts.errors.messages.createFailed"),
         {
           details: error,
           context: { action: "create", entity: "staff" },
@@ -120,8 +128,18 @@ export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS
 
   // 🚀 Update mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateStaffFormData }) =>
-      updateStaff(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateStaffFormData }) => {
+      // 🏢 Define primeira unidade como principal se não foi especificada
+      const dataWithPrimaryUnit = {
+        ...data,
+        primary_unit_id:
+          data.primary_unit_id ||
+          (data.unit_ids && data.unit_ids.length > 0
+            ? data.unit_ids[0]
+            : undefined),
+      };
+      return updateStaff(id, dataWithPrimaryUnit);
+    },
     onSuccess: (data) => {
       // Invalidate and refetch staff list
       queryClient.invalidateQueries({
@@ -135,16 +153,16 @@ export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS
       });
 
       success(
-        "Funcionário atualizado!",
-        `${data.first_name} foi atualizado com sucesso`,
-        "As alterações foram salvas",
+        t("toasts.success.updateTitle"),
+        t("toasts.success.updateMessage", { name: data.first_name }),
+        t("toasts.success.updateDescription"),
       );
     },
     onError: (error) => {
       const appError = createAppError(
         ErrorTypes.API_ERROR,
         "UPDATE_STAFF_FAILED",
-        "Erro ao atualizar funcionário",
+        t("toasts.errors.messages.updateFailed"),
         {
           details: error,
           context: { action: "update", entity: "staff" },
@@ -170,19 +188,72 @@ export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS
       });
 
       success(
-        "Funcionário removido!",
-        "O funcionário foi removido da equipe",
-        "A remoção foi realizada com sucesso",
+        t("toasts.success.deleteTitle"),
+        t("toasts.success.deleteMessage"),
+        t("toasts.success.deleteDescription"),
       );
     },
     onError: (error) => {
       const appError = createAppError(
         ErrorTypes.API_ERROR,
         "DELETE_STAFF_FAILED",
-        "Erro ao remover funcionário",
+        t("toasts.errors.messages.deleteFailed"),
         {
           details: error,
           context: { action: "delete", entity: "staff" },
+        },
+      );
+      errorHandler.handle(appError);
+    },
+  });
+
+  // 🔄 Toggle status mutation
+  const toggleStatusMutation = useMutation({
+    mutationFn: toggleStaffStatus,
+    onSuccess: (updatedStaff) => {
+      const isActive = updatedStaff.status === "ACTIVE";
+
+      // 🚀 Toast imediato (não bloqueia)
+      success(
+        isActive
+          ? t("toasts.success.activateTitle", {
+              defaultValue: "Colaborador ativado!",
+            })
+          : t("toasts.success.inactivateTitle", {
+              defaultValue: "Colaborador inativado!",
+            }),
+        isActive
+          ? t("toasts.success.activateMessage", {
+              defaultValue: "O colaborador foi ativado com sucesso.",
+            })
+          : t("toasts.success.inactivateMessage", {
+              defaultValue: "O colaborador foi inativado com sucesso.",
+            }),
+      );
+
+      // 🔄 Invalidar em background (não bloqueia)
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: STAFF_QUERY_KEYS.staff.lists(user?.id),
+        });
+        queryClient.invalidateQueries({
+          queryKey: STAFF_QUERY_KEYS.staff.detail(updatedStaff.id, user?.id),
+        });
+        queryClient.invalidateQueries({
+          queryKey: STAFF_QUERY_KEYS.staff.stats(undefined, user?.id),
+        });
+      }, 0);
+    },
+    onError: (error) => {
+      const appError = createAppError(
+        ErrorTypes.API_ERROR,
+        "TOGGLE_STATUS_FAILED",
+        t("toasts.errors.messages.toggleStatusFailed", {
+          defaultValue: "Erro ao alterar status do colaborador",
+        }),
+        {
+          details: error,
+          context: { action: "toggleStatus", entity: "staff" },
         },
       );
       errorHandler.handle(appError);
@@ -205,6 +276,10 @@ export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS
     await deleteMutation.mutateAsync(id);
   };
 
+  const toggleStaffStatusWithToast = async (id: string) => {
+    return await toggleStatusMutation.mutateAsync(id);
+  };
+
   return {
     // Data
     staff: staffData?.data || [],
@@ -217,6 +292,7 @@ export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    isTogglingStatus: toggleStatusMutation.isPending,
 
     // Error state
     error,
@@ -225,6 +301,7 @@ export function useBarbershopStaff(filters: StaffFilters = EMPTY_INITIAL_FILTERS
     createStaff: createStaffWithToast,
     updateStaff: updateStaffWithToast,
     deleteStaff: deleteStaffWithToast,
+    toggleStaffStatus: toggleStaffStatusWithToast,
     refetch,
   };
 }

@@ -9,10 +9,12 @@ import ptBRRecords from "./locales/pt-BR/records.json";
 // Feature-specific namespaces (statically bundled for now)
 import enUSAuth from "@/features/auth/locales/en.json";
 import ptBRAuth from "@/features/auth/locales/pt.json";
+import enUSBarbershopStaff from "@/features/barbershop-staff/locales/en.json";
+import ptBRBarbershopStaff from "@/features/barbershop-staff/locales/pt.json";
 import enUSBarbershop from "@/features/barbershop/locales/en.json";
 import ptBRBarbershop from "@/features/barbershop/locales/pt.json";
-import enUSComunicacoes from "@/features/comunicacoes/i18n/en-US.json";
-import ptBRComunicacoes from "@/features/comunicacoes/i18n/pt-BR.json";
+import enUSSearch from "@/features/search/locales/en.json"; // 🌍 FASE 10
+import ptBRSearch from "@/features/search/locales/pt.json"; // 🌍 FASE 10
 
 export const DEFAULT_LOCALE = "pt-BR";
 export const FALLBACK_LOCALE = "en-US";
@@ -45,16 +47,18 @@ const resources = {
   "pt-BR": {
     common: ptBRCommon,
     records: ptBRRecords,
-    comunicacoes: ptBRComunicacoes,
     auth: ptBRAuth,
     barbershop: ptBRBarbershop,
+    "barbershop-staff": ptBRBarbershopStaff,
+    search: ptBRSearch, // 🌍 FASE 10
   },
   "en-US": {
     common: enUSCommon,
     records: enUSRecords,
-    comunicacoes: enUSComunicacoes,
     auth: enUSAuth,
     barbershop: enUSBarbershop,
+    "barbershop-staff": enUSBarbershopStaff,
+    search: enUSSearch, // 🌍 FASE 10
   },
 };
 
@@ -66,7 +70,15 @@ if (!i18n.isInitialized) {
       lng: detectLocale(),
       fallbackLng: FALLBACK_LOCALE,
       defaultNS: "common",
-      ns: ["common", "records", "comunicacoes", "auth", "barbershop"],
+      ns: [
+        "common",
+        "records",
+        "comunicacoes",
+        "auth",
+        "barbershop",
+        "barbershop-staff",
+        "search", // 🌍 FASE 10
+      ],
       interpolation: { escapeValue: false },
       returnEmptyString: false,
       initImmediate: true,

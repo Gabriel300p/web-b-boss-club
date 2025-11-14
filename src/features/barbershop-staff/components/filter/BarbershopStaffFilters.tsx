@@ -14,7 +14,13 @@ import {
 } from "lucide-react";
 import { useCallback, useMemo } from "react";
 
+// import { TableSettings } from "@shared/components/table/TableSettings";
+import type {
+  // TableColumn,
+  TableSettingsConfig,
+} from "@shared/types/table.types";
 import type { StaffFilters } from "../../schemas/barbershop-staff.schemas";
+// import { createColumns } from "../table/columns";
 
 interface BarbershopStaffFiltersProps {
   filters: StaffFilters;
@@ -23,13 +29,57 @@ interface BarbershopStaffFiltersProps {
     value: StaffFilters[K],
   ) => void;
   onClearFilters: () => void;
+  onTableSettingsChange?: (settings: TableSettingsConfig) => void;
 }
 
 export function BarbershopStaffFilters({
   filters,
   onFilterChange,
   onClearFilters,
+  // onTableSettingsChange,
 }: BarbershopStaffFiltersProps) {
+  // 🎯 Convert table columns to TableSettings format
+  // const barbershopStaffTableColumns: TableColumn[] = useMemo(() => {
+  //   // Create columns with dummy handlers for conversion
+  //   const columns = createColumns({
+  //     onEdit: () => {},
+  //     onDelete: () => {},
+  //   });
+
+  //   return columns
+  //     .filter((column) => column.id !== "actions") // Exclude actions column from settings
+  //     .map((column) => {
+  //       // Get column ID - prefer 'id' over 'accessorKey'
+  //       const columnId =
+  //         column.id ||
+  //         ((column as { accessorKey?: string }).accessorKey as string);
+
+  //       // Get column label - handle both string and function headers
+  //       let columnLabel = "Coluna"; // Default fallback
+  //       if (typeof column.header === "string") {
+  //         columnLabel = column.header;
+  //       } else if (typeof column.header === "function") {
+  //         // For function headers, we'll use a mapping based on column ID
+  //         const labelMap: Record<string, string> = {
+  //           first_name: "Nome",
+  //           "user.email": "Email",
+  //           role_in_shop: "Função",
+  //           status: "Status",
+  //           is_available: "Disponibilidade",
+  //           hire_date: "Data de Contratação",
+  //         };
+  //         columnLabel = labelMap[columnId] || "Coluna";
+  //       }
+
+  //       return {
+  //         id: columnId,
+  //         label: columnLabel,
+  //         defaultVisible: true,
+  //         fixed: columnId === "first_name", // Fix name column
+  //       };
+  //     });
+  // }, []);
+
   // 🔥 OPTIMIZATION: Memoize filter change handlers to prevent re-renders
   const handleSearchChange = useCallback(
     (value: string) => onFilterChange("search", value),
@@ -132,48 +182,56 @@ export function BarbershopStaffFilters({
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="flex flex-wrap gap-2">
-        {/* Search bar */}
-        <TextFilter
-          value={filters.search || ""}
-          onChange={handleSearchChange}
-          placeholder="Pesquisar..."
-          className="max-w-lg"
-          size="lg"
-        />
-
+      <div>
         <FilterToolbar
           hasActiveFilters={hasActiveFilters}
           onReset={onClearFilters}
+          className="flex flex-wrap items-center justify-between gap-2"
         >
-          {/* Status filter */}
-          <Filter
-            title="Status"
-            options={statusOptions}
-            icon={<CheckCircleIcon className="h-4 w-4" />}
-            value={filters.status ? [filters.status] : []}
-            onChange={handleStatusChange}
-          />
+          <div className="flex flex-wrap gap-2">
+            {/* Search bar */}
+            <TextFilter
+              value={filters.search || ""}
+              onChange={handleSearchChange}
+              placeholder="Pesquisar..."
+              className="max-w-lg"
+              size="lg"
+            />
+            {/* Status filter */}
+            <Filter
+              title="Status"
+              options={statusOptions}
+              icon={<CheckCircleIcon className="h-4 w-4" />}
+              value={filters.status ? [filters.status] : []}
+              onChange={handleStatusChange}
+            />
 
-          {/* Role filter */}
-          <Filter
-            title="Função"
-            options={roleOptions}
-            icon={<UserIcon className="h-4 w-4" />}
-            value={filters.role_in_shop ? [filters.role_in_shop] : []}
-            onChange={handleRoleChange}
-          />
+            {/* Role filter */}
+            <Filter
+              title="Função"
+              options={roleOptions}
+              icon={<UserIcon className="h-4 w-4" />}
+              value={filters.role_in_shop ? [filters.role_in_shop] : []}
+              onChange={handleRoleChange}
+            />
 
-          {/* Availability filter */}
-          <Filter
-            title="Disponibilidade"
-            options={availabilityOptions}
-            icon={<CheckCircleIcon className="h-4 w-4" />}
-            value={
-              filters.is_available !== undefined ? [filters.is_available] : []
-            }
-            onChange={handleAvailabilityChange}
-          />
+            {/* Availability filter */}
+            <Filter
+              title="Disponibilidade"
+              options={availabilityOptions}
+              icon={<CheckCircleIcon className="h-4 w-4" />}
+              value={
+                filters.is_available !== undefined ? [filters.is_available] : []
+              }
+              onChange={handleAvailabilityChange}
+            />
+          </div>
+          {/* Table settings */}
+          {/* <TableSettings
+            tableId="barbershop-staff"
+            columnsFromApi={barbershopStaffTableColumns}
+            onChange={onTableSettingsChange || (() => {})}
+          /> */}
         </FilterToolbar>
       </div>
     </div>

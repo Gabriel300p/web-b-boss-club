@@ -17,94 +17,11 @@ export default {
       },
     },
     extend: {
-      // 🎨 Expanded Design System Colors
-      colors: {
-        // Base system colors (CSS custom properties)
-        border: "rgb(var(--border))",
-        input: "rgb(var(--input))",
-        ring: "rgb(var(--ring))",
-        background: "rgb(var(--background))",
-        foreground: "rgb(var(--foreground))",
-        primary: {
-          DEFAULT: "rgb(var(--primary))",
-          foreground: "rgb(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "rgb(var(--secondary))",
-          foreground: "rgb(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "rgb(var(--destructive))",
-          foreground: "rgb(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "rgb(var(--muted))",
-          foreground: "rgb(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "rgb(var(--accent))",
-          foreground: "rgb(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "rgb(var(--popover))",
-          foreground: "rgb(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "rgb(var(--card))",
-          foreground: "rgb(var(--card-foreground))",
-        },
-      },
-      // 📏 Enhanced Border Radius
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-        xl: "calc(var(--radius) + 4px)",
-        "2xl": "calc(var(--radius) + 8px)",
-        "3xl": "calc(var(--radius) + 12px)",
-      },
-
-      // 🌫️ Enhanced Shadows
-      boxShadow: {
-        soft: "0 2px 8px 0 rgb(0 0 0 / 0.08)",
-        elegant: "0 4px 16px 0 rgb(0 0 0 / 0.12)",
-        floating: "0 8px 32px 0 rgb(0 0 0 / 0.16)",
-        glow: "0 0 20px 0 rgb(99 102 241 / 0.2)",
-        "glow-success": "0 0 20px 0 rgb(34 197 94 / 0.2)",
-        "glow-warning": "0 0 20px 0 rgb(245 158 11 / 0.2)",
-        "glow-error": "0 0 20px 0 rgb(239 68 68 / 0.2)",
-      },
-
       // 📱 Enhanced Breakpoints
       screens: {
         xs: "475px",
         "3xl": "1600px",
         "4xl": "1920px",
-      },
-
-      // 📏 Enhanced Spacing
-      spacing: {
-        18: "4.5rem", // 72px
-        22: "5.5rem", // 88px
-        26: "6.5rem", // 104px
-        30: "7.5rem", // 120px
-        34: "8.5rem", // 136px
-        38: "9.5rem", // 152px
-        42: "10.5rem", // 168px
-        46: "11.5rem", // 184px
-        50: "12.5rem", // 200px
-        54: "13.5rem", // 216px
-        58: "14.5rem", // 232px
-        62: "15.5rem", // 248px
-        66: "16.5rem", // 264px
-        70: "17.5rem", // 280px
-        74: "18.5rem", // 296px
-        78: "19.5rem", // 312px
-        82: "20.5rem", // 328px
-        86: "21.5rem", // 344px
-        90: "22.5rem", // 360px
-        94: "23.5rem", // 376px
-        98: "24.5rem", // 392px
       },
 
       // 🎯 Z-Index Scale

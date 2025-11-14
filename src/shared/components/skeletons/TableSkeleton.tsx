@@ -41,14 +41,39 @@ export function TableSkeleton({
           className="grid gap-4 border-b border-neutral-100 py-3 dark:border-neutral-800"
           style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
         >
-          {Array.from({ length: columns - (hasActions ? 1 : 0) }, (_, j) => (
-            <SkeletonLine
-              key={j}
-              width={`${70 + (j % 4) * 15}%`}
-              className="bg-neutral-200 dark:bg-neutral-800"
-            />
-          ))}
-          {hasActions && (
+          {Array.from({ length: columns - (hasActions ? 1 : 0) }, (_, j) => {
+            // Primeira coluna: avatar + texto (para tabelas com avatar)
+            if (j === 0) {
+              return (
+                <div key={j} className="flex items-center gap-3">
+                  <SkeletonCircle
+                    size={44}
+                    className="bg-neutral-200 dark:bg-neutral-800"
+                  />
+                  <div className="flex flex-1 flex-col gap-2">
+                    <SkeletonLine
+                      width="80%"
+                      className="bg-neutral-200 dark:bg-neutral-800"
+                    />
+                    <SkeletonLine
+                      width="60%"
+                      className="bg-neutral-200 dark:bg-neutral-800"
+                    />
+                  </div>
+                </div>
+              );
+            }
+
+            // Demais colunas: apenas linha
+            return (
+              <SkeletonLine
+                key={j}
+                width={`${70 + (j % 4) * 15}%`}
+                className="bg-neutral-200 dark:bg-neutral-800"
+              />
+            );
+          })}
+          {/* {hasActions && (
             <div className="flex gap-2">
               <SkeletonCircle
                 size={24}
@@ -59,7 +84,7 @@ export function TableSkeleton({
                 className="bg-neutral-200 dark:bg-neutral-800"
               />
             </div>
-          )}
+          )} */}
         </motion.div>
       ))}
     </motion.div>

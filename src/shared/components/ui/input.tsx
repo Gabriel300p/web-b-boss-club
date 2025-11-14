@@ -12,7 +12,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const variants = {
       default:
         "border-neutral-800 bg-transparent focus:border-amber-400 focus:ring-amber-400/20",
-      form: "border-neutral-600 bg-neutral-800 focus:border-primary focus:ring-primary/20",
+      form: "border-neutral-700/80 bg-neutral-800/20 focus:border-primary focus:ring-primary/20",
       search:
         "border-neutral-700/70 bg-neutral-900/50 focus:border-amber-400 focus:ring-amber-400/20",
       login:
@@ -21,7 +21,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     const sizes = {
       sm: "h-8 px-2 py-1 text-xs",
-      md: "h-10 px-3 py-2 text-sm",
+      md: "px-3 py-3 text-sm",
       lg: "px-4 py-2.5 text-base",
       login: "px-3.5 py-3.5 text-base",
     };

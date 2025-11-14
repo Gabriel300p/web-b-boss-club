@@ -11,9 +11,6 @@ export { FormSkeleton } from "./FormSkeleton";
 export { RouteSkeleton } from "./RouteSkeleton";
 export { TableSkeleton } from "./TableSkeleton";
 
-// ===== FEATURE-SPECIFIC SKELETONS =====
-export * from "../../../features/comunicacoes/components/skeletons/_index";
-
 // ===== SKELETON CATEGORIES FOR EASY ACCESS =====
 export const SkeletonTypes = {
   // Basic components

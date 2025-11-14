@@ -1,0 +1,98 @@
+{
+  "search": {
+    "modal": {
+      "title": "Search system",
+      "description": "Use search to find pages, barbers and other system resources. Navigate with keyboard arrows and press Enter to select. Press Ctrl+Backspace to clear search or Ctrl+H to clear history.",
+      "ariaLabel": "Global system search"
+    },
+    "input": {
+      "placeholder": "Search in system...",
+      "placeholderWithResults": "Search...",
+      "placeholderEmpty": "Search pages, barbers...",
+      "ariaLabel": "Search in system",
+      "clearButton": "Clear search"
+    },
+    "results": {
+      "found": "{{count}} result found",
+      "found_plural": "{{count}} results found",
+      "foundFor": "{{count}} result found for \"{{query}}\"",
+      "foundFor_plural": "{{count}} results found for \"{{query}}\"",
+      "none": "No results found for \"{{query}}\"",
+      "showMore": "Show more results",
+      "categories": {
+        "all": "All",
+        "pages": "Pages",
+        "staff": "Barbers",
+        "services": "Services"
+      }
+    },
+    "history": {
+      "title": "Recent Searches",
+      "clear": "Clear all",
+      "showing": "Showing {{count}} search history item",
+      "showing_plural": "Showing {{count}} search history items",
+      "accessCount": "Accessed {{count}} time",
+      "accessCount_plural": "Accessed {{count}} times"
+    },
+    "emptyState": {
+      "noResults": {
+        "title": "No results found",
+        "description": "We couldn't find anything matching",
+        "tipsTitle": "💡 Search tips:",
+        "tips": {
+          "numeric": "Numeric IDs are not supported. Try searching by name.",
+          "email": "Searching by email? Try just the barber's name.",
+          "multiWord": "Multi-word search: all words must be present.",
+          "general": "Try more general terms like \"barber\", \"appointment\" or \"settings\"",
+          "spelling": "Check spelling and try term variations",
+          "keywords": "Use individual keywords instead of complete phrases"
+        },
+        "popularPages": "Popular pages:",
+        "suggestions": {
+          "staff": "Barbers",
+          "appointments": "Appointments",
+          "settings": "Settings"
+        }
+      },
+      "noHistory": {
+        "title": "Your history is empty",
+        "description": "Your recent searches will appear here for quick access.",
+        "motivational": {
+          "title": "Start exploring!",
+          "description": "Type any term above to search pages, barbers and much more. Your favorite searches will be saved here."
+        },
+        "shortcuts": {
+          "title": "⌨️ Useful shortcuts:",
+          "openSearch": "Open search",
+          "navigate": "Navigate results",
+          "clear": "Clear search"
+        }
+      },
+      "initial": {
+        "title": "Global Search",
+        "description": "Quickly find any page, barber or system resource.",
+        "categories": {
+          "staff": {
+            "title": "Barbers",
+            "description": "Search by name or email"
+          },
+          "pages": {
+            "title": "Pages",
+            "description": "Navigate to any section"
+          }
+        },
+        "hint": "Type something above to start"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "selected": "Selected"
+    },
+    "footer": {
+      "navigate": "Navigate",
+      "select": "Select",
+      "close": "Close"
+    }
+  }
+}

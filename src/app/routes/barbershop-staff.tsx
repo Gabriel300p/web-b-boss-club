@@ -1,21 +1,24 @@
+import { MainLayout } from "@/shared/components/layout/MainLayout";
 import { AuthGuard } from "@features/auth/components/AuthGuard";
-import { MainLayout } from "@shared/components/layout/MainLayout";
 import { RouteSkeleton } from "@shared/components/skeletons/_index";
 import { useLoadingConfig } from "@shared/hooks/useLoadingConfig";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
+import { z } from "zod";
 
-// 🚀 Import direto para quando lazy loading está desabilitado
 import { BarbershopStaffPage as DirectBarbershopStaffPage } from "@features/barbershop-staff/_index";
 
-// 🚀 Lazy loading da página de records
+// Schema para search params
+const barbershopStaffSearchSchema = z.object({
+  staffName: z.string().optional(), // Nome do barbeiro para filtrar automaticamente
+});
+
 const LazyBarbershopStaffPage = lazy(() =>
   import("@features/barbershop-staff/_index.ts").then((module) => ({
     default: module.BarbershopStaffPage,
   })),
 );
 
-// 🎯 Componente que escolhe a estratégia de loading baseado na config
 function BarbershopStaffPageLoader() {
   const config = useLoadingConfig();
 
@@ -42,6 +45,7 @@ function BarbershopStaffPageLoader() {
 }
 
 export const Route = createFileRoute("/barbershop-staff")({
+  validateSearch: barbershopStaffSearchSchema,
   component: () => (
     <AuthGuard requireAuth={true}>
       <MainLayout>

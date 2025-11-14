@@ -16,7 +16,7 @@ export interface RegisterCredentials extends LoginCredentials {
   confirmPassword: string;
 }
 
-// Resposta do login que pode requerer MFA
+// Resposta do login que pode requerer verificação
 export interface LoginResponse {
   mfaRequired: boolean;
   tempToken?: string;
@@ -29,7 +29,7 @@ export interface LoginResponse {
   };
 }
 
-// Resposta da verificação MFA
+// Resposta da verificação de código
 export interface MfaVerificationResponse {
   success: boolean;
   message: string;
@@ -43,7 +43,7 @@ export interface MfaVerificationResponse {
   isFirstLogin: boolean;
 }
 
-// Resposta de autenticação completa (após MFA)
+// Resposta de autenticação completa (após verificação)
 export interface AuthResponse {
   user: {
     id: string;
@@ -70,7 +70,11 @@ export interface AuthError extends Error {
     | "validation_error"
     | "mfa_required"
     | "mfa_invalid"
-    | "mfa_expired";
+    | "mfa_expired"
+    | "duplicate_cpf"
+    | "duplicate_email"
+    | "invalid_cpf"
+    | "invalid_email";
   message: string;
 }
 
@@ -79,9 +83,15 @@ export interface ForgotPasswordCredentials {
   email: string;
 }
 
-// MFA verification credentials (apenas código)
+// Credenciais de verificação de código (apenas código)
 export interface MfaVerificationCredentials {
   code: string; // código de 6 dígitos
+}
+
+// Change password credentials
+export interface ChangePasswordCredentials {
+  newPassword: string;
+  confirmPassword: string;
 }
 
 export interface AuthContextType {
@@ -99,6 +109,7 @@ export interface AuthContextType {
   logout: () => void;
   forgotPassword: (credentials: ForgotPasswordCredentials) => void;
   verifyMfa: (credentials: MfaVerificationCredentials) => void;
+  resetPassword: (credentials: ChangePasswordCredentials) => void;
   resendMfaCode: () => void;
   clearError: () => void;
   checkAuth: () => Promise<{ user: AuthResponse["user"] }>;
@@ -116,9 +127,13 @@ export interface AuthContextType {
   isForgotPasswordPending: boolean;
   forgotPasswordError: AuthError | null;
 
-  // Mutation states - MFA
+  // Mutation states - Verification
   isMfaVerificationPending: boolean;
   mfaVerificationError: AuthError | null;
   isResendMfaCodePending: boolean;
   resendMfaCodeError: AuthError | null;
+
+  // Mutation states - Reset Password
+  isResetPasswordPending: boolean;
+  resetPasswordError: AuthError | null;
 }

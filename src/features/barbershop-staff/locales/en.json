@@ -1,0 +1,253 @@
+{
+  "pages": {
+    "staff": {
+      "title": "Barbers",
+      "subtitle": "Manage your barber team"
+    }
+  },
+  "fields": {
+    "name": "Name",
+    "email": "Email",
+    "units": "Unit(s)",
+    "performance": "Performance",
+    "score": "Score",
+    "totalRevenue": "Total Revenue",
+    "role": "Role",
+    "status": "Status",
+    "available": "Availability",
+    "hireDate": "Hire Date",
+    "actions": "Actions"
+  },
+  "roles": {
+    "barber": "Barber",
+    "owner": "Owner",
+    "superAdmin": "Super Admin",
+    "client": "Client",
+    "pending": "Pending"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "suspended": "Suspended",
+    "terminated": "Terminated"
+  },
+  "availability": {
+    "available": "Available",
+    "unavailable": "Unavailable"
+  },
+  "actions": {
+    "new": "New",
+    "addNew": "Add new",
+    "edit": "Edit",
+    "delete": "Delete",
+    "reload": "Reload Data",
+    "clearFilters": "Clear Filters",
+    "cancel": "Cancel",
+    "create": "Add",
+    "creating": "Adding...",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "close": "Close",
+    "view": "View",
+    "activate": "Activate",
+    "inactivate": "Inactivate"
+  },
+  "modals": {
+    "createStaff": {
+      "title": "Add new barber",
+      "fields": {
+        "fullName": "Full Name",
+        "cpf": "CPF",
+        "email": "Email"
+      },
+      "placeholders": {
+        "fullName": "Enter the barber's full name",
+        "cpf": "000.000.000-00",
+        "email": "email@example.com"
+      },
+      "hints": {
+        "cpfFormat": "Enter numbers only. The mask will be applied automatically.",
+        "email": "If filled, a user will be created with auto-generated password."
+      },
+      "optional": "optional"
+    },
+    "staffModal": {
+      "viewTitle": "View Staff Member",
+      "viewSubtitle": "Detailed staff member information",
+      "editTitle": "Edit Staff Member",
+      "editSubtitle": "Update staff member information"
+    }
+  },
+  "sidebar": {
+    "staffInfo": "Information",
+    "editWarning": "CPF and email cannot be changed for security reasons."
+  },
+  "wizard": {
+    "title": "Add new barber",
+    "subtitle": "Creating a new barber, clients in the app will be able to see them.",
+    "modes": {
+      "create": "Create",
+      "view": "View",
+      "edit": "Edit"
+    },
+    "steps": {
+      "basicData": "Basic data",
+      "admissionInfo": "Admission information",
+      "_workSchedule_disabled": "Work schedule",
+      "userAccess": "User access"
+    },
+    "fields": {
+      "name": "Name",
+      "cpf": "CPF",
+      "phone": "Phone",
+      "status": "Status",
+      "description": "Description",
+      "internalNotes": "Internal Notes",
+      "hireDate": "Hire Date",
+      "terminatedDate": "Termination Date",
+      "salary": "Salary",
+      "commission": "Commission",
+      "units": "Units",
+      "primaryUnit": "Primary Unit"
+    },
+    "placeholders": {
+      "name": "Enter the barber's name",
+      "cpf": "XXX.XXX.XXX-XX",
+      "phone": "(XX) XXXXX-XXXX",
+      "status": "Active",
+      "description": "Enter additional information...",
+      "internalNotes": "Internal notes for management...",
+      "hireDate": "DD/MM/YYYY",
+      "terminatedDate": "DD/MM/YYYY",
+      "salary": "R$ 0.00",
+      "commission": "0.0%",
+      "units": "Select units...",
+      "primaryUnit": "Select primary unit...",
+      "selectUnitsFirst": "Select units first"
+    },
+    "hints": {
+      "description": "Additional information about the staff member (optional)",
+      "cpfNotEditable": "CPF cannot be changed for security reasons",
+      "emailNotEditable": "Email cannot be changed for security reasons"
+    },
+    "actions": {
+      "continue": "Continue"
+    },
+    "progress": {
+      "label": "Step",
+      "step": "{{current}} of {{total}}"
+    }
+  },
+  "empty": {
+    "noData": {
+      "title": "No results available",
+      "message": "There are no barbers to display at the moment.",
+      "action": "Reload Data",
+      "actionDisabled": "Wait 5 seconds..."
+    },
+    "filtered": {
+      "title": "No results found",
+      "message": "No barbers match the applied filters.",
+      "action": "Clear Filters"
+    }
+  },
+  "statistics": {
+    "total": "total",
+    "updatedAt": "updated at",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "toasts": {
+    "success": {
+      "createTitle": "Staff member created!",
+      "createMessage": "{{name}} has been added to the team",
+      "createDescription": "The staff member was created successfully",
+      "updateTitle": "Staff member updated!",
+      "updateMessage": "{{name}} has been updated successfully",
+      "updateDescription": "Changes have been saved",
+      "deleteTitle": "Staff member removed!",
+      "deleteMessage": "The staff member has been removed from the team",
+      "deleteDescription": "The removal was completed successfully",
+      "reloadTitle": "Data reloaded!",
+      "reloadMessage": "Data has been updated successfully",
+      "reloadDescription": "The barbers list has been reloaded"
+    },
+    "errors": {
+      "titles": {
+        "createError": "Error Creating Staff Member",
+        "updateError": "Error Updating Staff Member",
+        "deleteError": "Error Removing Staff Member",
+        "loadError": "Error Loading Data",
+        "reloadError": "Error Reloading Data"
+      },
+      "messages": {
+        "createFailed": "Error creating staff member. Please try again.",
+        "updateFailed": "Error updating staff member. Please try again.",
+        "deleteFailed": "Error removing staff member. Please try again.",
+        "loadFailed": "Error loading staff data. Please try again.",
+        "reloadFailed": "Error reloading data. Please try again.",
+        "networkError": "Connection error. Check your internet and try again.",
+        "unexpectedError": "An unexpected error occurred."
+      },
+      "actions": {
+        "tryAgain": "Try Again",
+        "reload": "Reload"
+      }
+    }
+  },
+  "filters": {
+    "search": {
+      "placeholder": "Search barbers...",
+      "shortcut": "Ctrl + E"
+    },
+    "status": {
+      "label": "Status",
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "role": {
+      "label": "Role",
+      "all": "All",
+      "barber": "Barbers",
+      "owner": "Owners"
+    },
+    "availability": {
+      "label": "Availability",
+      "all": "All",
+      "available": "Available",
+      "unavailable": "Unavailable"
+    }
+  },
+  "table": {
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "availability": "Availability",
+      "hireDate": "Hire Date"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "results": "results",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "bulkActions": {
+    "selectAll": "Select all on page",
+    "selectRow": "Select row",
+    "itemsSelected": "{{count}} item selected",
+    "itemsSelected_other": "{{count}} items selected",
+    "limitReached": "Limit of {{limit}} selections reached",
+    "activate": "Activate",
+    "inactivate": "Inactivate",
+    "downloadCSV": "Download CSV",
+    "clearSelection": "Clear selection",
+    "comingSoon": "Coming soon (Phase 2/3)",
+    "selectAllPages": "Select all from all pages ({{total}} items)",
+    "loadingAllPages": "Loading all items..."
+  }
+}

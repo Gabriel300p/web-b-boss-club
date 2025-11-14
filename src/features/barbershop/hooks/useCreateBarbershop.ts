@@ -27,11 +27,34 @@ export function useCreateBarbershop() {
       });
     },
     onError: (error: unknown) => {
+      // Extrai mensagem específica do erro
+      let errorMessage = "Erro desconhecido ao criar barbearia";
+      let errorTitle = "Erro ao criar barbearia";
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+
+        // Mapeia códigos de erro para títulos específicos
+        if ((error as any).code === "duplicate_cpf") {
+          errorTitle = "CPF já cadastrado";
+        } else if ((error as any).code === "duplicate_email") {
+          errorTitle = "Email já cadastrado";
+        } else if ((error as any).code === "invalid_cpf") {
+          errorTitle = "CPF inválido";
+        } else if ((error as any).code === "invalid_email") {
+          errorTitle = "Email inválido";
+        } else if ((error as any).code === "network_error") {
+          errorTitle = "Erro de conexão";
+        } else if ((error as any).code === "server_error") {
+          errorTitle = "Erro interno do servidor";
+        }
+      }
+
       showToast({
         type: "error",
-        title: "Erro ao criar barbearia",
-        message: `Erro: ${error}`,
-        duration: 5000,
+        title: errorTitle,
+        message: errorMessage,
+        duration: 8000,
       });
     },
   });

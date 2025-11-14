@@ -15,22 +15,24 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import type z from "zod";
+import { useResetPasswordAuth } from "../../hooks/useResetPasswordAuth";
 import { changePasswordSchema } from "../../schemas/auth.schema.ts";
-import { authApiService } from "../../services/auth-api.service.ts";
 import { AuthError } from "../AuthAnimations.tsx";
+import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
 
 export function ResetPasswordForm() {
   const { t } = useTranslation("auth");
 
-  // Detectar se é primeiro login baseado na URL
-  const isFirstLogin =
-    window.location.pathname === "/auth/first-login" ||
-    window.location.search.includes("firstLogin=true");
+  // Detectar contexto baseado em query params
+  const urlParams = new URLSearchParams(window.location.search);
+  const context = urlParams.get("context");
+  const isFirstLogin = context === "first-login";
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  // Usar hook que integra com AuthContext
+  const { resetPassword, isLoading, error } = useResetPasswordAuth();
 
   const form = useForm<z.infer<typeof changePasswordSchema>>({
     resolver: zodResolver(changePasswordSchema),
@@ -38,33 +40,10 @@ export function ResetPasswordForm() {
   });
 
   const handleSubmit = async (values: z.infer<typeof changePasswordSchema>) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      await authApiService.changePassword(
-        values.newPassword,
-        values.confirmPassword,
-      );
-
-      // Limpar temp_token após sucesso
-      localStorage.removeItem("temp_token");
-
-      // Se for primeiro login, redireciona para home após 2 segundos
-      if (isFirstLogin) {
-        setTimeout(() => {
-          window.location.href = "/home";
-        }, 2000);
-      }
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : t("forms.resetPassword.errors.changePasswordError");
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    await resetPassword({
+      newPassword: values.newPassword,
+      confirmPassword: values.confirmPassword,
+    });
   };
 
   return (
@@ -142,9 +121,17 @@ export function ResetPasswordForm() {
               </FormItem>
             )}
           />
+
+          {/* Password Strength Indicator */}
+          <PasswordStrengthIndicator password={form.watch("newPassword")} />
           {/* Error message display */}
           {error && (
-            <AuthError message={error}>
+            <AuthError
+              message={
+                error.message ||
+                t("forms.resetPassword.errors.changePasswordError")
+              }
+            >
               <span className="text-sm text-neutral-200 dark:text-neutral-400">
                 {t("forms.login.actions.forgotPasswordQuestion")}{" "}
                 <Link

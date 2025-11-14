@@ -155,7 +155,8 @@ export function FilterSimple<TData, TValue>({
               <>
                 <Separator orientation="vertical" className="mx-0.5 h-4" />
                 <Badge
-                  variant="secondary"
+                  label="De uma olhada depois"
+                  variant="neutral"
                   className="rounded-sm px-1 font-normal lg:hidden"
                 >
                   {selectedValues.size}
@@ -163,7 +164,8 @@ export function FilterSimple<TData, TValue>({
                 <div className="hidden space-x-1 lg:flex">
                   {selectedValues.size > 2 ? (
                     <Badge
-                      variant="secondary"
+                      label="De uma olhada depois"
+                      variant="neutral"
                       className="rounded-sm px-1 font-normal"
                     >
                       {selectedValues.size} selecionados
@@ -174,7 +176,7 @@ export function FilterSimple<TData, TValue>({
                       .map((option) => (
                         <BadgeWithoutDot
                           key={option.value.toString()}
-                          variant="secondary"
+                          variant="neutral"
                           className="rounded-sm px-1 font-normal"
                         >
                           {option.label}

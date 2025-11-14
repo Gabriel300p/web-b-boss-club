@@ -1,5 +1,6 @@
 import type { ApiResponse } from "../../../shared/services/api.service.js";
 import { apiService } from "../../../shared/services/api.service.js";
+import { tokenManager } from "../../../shared/services/token-manager.js";
 import type { UserRole } from "../types/auth.js";
 
 // Tipos para as APIs de autenticação
@@ -35,6 +36,7 @@ export interface VerifyMfaResponse {
     mfaVerified: boolean;
   };
   isFirstLogin: boolean;
+  access_token?: string; // Token do Supabase para autenticação
 }
 
 export interface UserProfile {
@@ -84,27 +86,27 @@ export class AuthApiService {
       credentials,
     );
 
-    // Se login for bem-sucedido e não precisar de MFA, salva o token
+    // Se login for bem-sucedido e não precisar de verificação, salva o token
     if (response.data.token) {
-      apiService.setAuthToken(response.data.token);
+      tokenManager.setAccessToken(response.data.token);
     }
 
-    // Se precisar de MFA, salva o token temporário
+    // Se precisar de verificação, salva o token temporário
     if (response.data.tempToken) {
-      apiService.setTempToken(response.data.tempToken);
+      tokenManager.setTempToken(response.data.tempToken);
     }
 
     return response;
   }
 
   /**
-   * 🔐 Verifica código MFA
+   * 🔐 Verifica código de verificação
    */
   async verifyMfa(code: string): Promise<ApiResponse<VerifyMfaResponse>> {
-    const tempToken = apiService.getTempToken();
+    const tempToken = tokenManager.getTempToken();
 
     if (!tempToken) {
-      throw new Error("Token temporário MFA não encontrado");
+      throw new Error("Token temporário de verificação não encontrado");
     }
 
     const response = await apiService.post<VerifyMfaResponse>(
@@ -125,14 +127,14 @@ export class AuthApiService {
    */
   async getProfile(): Promise<ApiResponse<UserProfile>> {
     // Tenta primeiro com o token de autenticação normal
-    const authToken = this.getAuthToken();
+    const authToken = tokenManager.getAccessToken();
 
     if (authToken) {
       return await apiService.get<UserProfile>(`${this.baseUrl}/profile`);
     }
 
-    // Se não tiver token normal, tenta com o token temporário MFA
-    const tempToken = apiService.getTempToken();
+    // Se não tiver token normal, tenta com o token temporário de verificação
+    const tempToken = tokenManager.getTempToken();
 
     if (tempToken) {
       const response = await apiService.get<UserProfile>(
@@ -144,10 +146,8 @@ export class AuthApiService {
         },
       );
 
-      // Se conseguir buscar o perfil com token temporário, remove ele
-      if (response.data) {
-        localStorage.removeItem("temp_token");
-      }
+      // NÃO remove temp_token aqui - pode ser necessário para outros fluxos
+      // O temp_token será removido apenas quando apropriado (ex: após reset password)
 
       return response;
     }
@@ -172,11 +172,14 @@ export class AuthApiService {
    */
   async resetPassword(
     email: string,
-  ): Promise<ApiResponse<{ message: string; success: boolean }>> {
-    return await apiService.post<{ message: string; success: boolean }>(
-      `${this.baseUrl}/reset-password`,
-      { email },
-    );
+  ): Promise<
+    ApiResponse<{ message: string; success: boolean; tempToken?: string }>
+  > {
+    return await apiService.post<{
+      message: string;
+      success: boolean;
+      tempToken?: string;
+    }>(`${this.baseUrl}/reset-password`, { email });
   }
 
   /**
@@ -196,7 +199,7 @@ export class AuthApiService {
    * 🚪 Faz logout do usuário
    */
   logout(): void {
-    apiService.clearTokens();
+    tokenManager.clearAllTokens();
     // NÃO redireciona aqui - o redirecionamento é feito pelo AuthContext
     // window.location.href = "/auth/login";
   }
@@ -205,21 +208,7 @@ export class AuthApiService {
    * 🔍 Verifica se usuário está autenticado
    */
   isAuthenticated(): boolean {
-    return apiService.isAuthenticated();
-  }
-
-  /**
-   * 🔑 Obtém token de autenticação atual
-   */
-  getAuthToken(): string | null {
-    return localStorage.getItem("access_token");
-  }
-
-  /**
-   * 🔑 Obtém token temporário MFA
-   */
-  getTempToken(): string | null {
-    return apiService.getTempToken();
+    return tokenManager.isTokenValid();
   }
 
   /**
@@ -232,16 +221,39 @@ export class AuthApiService {
   }
 
   /**
+   * 🔄 Reenvia código de verificação
+   */
+  async resendMfaCode(): Promise<
+    ApiResponse<{ message: string; success: boolean }>
+  > {
+    const tempToken = tokenManager.getTempToken();
+
+    if (!tempToken) {
+      throw new Error("Token temporário de verificação não encontrado");
+    }
+
+    return await apiService.post<{ message: string; success: boolean }>(
+      `${this.baseUrl}/resend-mfa`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${tempToken}`,
+        },
+      },
+    );
+  }
+
+  /**
    * 🔑 Altera senha do usuário autenticado
    */
   async changePassword(
     newPassword: string,
     confirmPassword: string,
   ): Promise<ApiResponse<{ message: string; success: boolean }>> {
-    // Tentar usar access_token primeiro, depois temp_token
-    const authToken = this.getAuthToken();
-    const tempToken = this.getTempToken();
-    const token = authToken || tempToken;
+    // Para change-password, priorizar temp_token (primeiro login) sobre access_token
+    const authToken = tokenManager.getAccessToken();
+    const tempToken = tokenManager.getTempToken();
+    const token = tempToken || authToken; // ← Invertido: temp_token primeiro!
 
     if (!token) {
       throw new Error("Token de autenticação não encontrado");

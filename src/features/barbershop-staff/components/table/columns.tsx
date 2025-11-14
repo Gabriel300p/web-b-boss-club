@@ -1,125 +1,280 @@
 import i18n from "@/app/i18n/init";
-import { PencilSimpleLineIcon, XCircleIcon } from "@shared/components/icons";
-import { Button } from "@shared/components/ui/button";
+import { Badge } from "@shared/components/ui/badge";
+import { Checkbox } from "@shared/components/ui/checkbox";
 import TableSort from "@shared/components/ui/table-sort";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@shared/components/ui/tooltip";
 import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { getStatusBadge } from "../../helpers/column.helper";
 import type { BarbershopStaff } from "../../schemas/barbershop-staff.schemas";
+import { PerformanceCell } from "./cells/performance/PerformanceCell";
+import { ScoreCellWithModal } from "./cells/score/ScoreCellWithModal";
+import StaffAvatar from "./cells/StaffAvatar";
+import { UnitsCell } from "./cells/UnitsCell";
+import { StaffActions, type StaffActionHandlers } from "./columns-actions";
 
-interface StaffColumnsProps {
-  onEdit: (staff: BarbershopStaff) => void;
-  onDelete: (staff: BarbershopStaff) => void;
-}
+// 🎯 Interface para props das colunas
+type StaffColumnsProps = StaffActionHandlers & {
+  // Bulk selection props (optional - Fase 1)
+  enableBulkSelection?: boolean;
+};
 
 // 🚀 Optimized column creation for barbershop staff
 export const createColumns = ({
+  onView,
   onEdit,
-  onDelete,
+  onToggleStatus,
+  enableBulkSelection = false,
 }: StaffColumnsProps): ColumnDef<BarbershopStaff>[] => {
   const t = i18n.getFixedT(i18n.language, "barbershop-staff");
 
-  const statusMap: Record<string, string> = {
-    ACTIVE: t("status.active", { defaultValue: "Ativo" }),
-    INACTIVE: t("status.inactive", { defaultValue: "Inativo" }),
-    SUSPENDED: t("status.suspended", { defaultValue: "Suspenso" }),
-    TERMINATED: t("status.terminated", { defaultValue: "Demitido" }),
-  };
+  const columns: ColumnDef<BarbershopStaff>[] = [];
 
-  const roleMap: Record<string, string> = {
-    BARBER: t("roles.barber", { defaultValue: "Barbeiro" }),
-    BARBERSHOP_OWNER: t("roles.owner", { defaultValue: "Proprietário" }),
-    SUPER_ADMIN: t("roles.superAdmin", { defaultValue: "Super Admin" }),
-    CLIENT: t("roles.client", { defaultValue: "Cliente" }),
-    PENDING: t("roles.pending", { defaultValue: "Pendente" }),
-  };
+  // 🎯 Checkbox column (TanStack Table nativo)
+  if (enableBulkSelection) {
+    columns.push({
+      id: "select",
+      header: ({ table }) => {
+        const allPageRowsSelected = table.getIsAllPageRowsSelected();
+        const somePageRowsSelected = table.getIsSomePageRowsSelected();
 
-  return [
+        // Estado do checkbox:
+        // - indeterminate: alguns selecionados
+        // - true: todos da página selecionados
+        // - false: nenhum selecionado
+        const checkedState = allPageRowsSelected
+          ? true
+          : somePageRowsSelected
+            ? "indeterminate"
+            : false;
+
+        // Tooltip text baseado no estado
+        const tooltipText = allPageRowsSelected
+          ? t("bulkActions.deselectAll")
+          : somePageRowsSelected
+            ? t("bulkActions.selectAllPage")
+            : t("bulkActions.selectAll");
+
+        return (
+          <div className="flex items-center justify-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Checkbox
+                    checked={checkedState}
+                    onCheckedChange={(value) =>
+                      table.toggleAllPageRowsSelected(!!value)
+                    }
+                    aria-label={tooltipText}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="text-xs">
+                <p>{tooltipText}</p>
+                {somePageRowsSelected && !allPageRowsSelected && (
+                  <p className="text-neutral-400">
+                    ({table.getSelectedRowModel().rows.length} de{" "}
+                    {table.getRowModel().rows.length})
+                  </p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center justify-center">
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label={t("bulkActions.selectRow")}
+            />
+          </div>
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    });
+  }
+
+  columns.push(
+    // 1. Nome/Email (staff_info)
     {
+      id: "staff_info",
       accessorKey: "first_name",
       header: ({ column }) => (
-        <TableSort column={column} className="ml-5">
-          {t("fields.name")}
+        <TableSort column={column}>
+          {t("fields.name")} / {t("fields.email")}
         </TableSort>
       ),
       cell: ({ row }) => {
         const staff = row.original;
-        const lastName =
-          staff.last_name && typeof staff.last_name === "string"
-            ? staff.last_name
-            : "";
-        const fullName = `${staff.first_name} ${lastName}`.trim();
+
+        // Usa display_name se existir, senão concatena first_name + last_name
         const displayName =
-          staff.display_name && typeof staff.display_name === "string"
-            ? staff.display_name
-            : fullName;
+          staff.display_name ||
+          `${staff.first_name}${staff.last_name ? ` ${staff.last_name}` : ""}`.trim();
+
+        const email = staff.user?.email || "";
+        const avatarUrl = staff.user?.avatar_url || null;
 
         return (
-          <div className="ml-5 cursor-pointer font-medium text-neutral-100 hover:text-neutral-200">
-            {displayName}
+          <div className="flex items-center gap-3">
+            <StaffAvatar
+              firstName={staff.first_name}
+              lastName={staff.last_name}
+              avatarUrl={avatarUrl}
+            />
+            <div className="flex flex-col">
+              <span className="font-medium text-neutral-100">
+                {displayName}
+              </span>
+              <span className="text-sm text-neutral-400">{email}</span>
+            </div>
           </div>
         );
       },
     },
+
+    // 2. 🆕 Unidades (units)
     {
-      accessorKey: "user.email",
+      id: "units",
+      accessorKey: "units",
+      header: () => <div className="text-center">{t("fields.units")}</div>,
+      cell: ({ row }) => {
+        const units = row.original.units || [];
+        const staffId = row.original.id;
+        return (
+          <div className="flex w-full justify-center">
+            <UnitsCell staffId={staffId} units={units} />
+          </div>
+        );
+      },
+      enableSorting: false,
+    },
+
+    // 3. 🆕 Performance (total_attendances + average_rating)
+    {
+      id: "performance",
+      accessorKey: "total_attendances",
+      header: ({ column }) => (
+        <TableSort column={column} align="center">
+          {t("fields.performance")}
+        </TableSort>
+      ),
+      cell: ({ row }) => {
+        const totalAttendances = row.original.total_attendances || 0;
+        const averageRating = row.original.average_rating || null;
+        const reviewCount = row.original._count?.reviews || 0;
+
+        return (
+          <div className="flex w-full justify-center text-center">
+            <PerformanceCell
+              totalAttendances={totalAttendances}
+              averageRating={averageRating}
+              reviewCount={reviewCount}
+            />
+          </div>
+        );
+      },
       enableSorting: true,
+    },
+    {
+      id: "score",
+      accessorKey: "score",
       header: ({ column }) => (
         <TableSort column={column} align="center">
-          {t("fields.email")}
+          {t("fields.score")}
         </TableSort>
       ),
       cell: ({ row }) => {
-        const staff = row.original;
+        const staffId = row.original.id;
+        const score = row.original.score
+          ? Number(row.original.score)
+          : undefined;
+
+        // 🆕 Dados reais para o tooltip
+        const averageRating = row.original.average_rating || null;
+        const totalReviews = row.original._count?.reviews || 0;
+        const totalRevenue = row.original.total_revenue
+          ? Number(row.original.total_revenue)
+          : 0;
+        const totalAttendances = row.original.total_attendances || 0;
+
+        // Pegar nome e email do staff
+        const displayName =
+          row.original.display_name ||
+          `${row.original.first_name}${row.original.last_name ? ` ${row.original.last_name}` : ""}`.trim();
+        const email = row.original.user?.email || "";
+        const avatarUrl = row.original.user?.avatar_url || null;
+
+        // ✅ Usar o score_level que vem do backend (já calculado com os thresholds corretos)
+        const scoreLevel = row.original.score_level || null;
+
         return (
-          <div className="text-center font-medium text-neutral-400">
-            {staff.user.email}
+          <div className="flex w-full justify-center text-center">
+            <ScoreCellWithModal
+              staffId={staffId}
+              staffName={displayName}
+              staffPhoto={avatarUrl}
+              staffEmail={email}
+              score={score !== undefined ? score : null}
+              scoreLevel={scoreLevel}
+              averageRating={averageRating}
+              totalReviews={totalReviews}
+              totalRevenue={totalRevenue}
+              totalAttendances={totalAttendances}
+              // 🎯 Score V3 data from backend
+              barbershopSize={row.original.barbershop_size}
+              targetAttendances={row.original.target_attendances}
+              daysWorking={row.original.days_working}
+              rampMultiplier={row.original.ramp_multiplier}
+              isInRampPeriod={row.original.is_in_ramp_period}
+            />
           </div>
         );
       },
+      enableSorting: true,
+      sortingFn: (rowA, rowB) => {
+        const scoreA = rowA.original.score ? Number(rowA.original.score) : -1;
+        const scoreB = rowB.original.score ? Number(rowB.original.score) : -1;
+        return scoreA - scoreB;
+      },
     },
+
+    // 4. 🆕 Receita Total (total_revenue)
     {
-      accessorKey: "role_in_shop",
+      id: "total_revenue",
+      accessorKey: "total_revenue",
       header: ({ column }) => (
         <TableSort column={column} align="center">
-          {t("fields.role")}
+          {t("fields.totalRevenue")}
         </TableSort>
       ),
       cell: ({ row }) => {
-        const role = row.getValue("role_in_shop") as string;
-
-        // Definir cores baseadas no role (modo escuro)
-        const getRoleStyles = (role: string) => {
-          switch (role) {
-            case "BARBER":
-              return "bg-blue-900/30 text-blue-400 border border-blue-700/50";
-            case "BARBERSHOP_OWNER":
-              return "bg-purple-900/30 text-purple-400 border border-purple-700/50";
-            case "SUPER_ADMIN":
-              return "bg-red-900/30 text-red-400 border border-red-700/50";
-            case "CLIENT":
-              return "bg-green-900/30 text-green-400 border border-green-700/50";
-            case "PENDING":
-              return "bg-yellow-900/30 text-yellow-400 border border-yellow-700/50";
-            default:
-              return "bg-neutral-800/50 text-neutral-300 border border-neutral-600/50";
-          }
-        };
+        const revenue = row.original.total_revenue || 0;
 
         return (
-          <div className="flex justify-center">
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getRoleStyles(
-                role,
-              )}`}
-            >
-              {roleMap[role] || role}
+          <div className="text-center">
+            <span className="text-sm font-medium text-neutral-100">
+              {new Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              }).format(Math.abs(revenue))}
             </span>
           </div>
         );
       },
+      enableSorting: true,
     },
+
+    // 5. Status
     {
+      id: "status",
       accessorKey: "status",
       header: ({ column }) => (
         <TableSort column={column} align="center">
@@ -128,130 +283,33 @@ export const createColumns = ({
       ),
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
-
-        // Definir cores baseadas no status (modo escuro)
-        const getStatusStyles = (status: string) => {
-          switch (status) {
-            case "ACTIVE":
-              return "bg-green-900/30 text-green-400 border border-green-700/50";
-            case "INACTIVE":
-              return "bg-gray-900/30 text-gray-400 border border-gray-700/50";
-            case "SUSPENDED":
-              return "bg-yellow-900/30 text-yellow-400 border border-yellow-700/50";
-            case "TERMINATED":
-              return "bg-red-900/30 text-red-400 border border-red-700/50";
-            default:
-              return "bg-neutral-800/50 text-neutral-300 border border-neutral-600/50";
-          }
-        };
+        const badgeConfig = getStatusBadge(status, t);
 
         return (
           <div className="flex justify-center">
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusStyles(
-                status,
-              )}`}
-            >
-              {statusMap[status] || status}
-            </span>
+            <Badge {...badgeConfig} />
           </div>
         );
       },
     },
-    {
-      accessorKey: "is_available",
-      header: ({ column }) => (
-        <TableSort column={column} align="center">
-          {t("fields.available")}
-        </TableSort>
-      ),
-      cell: ({ row }) => {
-        const isAvailable = row.getValue("is_available") as boolean;
-        return (
-          <div className="flex justify-center">
-            <span
-              className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
-                isAvailable
-                  ? "border-green-700/50 bg-green-900/30 text-green-400"
-                  : "border-red-700/50 bg-red-900/30 text-red-400"
-              }`}
-            >
-              {isAvailable ? "Disponível" : "Indisponível"}
-            </span>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "hire_date",
-      header: ({ column }) => (
-        <TableSort column={column} align="center">
-          {t("fields.hireDate")}
-        </TableSort>
-      ),
-      cell: ({ row }) => {
-        const hireDate = row.getValue("hire_date");
-
-        // Verificar se é uma string válida e não é objeto vazio
-        if (
-          !hireDate ||
-          typeof hireDate !== "string" ||
-          hireDate.trim() === ""
-        ) {
-          return <div className="text-center text-sm text-neutral-400">-</div>;
-        }
-
-        try {
-          const date = new Date(hireDate);
-          // Verificar se a data é válida
-          if (isNaN(date.getTime())) {
-            return (
-              <div className="text-center text-sm text-neutral-400">-</div>
-            );
-          }
-
-          return (
-            <div className="text-center text-sm text-neutral-500">
-              {format(date, "dd/MM/yyyy", { locale: ptBR })}
-            </div>
-          );
-        } catch (error) {
-          console.error(error);
-          return <div className="text-center text-sm text-neutral-400">-</div>;
-        }
-      },
-    },
+    // 7. Ações
     {
       id: "actions",
       header: () => <div className="text-center">{t("fields.actions")}</div>,
       cell: ({ row }) => {
         const staff = row.original;
+        const handlers = { onView, onEdit, onToggleStatus };
 
         return (
-          <div className="flex justify-center gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onEdit(staff)}
-              className="h-8 w-8 p-0 text-blue-400 hover:bg-blue-900/30 hover:text-blue-300"
-              aria-label={t("actions.edit")}
-              title={t("actions.edit")}
-            >
-              <PencilSimpleLineIcon className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onDelete(staff)}
-              className="h-8 w-8 p-0 text-red-400 hover:bg-red-900/30 hover:text-red-300"
-              aria-label={t("actions.delete")}
-              title={t("actions.delete")}
-            >
-              <XCircleIcon className="h-4 w-4" />
-            </Button>
+          <div className="flex justify-center">
+            <StaffActions staff={staff} handlers={handlers} t={t} />
           </div>
         );
       },
+      enableSorting: false,
+      enableHiding: false,
     },
-  ];
+  );
+
+  return columns;
 };

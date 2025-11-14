@@ -32,6 +32,7 @@
         "submit": "Continue",
         "loading": "Signing in...",
         "forgotPassword": "Forgot my password",
+        "createAccount": "Create account",
         "forgotPasswordQuestion": "Forgot your password?",
         "forgotPasswordLink": "Click here to reset"
       },
@@ -67,7 +68,7 @@
       },
       "errors": {
         "title": "Verification Error:",
-        "invalidCode": "Invalid MFA code. Check the code or request a new one."
+        "invalidCode": "The code you entered is incorrect. Check the code received by email and try again."
       }
     },
     "resetPassword": {
@@ -81,6 +82,15 @@
         "submit": "Change Password",
         "skip": "Skip and Continue",
         "loading": "Changing..."
+      },
+      "validation": {
+        "title": "Password strength",
+        "minLength": "At least 8 characters",
+        "uppercase": "One uppercase letter",
+        "lowercase": "One lowercase letter",
+        "number": "One number",
+        "special": "One special character",
+        "strongPassword": "Strong password! All requirements met."
       },
       "errors": {
         "changePasswordError": "Error changing password"
@@ -106,13 +116,18 @@
         "invalidLogin": "Invalid Login",
         "userNotFound": "User Not Found",
         "accountLocked": "Account Locked",
-        "connectionError": "Connection Error"
+        "connectionError": "Connection Error",
+        "dataConflict": "Data Conflict"
       },
       "messages": {
-        "invalidCredentials": "Invalid credentials{{context}}. Check your email and password or click \"Reset Password\" to receive a new verification code.",
+        "invalidCredentials": "Invalid email/CPF or password. Check your credentials and try again.",
         "userNotFound": "User not found{{context}}.",
         "accountLocked": "Account temporarily locked{{context}} for security.",
         "networkError": "Connection error. Check your internet and try again.",
+        "duplicateCpf": "This CPF is already registered in the system. Use another CPF or log in to the existing account.",
+        "duplicateEmail": "This email is already registered in the system. Use another email or log in to the existing account.",
+        "invalidCpf": "Invalid CPF. Please check if the CPF was entered correctly (numbers only).",
+        "invalidEmail": "Invalid email. Please check if the email was entered correctly.",
         "unexpectedError": "An unexpected error occurred."
       },
       "actions": {
@@ -126,18 +141,19 @@
       "forgotPasswordMessage": "Click here to reset your password",
       "mfaRequiredTitle": "Security verification required",
       "firstLoginTitle": "First Login",
-      "firstLoginMessage": "Please set a new password for your account"
+      "firstLoginMessage": "Please set a new password for your account",
+      "resetPasswordRedirect": "Code verified! Now set your new password."
     },
-    "mfa": {
+    "verification": {
       "titles": {
-        "required": "MFA Verification Required",
-        "invalid": "Invalid MFA Code",
-        "expired": "MFA Code Expired"
+        "required": "Security Verification Required",
+        "invalid": "Invalid Verification Code",
+        "expired": "Verification Code Expired"
       },
       "messages": {
-        "required": "MFA verification is required to continue",
-        "invalid": "Invalid or expired MFA code",
-        "expired": "MFA code expired. Request a new code"
+        "required": "Security verification is required to continue",
+        "invalid": "The code you entered is incorrect or has expired. Check the code received by email and try again.",
+        "expired": "The verification code has expired. Click 'Resend code' to receive a new one."
       },
       "actions": {
         "resendCode": "Resend Code"

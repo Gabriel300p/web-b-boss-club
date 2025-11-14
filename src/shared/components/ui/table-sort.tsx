@@ -45,9 +45,9 @@ const TableSort = <TData,>({
             e.stopPropagation();
             handleSort("asc");
           }}
-          className={`-mb-0.5 flex cursor-pointer items-center justify-center rounded-sm transition-all duration-200 hover:scale-110 ${
+          className={`flex cursor-pointer items-center justify-center rounded-sm transition-all duration-200 hover:scale-110 ${
             sortDirection === "asc"
-              ? "bg-blue-900/30 text-blue-400 shadow-sm"
+              ? "bg-yellow-900/30 text-yellow-400 shadow-sm"
               : "text-neutral-400 hover:bg-neutral-700/50 hover:text-neutral-300"
           }`}
           aria-label="Ordenar crescente"
@@ -65,7 +65,7 @@ const TableSort = <TData,>({
           }}
           className={`flex h-3 w-4 cursor-pointer items-center justify-center rounded-sm transition-all duration-200 hover:scale-110 ${
             sortDirection === "desc"
-              ? "bg-blue-900/30 text-blue-400 shadow-sm"
+              ? "bg-yellow-900/30 text-yellow-400 shadow-sm"
               : "text-neutral-400 hover:bg-neutral-700/50 hover:text-neutral-300"
           }`}
           aria-label="Ordenar decrescente"

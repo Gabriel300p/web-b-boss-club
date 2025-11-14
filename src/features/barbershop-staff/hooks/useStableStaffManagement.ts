@@ -3,16 +3,16 @@
  * Esta é uma versão robusta que elimina todos os problemas de re-render
  */
 import { useMemo } from "react";
+import type { StaffFilters } from "../schemas/barbershop-staff.schemas";
 import { useBarbershopStaff as useOriginalBarbershopStaff } from "./useBarbershopStaff";
 import { useStaffFilters as useOriginalStaffFilters } from "./useStaffFilters";
-import type { StaffFilters } from "../schemas/barbershop-staff.schemas";
 
 // 🎯 Hook estável para filtros que NÃO re-renderiza desnecessariamente
 export function useStableStaffFilters() {
   return useOriginalStaffFilters();
 }
 
-// 🎯 Hook estável para staff que NÃO re-renderiza desnecessariamente  
+// 🎯 Hook estável para staff que NÃO re-renderiza desnecessariamente
 export function useStableBarbershopStaff(filters: StaffFilters) {
   // Memoizar profundamente os filtros para evitar re-renders
   const stableFilters = useMemo(() => {
@@ -25,19 +25,21 @@ export function useStableBarbershopStaff(filters: StaffFilters) {
       ...(filters.status && { status: filters.status }),
       ...(filters.search && { search: filters.search }),
       ...(filters.role_in_shop && { role_in_shop: filters.role_in_shop }),
-      ...(filters.is_available !== undefined && { is_available: filters.is_available }),
+      ...(filters.is_available !== undefined && {
+        is_available: filters.is_available,
+      }),
       ...(filters.barbershop_id && { barbershop_id: filters.barbershop_id }),
       ...(filters.hired_after && { hired_after: filters.hired_after }),
       ...(filters.hired_before && { hired_before: filters.hired_before }),
-      ...(filters.available_for_booking !== undefined && { 
-        available_for_booking: filters.available_for_booking 
+      ...(filters.available_for_booking !== undefined && {
+        available_for_booking: filters.available_for_booking,
       }),
     };
-    
+
     return sortedFilters;
   }, [
     filters.page,
-    filters.limit, 
+    filters.limit,
     filters.sort_by,
     filters.sort_order,
     filters.status,
@@ -49,7 +51,7 @@ export function useStableBarbershopStaff(filters: StaffFilters) {
     filters.hired_before,
     filters.available_for_booking,
   ]);
-  
+
   return useOriginalBarbershopStaff(stableFilters);
 }
 
@@ -57,14 +59,14 @@ export function useStableBarbershopStaff(filters: StaffFilters) {
 export function useStableStaffManagement() {
   const filtersHook = useStableStaffFilters();
   const staffHook = useStableBarbershopStaff(filtersHook.filters);
-  
+
   return {
     // Filters
     filters: filtersHook.filters,
     updateFilter: filtersHook.updateFilter,
     resetFilters: filtersHook.resetFilters,
     hasActiveFilters: filtersHook.hasActiveFilters,
-    
+
     // Staff data
     staff: staffHook.staff,
     pagination: staffHook.pagination,

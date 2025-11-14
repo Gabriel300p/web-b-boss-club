@@ -5,10 +5,10 @@ import { ResetPasswordForm } from "../components/form/ResetPasswordForm";
 export function ResetPasswordPage() {
   const { t } = useTranslation("auth");
 
-  // Detectar se é primeiro login baseado na URL
-  const isFirstLogin =
-    window.location.pathname === "/auth/first-login" ||
-    window.location.search.includes("firstLogin=true");
+  // Detectar contexto baseado em query params
+  const urlParams = new URLSearchParams(window.location.search);
+  const context = urlParams.get("context");
+  const isFirstLogin = context === "first-login";
 
   return (
     <AuthPageWrapper className="bg-neutral-950">

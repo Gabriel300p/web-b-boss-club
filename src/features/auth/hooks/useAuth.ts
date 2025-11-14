@@ -37,6 +37,7 @@ export function useAuthActions() {
     logout,
     forgotPassword,
     verifyMfa,
+    resetPassword,
     resendMfaCode,
     clearError,
     checkAuth,
@@ -47,6 +48,7 @@ export function useAuthActions() {
     logout,
     forgotPassword,
     verifyMfa,
+    resetPassword,
     resendMfaCode,
     clearError,
     checkAuth,
@@ -62,6 +64,7 @@ export function useAuthLoadingStates() {
     isForgotPasswordPending,
     isMfaVerificationPending,
     isResendMfaCodePending,
+    isResetPasswordPending,
   } = useAuth();
 
   return {
@@ -71,13 +74,15 @@ export function useAuthLoadingStates() {
     isForgotPasswordPending,
     isMfaVerificationPending,
     isResendMfaCodePending,
+    isResetPasswordPending,
     // Convenience computed states
     isAnyActionPending:
       isLoginPending ||
       isLogoutPending ||
       isForgotPasswordPending ||
       isMfaVerificationPending ||
-      isResendMfaCodePending,
+      isResendMfaCodePending ||
+      isResetPasswordPending,
   };
 }
 
@@ -90,6 +95,7 @@ export function useAuthErrors() {
     forgotPasswordError,
     mfaVerificationError,
     resendMfaCodeError,
+    resetPasswordError,
   } = useAuth();
 
   return {
@@ -99,6 +105,7 @@ export function useAuthErrors() {
     forgotPasswordError,
     mfaVerificationError,
     resendMfaCodeError,
+    resetPasswordError,
     // Convenience computed state
     hasAnyError: !!(
       error ||
@@ -106,7 +113,8 @@ export function useAuthErrors() {
       logoutError ||
       forgotPasswordError ||
       mfaVerificationError ||
-      resendMfaCodeError
+      resendMfaCodeError ||
+      resetPasswordError
     ),
   };
 }

@@ -13,7 +13,7 @@ export function ToastContainer({ toasts, onClose }: ToastContainerProps) {
   // 🎯 Render in portal
   return createPortal(
     <div
-      className="pointer-events-none fixed top-4 right-4 z-50 flex flex-col-reverse space-y-3 space-y-reverse"
+      className="pointer-events-none fixed top-4 right-4 z-[100] flex flex-col-reverse space-y-3 space-y-reverse"
       style={{
         maxWidth: TOAST_CONFIG.maxWidth,
         width: "100%",

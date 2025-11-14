@@ -2,7 +2,7 @@ import type { MfaVerificationCredentials } from "../types/auth";
 import { useAuthActions, useAuthErrors, useAuthLoadingStates } from "./useAuth";
 
 /**
- * Hook específico para MFA functionality
+ * Hook específico para funcionalidade de verificação de código
  * Usa o AuthContext consolidado como fonte única da verdade
  */
 export function useMfaAuth() {
