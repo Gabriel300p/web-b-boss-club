@@ -1,0 +1,146 @@
+name: 🚀 Deploy Frontend to AWS S3 + CloudFront
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/**'
+      - '!.github/workflows/**'
+  
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual deployment'
+        required: false
+        default: 'Manual deployment'
+
+env:
+  AWS_REGION: us-east-1
+  S3_BUCKET: bboss-web-prod
+  NODE_VERSION: '18'
+
+jobs:
+  deploy:
+    name: Build and Deploy Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+      # ========================================
+      # CHECKOUT CODE
+      # ========================================
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      # ========================================
+      # SETUP NODE.JS
+      # ========================================
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      # ========================================
+      # SETUP PNPM
+      # ========================================
+      - name: 📦 Setup PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.0.0
+
+      # ========================================
+      # CACHE DEPENDENCIES
+      # ========================================
+      - name: 💾 Cache PNPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      # ========================================
+      # INSTALL DEPENDENCIES
+      # ========================================
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ========================================
+      # BUILD APPLICATION
+      # ========================================
+      - name: 🏗️ Build application
+        run: pnpm run build
+        env:
+          # Inject environment variables for Vite build
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      # ========================================
+      # CONFIGURE AWS CREDENTIALS
+      # ========================================
+      - name: 🔐 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # ========================================
+      # DEPLOY TO S3
+      # ========================================
+      - name: 🚀 Deploy to S3
+        run: |
+          # Sync all files except index.html with long cache
+          aws s3 sync dist/ s3://${{ env.S3_BUCKET }}/ \
+            --delete \
+            --cache-control "public, max-age=31536000" \
+            --exclude "index.html"
+          
+          # Upload index.html with no-cache
+          aws s3 cp dist/index.html s3://${{ env.S3_BUCKET }}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate" \
+            --content-type "text/html"
+
+      # ========================================
+      # INVALIDATE CLOUDFRONT CACHE
+      # ========================================
+      - name: 🔄 Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+      # ========================================
+      # GET CLOUDFRONT DOMAIN
+      # ========================================
+      - name: 📋 Get CloudFront domain
+        id: cloudfront
+        run: |
+          DOMAIN=$(aws cloudfront get-distribution \
+            --id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --query 'Distribution.DomainName' \
+            --output text)
+          echo "domain=$DOMAIN" >> $GITHUB_OUTPUT
+          echo "url=https://$DOMAIN" >> $GITHUB_OUTPUT
+
+      # ========================================
+      # DEPLOYMENT SUMMARY
+      # ========================================
+      - name: ✅ Deployment Summary
+        run: |
+          echo "### 🚀 Frontend Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment Details:**" >> $GITHUB_STEP_SUMMARY
+          echo "- 🌐 CloudFront URL: [${{ steps.cloudfront.outputs.url }}](${{ steps.cloudfront.outputs.url }})" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 S3 Bucket: \`${{ env.S3_BUCKET }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 🌍 Region: \`${{ env.AWS_REGION }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 📝 Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 👤 Author: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Next Steps:**" >> $GITHUB_STEP_SUMMARY
+          echo "1. ⏳ Wait 1-5 minutes for CloudFront cache invalidation" >> $GITHUB_STEP_SUMMARY
+          echo "2. 🔗 Access site: [${{ steps.cloudfront.outputs.url }}](${{ steps.cloudfront.outputs.url }})" >> $GITHUB_STEP_SUMMARY
+          echo "3. ✅ Verify backend API integration" >> $GITHUB_STEP_SUMMARY
