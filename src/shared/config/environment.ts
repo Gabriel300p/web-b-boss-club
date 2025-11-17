@@ -33,8 +33,8 @@ export const ENVIRONMENT = detectEnvironment();
 
 // 📍 URLs para cada ambiente
 export const API_URLS = {
-  local: "http://localhost:3002",
-  production: "/api",  // Usa CloudFront como proxy (path relativo)
+  local: "http://localhost:3002/api", // Backend local com prefixo /api
+  production: "/api", // CloudFront proxy (path relativo)
 } as const;
 
 // 🚀 URL atual baseada na escolha
@@ -46,7 +46,7 @@ console.log(`🔗 API URL: ${CURRENT_API_URL}`);
 
 // ⚠️ Verificação de ambiente
 if (ENVIRONMENT === "local") {
-  console.log("✅ Usando backend LOCAL (localhost:3002)");
+  console.log("✅ Usando backend LOCAL (localhost:3002/api)");
 } else {
-  console.log("🌍 Usando backend de PRODUÇÃO (Supabase)");
+  console.log("🌍 Usando backend de PRODUÇÃO (CloudFront /api)");
 }
