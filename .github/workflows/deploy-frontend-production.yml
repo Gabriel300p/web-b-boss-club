@@ -93,16 +93,22 @@ jobs:
       # ========================================
       - name: 🚀 Deploy to S3
         run: |
-          # Sync all files except index.html with long cache
+          # Sync all files except HTML files with long cache
           aws s3 sync dist/ s3://${{ env.S3_BUCKET }}/ \
             --delete \
             --cache-control "public, max-age=31536000" \
-            --exclude "index.html"
+            --exclude "*.html" \
+            --exclude "manifest.webmanifest"
 
-          # Upload index.html with no-cache
-          aws s3 cp dist/index.html s3://${{ env.S3_BUCKET }}/index.html \
-            --cache-control "no-cache, no-store, must-revalidate" \
-            --content-type "text/html"
+          # Upload HTML files with correct charset
+          find dist/ -type f -name "*.html" -exec sh -c 'aws s3 cp "$0" "s3://${{ env.S3_BUCKET }}/${0#dist/}" --cache-control "no-cache, no-store, must-revalidate" --content-type "text/html; charset=utf-8"' {} \;
+
+          # Upload manifest with correct content-type
+          if [ -f "dist/manifest.webmanifest" ]; then
+            aws s3 cp dist/manifest.webmanifest s3://${{ env.S3_BUCKET }}/manifest.webmanifest \
+              --cache-control "public, max-age=31536000" \
+              --content-type "application/manifest+json; charset=utf-8"
+          fi
 
       # ========================================
       # INVALIDATE CLOUDFRONT CACHE
